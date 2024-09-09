@@ -30,7 +30,7 @@ double lowest_y = 0;
 double highest_y = 0; 
 double highest_z = 0;
 
- typedef struct {
+typedef struct {
    std::string element;
    double x, y, z;
    double vx, vy, vz;
