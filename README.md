@@ -9,7 +9,7 @@ Build commands (Windows):
 
 mkdir build && cd build
 
-cmake .. -DVTK_ROOT="<Your VTK directory>"
+cmake .. -DVTK_ROOT="Your VTK directory"
 
 cmake --build . --config Release
 
