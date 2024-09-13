@@ -9,23 +9,18 @@ typedef struct
         double x, y, z;
   } Type_atoms;
 
-int determine_number_atoms(int cubes_in_x, int cubes_in_y, int cubes_in_z)
+void print_atoms(std::vector<Type_atoms> atoms)
 {
-    // A unit cube has four corner atoms with one centre atom. 
-    int corner_atoms_in_x = cubes_in_x + 1;
-    int atoms_in_one_plane = corner_atoms_in_x * (cubes_in_y + 1);
-    int total_corner_atoms = atoms_in_one_plane * (cubes_in_z + 1);
-    
-    int total_centre_atoms = cubes_in_x * cubes_in_y * cubes_in_z;
-    int total_atoms = total_corner_atoms + total_centre_atoms;
-    // We then add space at the end for an impact atom
-    total_atoms++;
-    return total_atoms;
-
+    // Print all atoms
+    for (int i = 0; i < atoms.size(); i++)
+    {
+        printf("Index %d x %f y %f z %f\n", i, atoms[i].x, atoms[i].y, atoms[i].z);
+    }
 }
-void generate_block(std::vector<Type_atoms> atoms, int cubes_in_x, int cubes_in_y, int cubes_in_z)
-{
 
+std::vector<Type_atoms> generate_block( int cubes_in_x, int cubes_in_y, int cubes_in_z)
+{
+    std::vector<Type_atoms> atoms;
     printf("Cubes in x %d \nCubes in y %d\nCubes in z %d\n", cubes_in_x, cubes_in_y, cubes_in_z);
 
     double atom_spacing = 3.61; //Angstroms
@@ -36,14 +31,16 @@ void generate_block(std::vector<Type_atoms> atoms, int cubes_in_x, int cubes_in_
     atom.x = 0;
     atom.y = 0;
     atom.z = 0;
+    atoms.push_back(atom);
 
     // Complete first row of corner atoms
     int corner_atoms_in_x = cubes_in_x + 1;
     for (int i = 1; i < corner_atoms_in_x; i++)
     {
-        atoms[i].x = atoms[i - 1].x + atom_spacing;
-        atoms[i].y = 0;
-        atoms[i].z = 0;
+        atom.x = atoms[i - 1].x + atom_spacing;
+        atom.y = 0;
+        atom.z = 0;
+        atoms.push_back(atom);
         atom_counter++;
     }
 
@@ -52,9 +49,10 @@ void generate_block(std::vector<Type_atoms> atoms, int cubes_in_x, int cubes_in_
     {
         for (int j = 0; j < corner_atoms_in_x; j++)
         {
-            atoms[atom_counter].x = atoms[j].x;
-            atoms[atom_counter].y = atoms[j].y + (i * atom_spacing);
-            atoms[atom_counter].z = 0;
+            atom.x = atoms[j].x;
+            atom.y = atoms[j].y + (i * atom_spacing);
+            atom.z = 0;
+            atoms.push_back(atom);
             atom_counter++;
         }
     }
@@ -65,25 +63,28 @@ void generate_block(std::vector<Type_atoms> atoms, int cubes_in_x, int cubes_in_
     {
         for (int j = 0; j < atoms_in_one_plane; j++)
         {
-            atoms[atom_counter].x = atoms[j].x;
-            atoms[atom_counter].y = atoms[j].y;
-            atoms[atom_counter].z = atoms[j].z + (i * atom_spacing);
+            atom.x = atoms[j].x;
+            atom.y = atoms[j].y;
+            atom.z = atoms[j].z + (i * atom_spacing);
+            atoms.push_back(atom);
             atom_counter++;
         }
     }
 
     // Add in first centre atom
-    atoms[atom_counter].x = atom_spacing / 2;
-    atoms[atom_counter].y = atom_spacing / 2;
-    atoms[atom_counter].z = atom_spacing / 2;
+    atom.x = atom_spacing / 2;
+    atom.y = atom_spacing / 2;
+    atom.z = atom_spacing / 2;
+    atoms.push_back(atom);
     atom_counter++;
 
     // // Complete first row of centre atoms
     for (int i = 1; i < cubes_in_x; i++)
     {
-        atoms[atom_counter].x = atoms[atom_counter - 1].x + atom_spacing;
-        atoms[atom_counter].y = atoms[atom_counter - 1].y;
-        atoms[atom_counter].z = atoms[atom_counter - 1].z;
+        atom.x = atoms[atom_counter - 1].x + atom_spacing;
+        atom.y = atoms[atom_counter - 1].y;
+        atom.z = atoms[atom_counter - 1].z;
+        atoms.push_back(atom);
         atom_counter++;
     }
 
@@ -95,9 +96,10 @@ void generate_block(std::vector<Type_atoms> atoms, int cubes_in_x, int cubes_in_
         int end = atom_counter;
         for (int j = start; j < end; j++)
         {
-            atoms[atom_counter].x = atoms[j].x;
-            atoms[atom_counter].y = atoms[j].y + (i * atom_spacing);
-            atoms[atom_counter].z = atoms[j].z;
+            atom.x = atoms[j].x;
+            atom.y = atoms[j].y + (i * atom_spacing);
+            atom.z = atoms[j].z;
+            atoms.push_back(atom);
             atom_counter++;
         }
     }
@@ -109,12 +111,13 @@ void generate_block(std::vector<Type_atoms> atoms, int cubes_in_x, int cubes_in_
         int end = atom_counter;
         for (int j = start; j < end; j++)
         {
-            atoms[atom_counter].x = atoms[j].x;
-            atoms[atom_counter].y = atoms[j].y ;
-            atoms[atom_counter].z = atoms[j].z + (i * atom_spacing);
+            atom.x = atoms[j].x;
+            atom.y = atoms[j].y ;
+            atom.z = atoms[j].z + (i * atom_spacing);
+            atoms.push_back(atom);
             atom_counter++;
         }
     }
 
-
+    return atoms;
 }

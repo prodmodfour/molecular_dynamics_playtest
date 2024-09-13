@@ -1,12 +1,11 @@
-
 cmake_minimum_required(VERSION 3.12 FATAL_ERROR)
 
-project(visualiser)
+project(visualise_md)
 
 find_package(VTK COMPONENTS 
   CommonColor
   CommonCore
-  IOGeometry
+  FiltersSources
   InteractionStyle
   RenderingContextOpenGL2
   RenderingCore
@@ -16,16 +15,16 @@ find_package(VTK COMPONENTS
 )
 
 if (NOT VTK_FOUND)
-  message(FATAL_ERROR "visualiser: Unable to find the VTK build folder.")
+  message(FATAL_ERROR "Sphere: Unable to find the VTK build folder.")
 endif()
 
 # Prevent a "command line is too long" failure in Windows.
 set(CMAKE_NINJA_FORCE_RESPONSE_FILE "ON" CACHE BOOL "Force Ninja to use response files.")
-add_executable(visualiser MACOSX_BUNDLE visualiser.cpp )
-  target_link_libraries(visualiser PRIVATE ${VTK_LIBRARIES}
+add_executable(visualise_md MACOSX_BUNDLE visualise_md.cpp )
+  target_link_libraries(visualise_md PRIVATE ${VTK_LIBRARIES}
 )
 # vtk_module_autoinit is needed
 vtk_module_autoinit(
-  TARGETS visualiser
+  TARGETS visualise_md
   MODULES ${VTK_LIBRARIES}
 )
