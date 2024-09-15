@@ -7,9 +7,24 @@
 typedef struct 
   {
         double x, y, z;
-  } Type_atoms;
+  } Type_atom;
 
-void print_atoms(std::vector<Type_atoms> atoms)
+typedef struct 
+{
+    int x, y, z;
+} block_dimensions;
+
+void generate_corner_atom_row(std::vector<Type_atom>& atom_block, Type_atom first_atom, block_dimensions cubes_in, double atom_spacing);
+void generate_corner_atom_xy_plane(std::vector<Type_atom>& atom_block, block_dimensions cubes_in, double atom_spacing);
+void generate_corner_atom_xyz_block(std::vector<Type_atom> first_atom_xy_plane, block_dimensions cubes_in, double atom_spacing);
+void generate_corner_atoms(std::vector<Type_atom>& atom_block, Type_atom first_atom, block_dimensions cubes_in, double atom_spacing);
+
+void generate_centre_atom_row(Type_atom first_atom, block_dimensions cubes_in, double atom_spacing);
+void generate_centre_atom_xy_plane(std::vector<Type_atom> first_atom_row, block_dimensions cubes_in, double atom_spacing);
+void generate_centre_atom_xyz_block(std::vector<Type_atom> first_atom_xy_plane, block_dimensions cubes_in, double atom_spacing);
+void generate_centre_atoms(Type_atom first_atom, block_dimensions cubes_in, double atom_spacing);
+
+void print_atoms(std::vector<Type_atom> atoms)
 {
     // Print all atoms
     for (int i = 0; i < atoms.size(); i++)
@@ -18,106 +33,64 @@ void print_atoms(std::vector<Type_atoms> atoms)
     }
 }
 
-std::vector<Type_atoms> generate_block( int cubes_in_x, int cubes_in_y, int cubes_in_z)
+std::vector<Type_atom> generate_block( int cubes_in_x, int cubes_in_y, int cubes_in_z)
 {
-    std::vector<Type_atoms> atoms;
     printf("Cubes in x %d \nCubes in y %d\nCubes in z %d\n", cubes_in_x, cubes_in_y, cubes_in_z);
 
+    block_dimensions cubes_in;
+    cubes_in.x = cubes_in_x;
+    cubes_in.y = cubes_in_y;
+    cubes_in.z = cubes_in_z;
     double atom_spacing = 3.61; //Angstroms
 
-    // Add first atom at origin
-    int atom_counter = 1;
-    Type_atoms atom;
-    atom.x = 0;
-    atom.y = 0;
-    atom.z = 0;
-    atoms.push_back(atom);
+    Type_atom first_corner_atom;
+    first_corner_atom.x = 0;
+    first_corner_atom.y = 0;
+    first_corner_atom.z = 0;
+    std::vector<Type_atom> atom_block;
+    generate_corner_atoms(&atom_block, first_corner_atom, cubes_in, atom_spacing);
 
-    // Complete first row of corner atoms
-    int corner_atoms_in_x = cubes_in_x + 1;
-    for (int i = 1; i < corner_atoms_in_x; i++)
+
+    // Type_atom first_centre_atom;
+    // first_centre_atom.x = atom_spacing / 2;
+    // first_centre_atom.y = atom_spacing / 2;
+    // first_centre_atom.z = atom_spacing / 2;
+    // std::vector<Type_atom> centre_atoms = generate_centre_atoms(first_centre_atom, cubes_in, atom_spacing);
+
+
+
+    return atom_block;
+}
+
+void generate_corner_atom_row(std::vector<Type_atom>& atom_block, Type_atom first_atom, block_dimensions cubes_in, double atom_spacing);
+{
+
+    Type_atom atom;
+    atom.y = first_atom.y;
+    atom.z = first_atom.z;
+    for (int i = 0; i < (cubes_in.x + 1); i++)
     {
-        atom.x = atoms[i - 1].x + atom_spacing;
-        atom.y = 0;
-        atom.z = 0;
-        atoms.push_back(atom);
-        atom_counter++;
+        atom.x = first_atom.x + (i * atom_spacing);
+        atom_block.push_back(atom);
     }
 
-    // Complete first plane of corner atoms
-    for (int i = 1; i < (cubes_in_y + 1); i++)
+}
+
+void generate_corner_atom_xy_plane(std::vector<Type_atom>& atom_block, Type_atom first_atom, block_dimensions cubes_in, double atom_spacing);
+{
+    for (int i = 0; i < (cubes_in.y + 1); i++)
     {
-        for (int j = 0; j < corner_atoms_in_x; j++)
-        {
-            atom.x = atoms[j].x;
-            atom.y = atoms[j].y + (i * atom_spacing);
-            atom.z = 0;
-            atoms.push_back(atom);
-            atom_counter++;
-        }
+        first_atom.y += (i * atom_spacing);
+        generate_centre_atom_row(&atom_block, first_atom, cubes_in, atom_spacing )
+    }
+}
+
+void generate_corner_atoms(std::vector<Type_atom>& atom_block, Type_atom first_atom, block_dimensions cubes_in, double atom_spacing)
+{
+    for (int i = 0; i < (cubes_in.z + 1); i++)
+    {
+        first_atom.z += (i * atom_spacing);
+        generate_corner_atom_xy_plane(&atom_block, first_atom, cubes_in, atom_spacing );
     }
 
-    // Complete block of corner atoms
-    int atoms_in_one_plane = corner_atoms_in_x * (cubes_in_y + 1);
-    for (int i = 1; i < (cubes_in_z + 1); i++)
-    {
-        for (int j = 0; j < atoms_in_one_plane; j++)
-        {
-            atom.x = atoms[j].x;
-            atom.y = atoms[j].y;
-            atom.z = atoms[j].z + (i * atom_spacing);
-            atoms.push_back(atom);
-            atom_counter++;
-        }
-    }
-
-    // Add in first centre atom
-    atom.x = atom_spacing / 2;
-    atom.y = atom_spacing / 2;
-    atom.z = atom_spacing / 2;
-    atoms.push_back(atom);
-    atom_counter++;
-
-    // // Complete first row of centre atoms
-    for (int i = 1; i < cubes_in_x; i++)
-    {
-        atom.x = atoms[atom_counter - 1].x + atom_spacing;
-        atom.y = atoms[atom_counter - 1].y;
-        atom.z = atoms[atom_counter - 1].z;
-        atoms.push_back(atom);
-        atom_counter++;
-    }
-
-    // Complete first plane of centre atoms
-    
-    for (int i = 1; i < cubes_in_y; i++)
-    {
-        int start = atom_counter - (i * cubes_in_x);
-        int end = atom_counter;
-        for (int j = start; j < end; j++)
-        {
-            atom.x = atoms[j].x;
-            atom.y = atoms[j].y + (i * atom_spacing);
-            atom.z = atoms[j].z;
-            atoms.push_back(atom);
-            atom_counter++;
-        }
-    }
-
-    // // Complete block of corner atoms
-    for (int i = 1; i < cubes_in_z; i++)
-    {
-        int start = (atom_counter - (i * (cubes_in_x * cubes_in_y)));
-        int end = atom_counter;
-        for (int j = start; j < end; j++)
-        {
-            atom.x = atoms[j].x;
-            atom.y = atoms[j].y ;
-            atom.z = atoms[j].z + (i * atom_spacing);
-            atoms.push_back(atom);
-            atom_counter++;
-        }
-    }
-
-    return atoms;
 }
