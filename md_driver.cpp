@@ -7,6 +7,9 @@
 #include <chrono>
 #include <thread>
 
+#include "Type_atom.h"
+
+
 
 
 #define EV_TO_J_PER_MOLE 96400.0
@@ -30,17 +33,10 @@ double lowest_y = 0;
 double highest_y = 0; 
 double highest_z = 0;
 
-typedef struct {
-   std::string element;
-   double x, y, z;
-   double vx, vy, vz;
-   double fx, fy, fz;
-} Type_atoms;
+std::ifstream xyz_file("case11.xyz");
+std::string line;
 
- std::ifstream xyz_file("case11.xyz");
- std::string line;
-
- Type_atoms *Atoms;
+Type_atom *Atoms;
 
 std::vector<std::string> split_sentence(std::string sen);
 void print_atom_position(int atom_index, Type_atoms Atom);
