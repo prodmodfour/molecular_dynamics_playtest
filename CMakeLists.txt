@@ -5,6 +5,7 @@ project(visualise_md)
 find_package(VTK COMPONENTS 
   CommonColor
   CommonCore
+  CommonDataModel
   FiltersSources
   InteractionStyle
   RenderingContextOpenGL2

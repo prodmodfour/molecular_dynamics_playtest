@@ -1,3 +1,8 @@
+#include <vtkAnimationCue.h>
+#include <vtkAnimationScene.h>
+#include <vtkCamera.h>
+#include <vtkCommand.h>
+#include <vtkLogger.h>
 #include <vtkActor.h>
 #include <vtkInteractorStyleTrackballCamera.h>
 #include <vtkNamedColors.h>
@@ -10,10 +15,12 @@
 #include <vtkSmartPointer.h>
 #include <vtkSphereSource.h>
 
+
 #include <vector>
 #include <Windows.h>
 
 #include "generate_atoms.h"
+#include "AtomAnimator.h"
 
 #define EV_TO_J_PER_MOLE 96400.0
 #define J_PER_MOLE_TO_EV 1.037e-5
@@ -22,10 +29,13 @@
 int main(int argc, char *argv[])
 {
 
-  if(argc != 4)
+  if(argc != 5)
   {
     printf("Incorrect number of input arguments.\n");
-    printf("Please input 3 integers (Cubes in x, Cubes in y, Cubes in z)");
+    printf("First 3 arguments must be integers (Cubes in x, Cubes in y, Cubes in z)\n");
+    printf("The fourth argument must be a flag that determines the animation type, either real time of sequence\n");
+    printf("e.g. '2 2 2 -real' or '1 2 3 -sequence'/n");
+
     return 0;
   }
 
@@ -95,6 +105,85 @@ int main(int argc, char *argv[])
 
   renderer->SetBackground(colors->GetColor3d("DarkSlateGray").GetData());
 
+  // Create an Animation Scene
+  vtkNew<vtkAnimationScene> scene;
+
+  if (strcmp(argv[4], "-real") == 0)
+  {
+    vtkLogF(INFO, "real-time mode");
+    scene->SetModeToRealTime();
+  }
+  else if (strcmp(argv[4], "-sequence") == 0)
+  {
+    vtkLogF(INFO, "sequence mode");
+    scene->SetModeToSequence();
+  }
+  else
+  {
+    std::cout << "Incorrect Flag" << std::endl;
+    return 2;
+  }
+  scene->SetLoop(0);
+  scene->SetFrameRate(5);
+  scene->SetStartTime(0);
+  scene->SetEndTime(5);
+  scene->AddObserver(vtkCommand::AnimationCueTickEvent, renderWindow.GetPointer(),
+                     &vtkWindow::Render);
+
+  // Set up animation for each atom
+  // std::vector<vtkSmartPointer<vtkAnimationCue>> animation_cues;
+  // std::vector<AtomAnimator> animators;
+
+  // Create an Animation Cue for each actor
+  vtkNew<vtkAnimationCue> cue1;
+  cue1->SetStartTime(1);
+  cue1->SetEndTime(10);
+  scene->AddCue(cue1);
+
+  vtkNew<vtkAnimationCue> cue2;
+  cue2->SetStartTime(1);
+  cue2->SetEndTime(10);
+  scene->AddCue(cue2);
+
+  // Create an ActorAnimator for each actor;
+  AtomAnimator animator1;
+  animator1.SetEndPosition(vtkVector3d(all_atoms[0].x + 10, all_atoms[0].y + 10, all_atoms[0].z + 10));
+  animator1.SetActor(actors[0]);
+  animator1.AddObserversToCue(cue1);
+
+  AtomAnimator animator2;
+  animator2.SetEndPosition(vtkVector3d(all_atoms[1].x + 10, all_atoms[1].y + 10, all_atoms[1].z + 10));
+  animator2.SetActor(actors[1]);
+  animator2.AddObserversToCue(cue2);
+
+
+  // for (int i = 0; i < (10); i++)
+  // {
+  //   // Create the animation cue
+  //   vtkNew<vtkAnimationCue> cue;
+  //   cue->SetStartTime(i);
+  //   cue->SetEndTime(i + 5);
+  //   animation_cues.push_back(cue);
+  //   scene->AddCue(animation_cues[i]);
+
+  //   // Create Atom Animator
+  //   AtomAnimator animateAtom;
+  //   animators.push_back(animateAtom);
+  //   animators[i].SetEndPosition(vtkVector3d(all_atoms[i].x + 1, all_atoms[i].y + 1, all_atoms[i].z + 1));
+  //   animators[i].SetActor(actors[i]);
+
+  //   // Create Cue observer.
+  //   vtkNew<vtkAnimationCueObserver> observer;
+  //   observer->Renderer = renderer;
+  //   observer->Animator = &animators[i];
+  //   observer->RenWin = renderWindow;
+
+  //   animation_cues[i]->AddObserver(vtkCommand::StartAnimationCueEvent, observer);
+  //   animation_cues[i]->AddObserver(vtkCommand::EndAnimationCueEvent, observer);
+  //   animation_cues[i]->AddObserver(vtkCommand::AnimationCueTickEvent, observer);
+
+
+  // }
 
   // Render
   renderWindow->Render();
@@ -102,6 +191,13 @@ int main(int argc, char *argv[])
   vtkNew<vtkInteractorStyleTrackballCamera> style;
 
   renderWindowInteractor->SetInteractorStyle(style);
+  renderer->ResetCamera();
+  renderer->GetActiveCamera()->Dolly(.5);
+  renderer->ResetCameraClippingRange();
+
+  // Create Cue observer.
+  scene->Play();
+  scene->Stop();
 
   // Begin mouse interaction.
   renderWindowInteractor->Start();
