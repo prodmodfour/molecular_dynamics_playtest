@@ -13,46 +13,50 @@
 #include <vector>
 #include <Windows.h>
 
-#include "generate_block.h"
+#include "generate_atoms.h"
 
-int main(int, char*[])
+#define EV_TO_J_PER_MOLE 96400.0
+#define J_PER_MOLE_TO_EV 1.037e-5
+#define SCALING 0.01
+
+int main(int argc, char *argv[])
 {
 
+  if(argc != 4)
+  {
+    printf("Incorrect number of input arguments.\n");
+    printf("Please input 3 integers (Cubes in x, Cubes in y, Cubes in z)");
+    return 0;
+  }
+
+  block_dimensions cubes_in;
+
+  cubes_in.x = std::stoi(argv[1]);
+  cubes_in.y = std::stoi(argv[2]); 
+  cubes_in.z = std::stoi(argv[3]); 
+  std::vector<Type_atom> all_atoms = generate_atom_block(cubes_in);
   
 
 
-  int cubes_in_x = 4;
-  int cubes_in_y = 4;
-  int cubes_in_z = 4;
-  std::vector<Type_atoms> atoms = generate_block(cubes_in_x, cubes_in_y, cubes_in_z);
-
-
-
-
   // We add an impact atom to the end of the vector
-  // This atom is initialised at (0, 0, 0) but will change position to 
-  // 1 Angstrom away from the centre of the top x-y surface of the block
-  Type_atoms atom;
-  atom.x = 0.0;
-  atom.y = 0.0;
-  atom.z = 0.0;
-  atoms.push_back(atom);
-  printf("Total Atoms %zd\n", atoms.size());
-  // print_atoms(atoms);
-
-
+  // This atom is initialised 1 Angstrom above the centre of the top x-y surface of the block
+  double z_offset = 3;
+  double applied_energy = 1000;
+  add_impact_atom(all_atoms, z_offset, applied_energy, cubes_in);
+  print_atoms(all_atoms);
 
 
   vtkNew<vtkNamedColors> colors;
 
   std::vector<vtkSmartPointer<vtkActor>> actors;
-  for (int i = 0; i < atoms.size(); i++)
+  double copper_atom_radius = 1.28; //Angstroms
+  for (int i = 0; i < all_atoms.size(); i++)
   {
     vtkNew<vtkSphereSource> sphereSource;
 
-    sphereSource->SetCenter(atoms[i].x, atoms[i].y, atoms[i].z);
+    sphereSource->SetCenter(all_atoms[i].x, all_atoms[i].y, all_atoms[i].z);
 
-    double copper_atom_radius = 1.28; //Angstroms
+    
     sphereSource->SetRadius(copper_atom_radius);
 
     vtkNew<vtkPolyDataMapper> mapper;
@@ -61,6 +65,11 @@ int main(int, char*[])
     vtkNew<vtkActor> actor;
     actor->SetMapper(mapper);
     actor->GetProperty()->SetColor(colors->GetColor3d("MistyRose").GetData());
+
+    if (i == (all_atoms.size() - 1))
+    {
+      actor->GetProperty()->SetColor(colors->GetColor3d("Red").GetData());
+    }
 
     actors.push_back(actor);
   }
@@ -72,6 +81,7 @@ int main(int, char*[])
   vtkNew<vtkRenderWindow> renderWindow;
   renderWindow->AddRenderer(renderer);
   renderWindow->SetWindowName("Molecular Dynamics Playtest");
+  renderWindow->SetSize(1280, 720);
 
   // An interactor.
   vtkNew<vtkRenderWindowInteractor> renderWindowInteractor;
