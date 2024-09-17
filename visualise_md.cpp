@@ -55,6 +55,11 @@ int main(int argc, char *argv[])
   add_impact_atom(all_atoms, z_offset, applied_energy, cubes_in);
   print_atoms(all_atoms);
 
+  if (all_atoms.size() > 12000)
+  {
+    std::cout << "Too many atoms. Choose smaller dimensions for atom system." << std::endl;
+    return 3;
+  }
 
   vtkNew<vtkNamedColors> colors;
 
@@ -131,59 +136,35 @@ int main(int argc, char *argv[])
                      &vtkWindow::Render);
 
   // Set up animation for each atom
-  // std::vector<vtkSmartPointer<vtkAnimationCue>> animation_cues;
-  // std::vector<AtomAnimator> animators;
+  // std::vector<vtkAnimationCue> animation_cues;
+  int total_atoms = 3;
+
+  // for (int i = 0; i < all_atoms.size(); i++)
+  // {
+  //   total_atoms++;
+  // }
+  // This doesn't work with a variable for some reason
+  AtomAnimator animators[12000];
 
   // Create an Animation Cue for each actor
   vtkNew<vtkAnimationCue> cue1;
   cue1->SetStartTime(1);
   cue1->SetEndTime(10);
+
   scene->AddCue(cue1);
+  
 
-  vtkNew<vtkAnimationCue> cue2;
-  cue2->SetStartTime(1);
-  cue2->SetEndTime(10);
-  scene->AddCue(cue2);
-
-  // Create an ActorAnimator for each actor;
-  AtomAnimator animator1;
-  animator1.SetEndPosition(vtkVector3d(all_atoms[0].x + 10, all_atoms[0].y + 10, all_atoms[0].z + 10));
-  animator1.SetActor(actors[0]);
-  animator1.AddObserversToCue(cue1);
-
-  AtomAnimator animator2;
-  animator2.SetEndPosition(vtkVector3d(all_atoms[1].x + 10, all_atoms[1].y + 10, all_atoms[1].z + 10));
-  animator2.SetActor(actors[1]);
-  animator2.AddObserversToCue(cue2);
+  for (int i = 0; i < all_atoms.size(); i++)
+  {
+    AtomAnimator animator1;
+    
+    animator1.SetEndPosition(vtkVector3d(all_atoms[i].x + 10, all_atoms[i].y + 10, all_atoms[i].z + 10));
+    animator1.SetActor(actors[i]);
+    animators[i] = animator1;
+    animators[i].AddObserversToCue(cue1);
+  }
 
 
-  // for (int i = 0; i < (10); i++)
-  // {
-  //   // Create the animation cue
-  //   vtkNew<vtkAnimationCue> cue;
-  //   cue->SetStartTime(i);
-  //   cue->SetEndTime(i + 5);
-  //   animation_cues.push_back(cue);
-  //   scene->AddCue(animation_cues[i]);
-
-  //   // Create Atom Animator
-  //   AtomAnimator animateAtom;
-  //   animators.push_back(animateAtom);
-  //   animators[i].SetEndPosition(vtkVector3d(all_atoms[i].x + 1, all_atoms[i].y + 1, all_atoms[i].z + 1));
-  //   animators[i].SetActor(actors[i]);
-
-  //   // Create Cue observer.
-  //   vtkNew<vtkAnimationCueObserver> observer;
-  //   observer->Renderer = renderer;
-  //   observer->Animator = &animators[i];
-  //   observer->RenWin = renderWindow;
-
-  //   animation_cues[i]->AddObserver(vtkCommand::StartAnimationCueEvent, observer);
-  //   animation_cues[i]->AddObserver(vtkCommand::EndAnimationCueEvent, observer);
-  //   animation_cues[i]->AddObserver(vtkCommand::AnimationCueTickEvent, observer);
-
-
-  // }
 
   // Render
   renderWindow->Render();
