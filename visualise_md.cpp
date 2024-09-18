@@ -110,6 +110,16 @@ int main(int argc, char *argv[])
 
   renderer->SetBackground(colors->GetColor3d("DarkSlateGray").GetData());
 
+  // Render
+  renderWindow->Render();
+
+  vtkNew<vtkInteractorStyleTrackballCamera> style;
+
+  renderWindowInteractor->SetInteractorStyle(style);
+  renderer->ResetCamera();
+  renderer->GetActiveCamera()->Dolly(.5);
+  renderer->ResetCameraClippingRange();
+
   // Create an Animation Scene
   vtkNew<vtkAnimationScene> scene;
 
@@ -136,49 +146,33 @@ int main(int argc, char *argv[])
                      &vtkWindow::Render);
 
   // Set up animation for each atom
-  // std::vector<vtkAnimationCue> animation_cues;
-  int total_atoms = 3;
+  AtomAnimator* animators = new AtomAnimator[all_atoms.size()];
+  int total_timesteps = 10;
 
-  // for (int i = 0; i < all_atoms.size(); i++)
-  // {
-  //   total_atoms++;
-  // }
-  // This doesn't work with a variable for some reason
-  AtomAnimator animators[12000];
-
-  // Create an Animation Cue for each actor
-  vtkNew<vtkAnimationCue> cue1;
-  cue1->SetStartTime(1);
-  cue1->SetEndTime(10);
-
-  scene->AddCue(cue1);
-  
-
-  for (int i = 0; i < all_atoms.size(); i++)
+  for (int j = 0; j < total_timesteps; j++)
   {
-    AtomAnimator animator1;
+    // Create an Animation Cue for each actor
+    vtkNew<vtkAnimationCue> cue1;
+    cue1->SetStartTime(1);
+    cue1->SetEndTime(10);
+    scene->AddCue(cue1);
     
-    animator1.SetEndPosition(vtkVector3d(all_atoms[i].x + 10, all_atoms[i].y + 10, all_atoms[i].z + 10));
-    animator1.SetActor(actors[i]);
-    animators[i] = animator1;
-    animators[i].AddObserversToCue(cue1);
+
+    for (int i = 0; i < all_atoms.size(); i++)
+    {
+      AtomAnimator animator1;
+      
+      animator1.SetEndPosition(vtkVector3d(all_atoms[i].x + j, all_atoms[i].y + j, all_atoms[i].z + j));
+      animator1.SetActor(actors[i]);
+      animators[i] = animator1;
+      animators[i].AddObserversToCue(cue1);
+    }
+
+    // Create Cue observer.
+    scene->Play();
+    scene->Stop();
   }
 
-
-
-  // Render
-  renderWindow->Render();
-
-  vtkNew<vtkInteractorStyleTrackballCamera> style;
-
-  renderWindowInteractor->SetInteractorStyle(style);
-  renderer->ResetCamera();
-  renderer->GetActiveCamera()->Dolly(.5);
-  renderer->ResetCameraClippingRange();
-
-  // Create Cue observer.
-  scene->Play();
-  scene->Stop();
 
   // Begin mouse interaction.
   renderWindowInteractor->Start();
