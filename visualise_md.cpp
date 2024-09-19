@@ -140,29 +140,46 @@ int main(int argc, char *argv[])
   }
   scene->SetLoop(0);
   scene->SetFrameRate(5);
-  scene->SetStartTime(0);
-  scene->SetEndTime(5);
+
   scene->AddObserver(vtkCommand::AnimationCueTickEvent, renderWindow.GetPointer(),
                      &vtkWindow::Render);
 
   // Set up animation for each atom
   AtomAnimator* animators = new AtomAnimator[all_atoms.size()];
   int total_timesteps = 10;
+  double next_x, next_y, next_z, current_x, current_y, current_z;
+  int start_time = 0;
+  int step_duration = 5;
+  int end_time = start_time + step_duration;
 
-  for (int j = 0; j < total_timesteps; j++)
+  for (int j = 1; j < total_timesteps; j++)
   {
+    scene->SetStartTime(start_time);
+    scene->SetEndTime(end_time);
     // Create an Animation Cue for each actor
     vtkNew<vtkAnimationCue> cue1;
-    cue1->SetStartTime(1);
-    cue1->SetEndTime(10);
+    cue1->SetStartTime(start_time);
+    cue1->SetEndTime(end_time);
     scene->AddCue(cue1);
-    
 
+    // Update start and end time for the next animation step
+    start_time = end_time;
+    end_time += step_duration;
+    
     for (int i = 0; i < all_atoms.size(); i++)
     {
       AtomAnimator animator1;
-      
-      animator1.SetEndPosition(vtkVector3d(all_atoms[i].x + j, all_atoms[i].y + j, all_atoms[i].z + j));
+
+      current_x = all_atoms[i].x + j - 1;
+      current_y = all_atoms[i].y + j - 1;
+      current_z = all_atoms[i].z + j -1;
+      animator1.SetStartPosition(vtkVector3d(current_x, current_y, current_z));
+
+      // Find the position that the atom will be at the end of the animation step
+      next_x = all_atoms[i].x + j;
+      next_y = all_atoms[i].y + j;
+      next_z = all_atoms[i].z + j;
+      animator1.SetEndPosition(vtkVector3d(next_x, next_y, next_z));
       animator1.SetActor(actors[i]);
       animators[i] = animator1;
       animators[i].AddObserversToCue(cue1);
@@ -171,6 +188,7 @@ int main(int argc, char *argv[])
     // Create Cue observer.
     scene->Play();
     scene->Stop();
+
   }
 
 
