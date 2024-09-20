@@ -14,8 +14,7 @@
 #define J_PER_MOLE_TO_EV 1.037e-5
 #define SCALING 0.01
 
-/* Global variables */
-double cu_mass = 63.546;                        /* atomic weight in g/mol */
+/* Global variables */                    /* atomic weight in g/mol */
 double timestep_size = 0.001;                         /* in ps */
 double epsilon = 0.4802 * EV_TO_J_PER_MOLE;  /* J/mol */
 double sigma = 2.285;                    /* Angstrom */
@@ -27,17 +26,19 @@ double velocity_scale = SCALING*timestep_size/cu_mass;
 std::string line;
 
 std::vector<std::string> split_sentence(std::string sen);
-void print_atom_position(int atom_index, Type_atoms Atom);
 void zero_forces(std::vector<Type_atom> &all_atoms);
 double evaluate_forces(std::vector<Type_atom> &all_atoms);
 double calculate_kinetic_energy(double sum_v_squared);
 
 
-std::vector<std::vector<Type_atom>> simulate_atom_movement(std::vector<Type_atom> all_atoms, int number_timesteps)
+std::vector<std::vector<Type_atom>> simulate_atom_movement(std::vector<Type_atom> &all_atoms, int number_timesteps, int history_interval)
 {
+    std::vector<std::vector<Type_atom>> atom_trajectory_data;
+    atom_trajectory_data.push_back(all_atoms);
+
     auto start = std::chrono::high_resolution_clock::now();
  
-    double kinetic_energy, potential_energy, sum_v_squared, total_energy;
+    double kinetic_energy, potential_energy, sum_v_squared;
     double vxi, vyi, vzi;
     double vxi2, vyi2, vzi2;
     double vxi3, vyi3, vzi3;
@@ -51,7 +52,7 @@ std::vector<std::vector<Type_atom>> simulate_atom_movement(std::vector<Type_atom
         zero_forces(all_atoms);
         sum_v_squared = 0.0;
 
-        potential_energy = evaluate_forces();
+        potential_energy = evaluate_forces(all_atoms);
 
         // Simulate Atom Trajectory
         for (int i = 0; i < all_atoms.size(); i++)
@@ -91,8 +92,15 @@ std::vector<std::vector<Type_atom>> simulate_atom_movement(std::vector<Type_atom
             all_atoms[i].vz = vzi2;
     }
 
-    kinetic_energy = calculate_kinetic_energy(sum_v_squared);
-    printf("Timestep %d Potential Energy: %f Kinetic Energy: %f Total Energy %f\n", timestep, potential_energy, kinetic_energy, potential_energy + kinetic_energy);
+        if ((timestep + 1) % history_interval == 0)
+        {
+            atom_trajectory_data.push_back(all_atoms);
+        }
+
+    
+
+        kinetic_energy = calculate_kinetic_energy(sum_v_squared);
+        // printf("Timestep %d Potential Energy: %f Kinetic Energy: %f Total Energy %f\n", timestep, potential_energy, kinetic_energy, potential_energy + kinetic_energy);
     }
 
     auto end = std::chrono::high_resolution_clock::now();
@@ -100,6 +108,7 @@ std::vector<std::vector<Type_atom>> simulate_atom_movement(std::vector<Type_atom
     std::chrono::duration<float> duration = end - start;
     std::cout << duration.count() << "s " << std::endl;
 
+    return atom_trajectory_data;
 
  
 
@@ -126,18 +135,13 @@ std::vector<std::string> split_sentence(std::string sen) {
     return words;
 }
 
-void print_atom_position(int atom_index, Type_atoms Atom)
-{
-    printf("Atom # %d element %s x %f y %f z %f\n", atom_index, Atom.element.c_str(), Atom.x, Atom.y, Atom.z);
-}
-
 void zero_forces(std::vector<Type_atom> &all_atoms)
 {
     for (int i = 0; i < all_atoms.size(); i++)
     {
-        all_all_atoms[i].fx = 0;
-        all_all_atoms[i].fy = 0;
-        all_all_atoms[i].fz = 0;
+        all_atoms[i].fx = 0;
+        all_atoms[i].fy = 0;
+        all_atoms[i].fz = 0;
     }
 }
 

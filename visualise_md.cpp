@@ -31,13 +31,14 @@
 int main(int argc, char *argv[])
 {
 
-  if(argc != 5)
+  if(argc != 6)
   {
     printf("Incorrect number of input arguments.\n");
     printf("First 3 arguments must be integers (Cubes in x, Cubes in y, Cubes in z)\n");
     printf("The fourth argument must be an integer (Duration of each animation step)\n");
     printf("The bigger this number, the slower the animation\n");
-    printf("e.g. '2 2 2 5'/n");
+    std::cout << "The fifth argument should be the number of timesteps in the simulation" << std::endl;
+    printf("e.g. '2 2 2 5 1000'/n");
 
     return 0;
   }
@@ -62,30 +63,18 @@ int main(int argc, char *argv[])
   }
 
   // Simulate molecular dynamics and obtain atom trajectory data
-  int steps = 10;
+  int number_timesteps = std::stoi(argv[5]);
   std::vector<std::vector<Type_atom>> atom_trajectory_data;
 
-
-  // This is the first from of the animation
-  atom_trajectory_data.push_back(all_atoms);
+  atom_trajectory_data = simulate_atom_movement(all_atoms, number_timesteps, 100);
+  std::cout << atom_trajectory_data.size() << std::endl;
   print_atoms(atom_trajectory_data[0]);
-  
-  for (int j = 1; j < steps; j++)
-  {
-    for (int i = 0; i < all_atoms.size(); i++)
-    {
-      all_atoms[i].x +=1;
-      all_atoms[i].y +=1;
-      all_atoms[i].z +=1;
-    }
-    atom_trajectory_data.push_back(all_atoms);
-  }
+  print_atoms(atom_trajectory_data[atom_trajectory_data.size() - 1]);
 
-
-  // Render animation
+  // // Render animation
   int step_duration = std::stoi(argv[4]);
   animate_atoms(atom_trajectory_data, step_duration);
   std::cout << "End of program reached" << std::endl;
 
-  
+  return 0;
 }
