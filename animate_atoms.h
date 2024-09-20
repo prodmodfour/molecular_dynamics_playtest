@@ -5,6 +5,13 @@
 
 
 
+
+
+
+int animate_atoms(std::vector<std::vector<Type_atom>> &atom_trajectory_data, int step_duration);
+
+
+
 int animate_atoms(std::vector<std::vector<Type_atom>> &atom_trajectory_data, int step_duration)
 {
     vtkNew<vtkNamedColors> colors;
@@ -26,7 +33,7 @@ int animate_atoms(std::vector<std::vector<Type_atom>> &atom_trajectory_data, int
 
         vtkNew<vtkActor> actor;
         actor->SetMapper(mapper);
-        actor->GetProperty()->SetColor(colors->GetColor3d("MistyRose").GetData());
+        actor->GetProperty()->SetColor(colors->GetColor3d("White").GetData());
 
         if (i == (atom_trajectory_data[0].size() - 1))
         {
@@ -90,9 +97,12 @@ int animate_atoms(std::vector<std::vector<Type_atom>> &atom_trajectory_data, int
         animators[i] = animator;
     }
 
-    double focal_x, focal_y, focal_z;
-    double camera_x, camera_y, camera_z;
-        
+    renderer->GetActiveCamera()->ParallelProjectionOn();
+    double parallel_scale;
+    parallel_scale = renderer->GetActiveCamera()->GetParallelScale();
+    std::cout << parallel_scale << std::endl;
+
+
     for (int step = 0; step < atom_trajectory_data.size(); step++)
     {
         scene->SetStartTime(start_time);
@@ -118,13 +128,7 @@ int animate_atoms(std::vector<std::vector<Type_atom>> &atom_trajectory_data, int
 
         scene->Play();
         scene->Stop();
-        renderer->GetActiveCamera()->GetFocalPoint(focal_x, focal_y, focal_z);
-        std::cout << focal_x << " " << focal_y <<" " <<focal_z << std::endl;
-        renderer->GetActiveCamera()->GetPosition(camera_x, camera_y, camera_z);
-        std::cout << camera_x << " " << camera_y <<" " <<camera_z << std::endl << std::endl;
-
-
-
+        
 
         if (step == atom_trajectory_data.size() - 1)
         {
@@ -138,19 +142,13 @@ int animate_atoms(std::vector<std::vector<Type_atom>> &atom_trajectory_data, int
         }
     }
 
-    renderer->GetActiveCamera()->GetFocalPoint(focal_x, focal_y, focal_z);
-    std::cout << focal_x << " " << focal_y <<" " <<focal_z << std::endl;
 
-    std::cout << std::endl;
+
     // Begin mouse interaction.
     renderWindowInteractor->Start();
-    renderer->GetActiveCamera()->GetFocalPoint(focal_x, focal_y, focal_z);
-    std::cout << focal_x << " " << focal_y <<" " <<focal_z << std::endl;
-    renderer->GetActiveCamera()->GetPosition(camera_x, camera_y, camera_z);
-    std::cout << camera_x << " " << camera_y <<" " <<camera_z << std::endl << std::endl;
 
-    
-  return EXIT_SUCCESS;
+    return EXIT_SUCCESS;
 
 
 }
+

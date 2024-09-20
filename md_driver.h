@@ -31,6 +31,7 @@ double evaluate_forces(std::vector<Type_atom> &all_atoms);
 double calculate_kinetic_energy(double sum_v_squared);
 
 
+
 std::vector<std::vector<Type_atom>> simulate_atom_movement(std::vector<Type_atom> &all_atoms, int number_timesteps, int history_interval)
 {
     std::vector<std::vector<Type_atom>> atom_trajectory_data;
@@ -114,7 +115,8 @@ std::vector<std::vector<Type_atom>> simulate_atom_movement(std::vector<Type_atom
 
 }
 
-std::vector<std::string> split_sentence(std::string sen) {
+std::vector<std::string> split_sentence(std::string sen) 
+{
   
     // Create a stringstream object
     std::stringstream ss(sen);

@@ -30,8 +30,20 @@
 
 int main(int argc, char *argv[])
 {
-
-  if(argc != 6)
+  // Get input arguments
+  block_dimensions cubes_in;
+  int step_duration;
+  int total_timesteps;
+  if (argc == 1)
+  {
+    // Default parameters
+    cubes_in.x = 2;
+    cubes_in.y = 2; 
+    cubes_in.z = 2;
+    step_duration = 5;
+    total_timesteps = 1000;
+  }
+  else if(argc != 6)
   {
     printf("Incorrect number of input arguments.\n");
     printf("First 3 arguments must be integers (Cubes in x, Cubes in y, Cubes in z)\n");
@@ -42,12 +54,18 @@ int main(int argc, char *argv[])
 
     return 0;
   }
+  else if (argc == 6)
+  {
+    cubes_in.x = std::stoi(argv[1]);
+    cubes_in.y = std::stoi(argv[2]); 
+    cubes_in.z = std::stoi(argv[3]);
+    step_duration = std::stoi(argv[4]);
+    total_timesteps = std::stoi(argv[5]);
+  }
 
   // Generate Atom system based on user input
-  block_dimensions cubes_in;
-  cubes_in.x = std::stoi(argv[1]);
-  cubes_in.y = std::stoi(argv[2]); 
-  cubes_in.z = std::stoi(argv[3]); 
+  
+
   std::vector<Type_atom> all_atoms = generate_atom_block(cubes_in);
   
   // We add an impact atom to the end of the vector
@@ -63,16 +81,14 @@ int main(int argc, char *argv[])
   }
 
   // Simulate molecular dynamics and obtain atom trajectory data
-  int number_timesteps = std::stoi(argv[5]);
+   
   std::vector<std::vector<Type_atom>> atom_trajectory_data;
-
-  atom_trajectory_data = simulate_atom_movement(all_atoms, number_timesteps, 100);
+  atom_trajectory_data = simulate_atom_movement(all_atoms, total_timesteps, 100);
   std::cout << atom_trajectory_data.size() << std::endl;
   print_atoms(atom_trajectory_data[0]);
   print_atoms(atom_trajectory_data[atom_trajectory_data.size() - 1]);
 
   // // Render animation
-  int step_duration = std::stoi(argv[4]);
   animate_atoms(atom_trajectory_data, step_duration);
   std::cout << "End of program reached" << std::endl;
 
