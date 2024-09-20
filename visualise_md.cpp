@@ -22,6 +22,7 @@
 #include "Type_atom.h"
 #include "generate_atoms.h"
 #include "animate_atoms.h"
+#include "md_driver.h"
 
 #define EV_TO_J_PER_MOLE 96400.0
 #define J_PER_MOLE_TO_EV 1.037e-5
