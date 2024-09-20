@@ -1,7 +1,4 @@
-#include <vtkActor.h>
-#include <vtkAnimationCue.h>
-#include <vtkCommand.h>
-#include <vtkVectorOperators.h>
+
 
 class AtomAnimator
 {
