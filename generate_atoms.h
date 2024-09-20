@@ -6,7 +6,6 @@
 #include <iostream>
 #include <cmath>
 
-#include "Type_atom.h"
 
 #define EV_TO_J_PER_MOLE 96400.0
 #define J_PER_MOLE_TO_EV 1.037e-5
@@ -21,6 +20,7 @@ typedef struct
 } block_dimensions;
 
 void print_atoms(std::vector<Type_atom> atoms);
+void print_atoms_trimmed(std::vector<Type_atom_coordinates> atoms);
 void generate_atom_row(std::vector<Type_atom>& atom_block, Type_atom first_atom, block_dimensions cubes_in,  std::string atom_type);
 void generate_atom_xy_plane(std::vector<Type_atom>& atom_block, block_dimensions cubes_in,  std::string atom_type);
 void generate_atom_xyz_space(std::vector<Type_atom>& atom_block, Type_atom first_atom, block_dimensions cubes_in,  std::string atom_type);
@@ -29,6 +29,15 @@ std::vector<Type_atom> generate_atom_block(block_dimensions cubes_in);
 void add_impact_atom(std::vector<Type_atom>& atom_block, double z_offset, double applied_energy, block_dimensions cubes_in);
 
 void print_atoms(std::vector<Type_atom> atoms)
+{
+    // Print all atoms
+    for (int i = 0; i < atoms.size(); i++)
+    {
+        printf("Index %d x %f y %f z %f\n", i, atoms[i].x, atoms[i].y, atoms[i].z);
+    }
+}
+
+void print_atoms_trimmed(std::vector<Type_atom_coordinates> atoms)
 {
     // Print all atoms
     for (int i = 0; i < atoms.size(); i++)
