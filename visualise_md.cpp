@@ -63,13 +63,12 @@ int main(int argc, char *argv[])
   // Simulate molecular dynamics and obtain atom trajectory data
   int steps = 10;
   std::vector<std::vector<Type_atom>> atom_trajectory_data;
-  atom_trajectory_data.reserve(steps);
+
 
   // This is the first from of the animation
-  atom_trajectory_data[0] = all_atoms;
+  atom_trajectory_data.push_back(all_atoms);
   print_atoms(atom_trajectory_data[0]);
   
-
   for (int j = 1; j < steps; j++)
   {
     for (int i = 0; i < all_atoms.size(); i++)
@@ -78,7 +77,7 @@ int main(int argc, char *argv[])
       all_atoms[i].y +=1;
       all_atoms[i].z +=1;
     }
-    atom_trajectory_data[j] = all_atoms;
+    atom_trajectory_data.push_back(all_atoms);
   }
 
 

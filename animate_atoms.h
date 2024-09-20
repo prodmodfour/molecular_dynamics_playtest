@@ -1,6 +1,7 @@
 
 #include "AtomAnimator.h"
 #include <vector>
+#include <iostream>
 
 
 
@@ -94,6 +95,8 @@ int animate_atoms(std::vector<std::vector<Type_atom>> &atom_trajectory_data, int
         animator.SetActor(actors[i]);
         animators[i] = animator;
     }
+
+
         
     for (int step = 1; step < atom_trajectory_data.size(); step++)
     {
@@ -119,11 +122,11 @@ int animate_atoms(std::vector<std::vector<Type_atom>> &atom_trajectory_data, int
         scene->Play();
         scene->Stop();
 
-        // // Set up start positions for the next animation step
-        // for (int i = 0; i < atom_trajectory_data[step].size(); i++)
-        // {
-        //     animators[i].SetStartPosition(vtkVector3d(atom_trajectory_data[step][i].x, atom_trajectory_data[step][i].y, atom_trajectory_data[step][i].z));
-        // }
+        // Set up start positions for the next animation step
+        for (int i = 0; i < atom_trajectory_data[step].size(); i++)
+        {
+            animators[i].SetStartPosition(vtkVector3d(atom_trajectory_data[step][i].x, atom_trajectory_data[step][i].y, atom_trajectory_data[step][i].z));
+        }
     }
 
     // Begin mouse interaction.
