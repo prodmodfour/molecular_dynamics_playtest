@@ -1,3 +1,6 @@
+#ifndef __md_driver_h
+#define __md_driver_h
+
 #include <string>
 #include <iostream>
 #include <fstream>
@@ -7,35 +10,28 @@
 #include <chrono>
 #include <thread>
 
+#include "Settings.h"
+#include "Type_atom.h"
 
 
 
-#define EV_TO_J_PER_MOLE 96400.0
-#define J_PER_MOLE_TO_EV 1.037e-5
-#define SCALING 0.01
-
-/* Global variables */                    /* atomic weight in g/mol */
-double timestep_size = 0.001;                         /* in ps */
-double epsilon = 0.4802 * EV_TO_J_PER_MOLE;  /* J/mol */
-double sigma = 2.285;                    /* Angstrom */
-double r_cutoff = 2.5 * sigma;                            /* 2.5 sigma */
-double r_cutoff_squared = r_cutoff * r_cutoff;
-double velocity_scale = SCALING*timestep_size/cu_mass;
 
 
 std::string line;
 
 std::vector<std::string> split_sentence(std::string sen);
 void zero_forces(std::vector<Type_atom> &all_atoms);
-double evaluate_forces(std::vector<Type_atom> &all_atoms);
-double calculate_kinetic_energy(double sum_v_squared);
+double evaluate_forces(std::vector<Type_atom> &all_atoms, Settings settings);
+double calculate_kinetic_energy(double sum_v_squared, Settings settings);
 
 
 
-std::vector<std::vector<Type_atom>> simulate_atom_movement(std::vector<Type_atom> &all_atoms, int number_timesteps, int history_interval)
+std::vector<std::vector<Type_atom>> simulate_atom_movement(std::vector<Type_atom> &all_atoms, Settings settings)
 {
     std::vector<std::vector<Type_atom>> atom_trajectory_data;
+
     atom_trajectory_data.push_back(all_atoms);
+    // atom_trajectory_data.push_back(all_atoms);
 
     auto start = std::chrono::high_resolution_clock::now();
  
@@ -45,15 +41,19 @@ std::vector<std::vector<Type_atom>> simulate_atom_movement(std::vector<Type_atom
     double vxi3, vyi3, vzi3;
     double fxi, fyi, fzi;
     double delta_vxi, delta_vyi, delta_vzi;
+    double total_timesteps = settings.GetSimulationTotalTimesteps();
+    double velocity_scale = settings.GetVelocityScale();
+    double timestep_size = settings.GetSimulationTimestepSize();
+    int history_interval = settings.GetSimulationHistoryInterval();
 
     // Leapfrog Verlet Algorithm
-    for (int timestep = 0; timestep < number_timesteps; timestep++)
+    for (int timestep = 0; timestep < total_timesteps; timestep++)
     {
         // Reset variables
         zero_forces(all_atoms);
         sum_v_squared = 0.0;
 
-        potential_energy = evaluate_forces(all_atoms);
+        potential_energy = evaluate_forces(all_atoms, settings);
 
         // Simulate Atom Trajectory
         for (int i = 0; i < all_atoms.size(); i++)
@@ -100,7 +100,7 @@ std::vector<std::vector<Type_atom>> simulate_atom_movement(std::vector<Type_atom
 
     
 
-        kinetic_energy = calculate_kinetic_energy(sum_v_squared);
+        kinetic_energy = calculate_kinetic_energy(sum_v_squared, settings);
         // printf("Timestep %d Potential Energy: %f Kinetic Energy: %f Total Energy %f\n", timestep, potential_energy, kinetic_energy, potential_energy + kinetic_energy);
     }
 
@@ -109,10 +109,8 @@ std::vector<std::vector<Type_atom>> simulate_atom_movement(std::vector<Type_atom
     std::chrono::duration<float> duration = end - start;
     std::cout << duration.count() << "s " << std::endl;
 
+
     return atom_trajectory_data;
-
- 
-
 }
 
 std::vector<std::string> split_sentence(std::string sen) 
@@ -147,7 +145,7 @@ void zero_forces(std::vector<Type_atom> &all_atoms)
     }
 }
 
-double evaluate_forces(std::vector<Type_atom> &all_atoms)
+double evaluate_forces(std::vector<Type_atom> &all_atoms, Settings settings)
 {
  double xi, yi, zi;
  double xj, yj, zj;
@@ -160,11 +158,16 @@ double evaluate_forces(std::vector<Type_atom> &all_atoms)
 
  potential_energy = 0;
 
+
+ double epsilon = settings.GetEpsilon();
+ double sigma = settings.GetSigma();
  // We will only ever have to deal with Cu-Cu interactions
  epsilon4 = 4 * epsilon;
  epsilon24 = 24 * epsilon;
  sigma_squared = sigma * sigma;
 
+double r_cutoff = settings.GetRCutoff();
+double r_cutoff_squared = r_cutoff * r_cutoff;
  // Find forces from every unique pair interaction
  for (int i = 0; i < all_atoms.size(); i++)
  {
@@ -247,18 +250,23 @@ double evaluate_forces(std::vector<Type_atom> &all_atoms)
     potential_energy *= epsilon4;
 
     // Convert to eV
-    potential_energy *= J_PER_MOLE_TO_EV;
+    double j_per_mole_to_ev = settings.GetJPerMoleToEV();
+    potential_energy *= j_per_mole_to_ev;
 
     return potential_energy;
 
 }
 
-double calculate_kinetic_energy(double sum_v_squared)
+double calculate_kinetic_energy(double sum_v_squared, Settings settings)
 {
     double kinetic_energy;
-    kinetic_energy = 0.5*cu_mass*sum_v_squared;
+    double atom_mass = settings.GetAtomMass();
+    kinetic_energy = 0.5*atom_mass*sum_v_squared;
     
     // Convert to eV
-    kinetic_energy *= J_PER_MOLE_TO_EV;
+    double j_per_mole_to_ev = settings.GetJPerMoleToEV();
+    kinetic_energy *= j_per_mole_to_ev;
     return kinetic_energy;
 }
+
+#endif

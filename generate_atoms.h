@@ -1,3 +1,6 @@
+#ifndef __generate_atoms_h
+#define __generate_atoms_h
+
 #include <thread>
 #include <cstdio>
 #include <string>
@@ -5,30 +8,25 @@
 #include <algorithm>
 #include <iostream>
 #include <cmath>
+#include "Type_atom.h"
+#include "Settings.h"
 
 
-#define EV_TO_J_PER_MOLE 96400.0
-#define J_PER_MOLE_TO_EV 1.037e-5
-#define SCALING 0.01
-double atom_spacing = 3.61;
 
-double cu_mass = 63.546;
+typedef struct {
+    int x_cubes, y_cubes, z_cubes;
+    double atom_spacing;
+} block_parameters;
+void print_atoms(std::vector<Type_atom>& atoms);
 
-typedef struct 
-{
-    int x, y, z;
-} block_dimensions;
+void generate_atom_row(std::vector<Type_atom>& atom_block, Type_atom first_atom, block_parameters parameters,  std::string atom_type);
+void generate_atom_xy_plane(std::vector<Type_atom>& atom_block, block_parameters parameters,  std::string atom_type);
+void generate_atom_xyz_space(std::vector<Type_atom>& atom_block, Type_atom first_atom, block_parameters parameters,  std::string atom_type);
+std::vector<Type_atom> generate_atom_block(block_parameters parameters);
 
-void print_atoms(std::vector<Type_atom> atoms);
-void print_atoms_trimmed(std::vector<Type_atom_coordinates> atoms);
-void generate_atom_row(std::vector<Type_atom>& atom_block, Type_atom first_atom, block_dimensions cubes_in,  std::string atom_type);
-void generate_atom_xy_plane(std::vector<Type_atom>& atom_block, block_dimensions cubes_in,  std::string atom_type);
-void generate_atom_xyz_space(std::vector<Type_atom>& atom_block, Type_atom first_atom, block_dimensions cubes_in,  std::string atom_type);
-std::vector<Type_atom> generate_atom_block(block_dimensions cubes_in);
+void add_impact_atom(std::vector<Type_atom>& atom_block, double z_offset, double applied_energy, Settings settings);
 
-void add_impact_atom(std::vector<Type_atom>& atom_block, double z_offset, double applied_energy, block_dimensions cubes_in);
-
-void print_atoms(std::vector<Type_atom> atoms)
+void print_atoms(std::vector<Type_atom>& atoms)
 {
     // Print all atoms
     for (int i = 0; i < atoms.size(); i++)
@@ -37,45 +35,45 @@ void print_atoms(std::vector<Type_atom> atoms)
     }
 }
 
-void print_atoms_trimmed(std::vector<Type_atom_coordinates> atoms)
-{
-    // Print all atoms
-    for (int i = 0; i < atoms.size(); i++)
-    {
-        printf("Index %d x %f y %f z %f\n", i, atoms[i].x, atoms[i].y, atoms[i].z);
-    }
-}
 
-std::vector<Type_atom> generate_atom_block(block_dimensions cubes_in)
+
+std::vector<Type_atom> generate_atom_block(Settings settings)
 {
     std::vector<Type_atom> atom_block;
+    block_parameters parameters;
+    settings.PrintBlockParameters();
+    parameters.x_cubes  = settings.GetCubesInX();
+    parameters.y_cubes = settings.GetCubesInY();
+    parameters.z_cubes = settings.GetCubesInZ();
+    parameters.atom_spacing = settings.GetAtomSpacing();
 
     Type_atom first_corner_atom;
     first_corner_atom.x = 0;
     first_corner_atom.y = 0;
     first_corner_atom.z = 0;
-    generate_atom_xyz_space(atom_block, first_corner_atom, cubes_in, "corner");
+    generate_atom_xyz_space(atom_block, first_corner_atom, parameters, "corner");
 
 
     Type_atom first_centre_atom;
-    first_centre_atom.x = atom_spacing / 2;
-    first_centre_atom.y = atom_spacing / 2;
-    first_centre_atom.z = atom_spacing / 2;
-    generate_atom_xyz_space(atom_block, first_centre_atom, cubes_in, "centre");
+
+    first_centre_atom.x = parameters.atom_spacing / 2;
+    first_centre_atom.y = parameters.atom_spacing / 2;
+    first_centre_atom.z = parameters.atom_spacing / 2;
+    generate_atom_xyz_space(atom_block, first_centre_atom, parameters, "centre");
 
     return atom_block;
 }
 
-void generate_atom_row(std::vector<Type_atom>& atom_block, Type_atom first_atom, block_dimensions cubes_in, std::string atom_type)
+void generate_atom_row(std::vector<Type_atom>& atom_block, Type_atom first_atom, block_parameters parameters, std::string atom_type)
 {
     int number_repeats;
     if(atom_type == "corner")
     {
-        number_repeats = cubes_in.x + 1;
+        number_repeats = parameters.x_cubes + 1;
     }
     else if (atom_type == "centre")
     {
-        number_repeats = cubes_in.x;
+        number_repeats = parameters.x_cubes;
     }
     else
     {
@@ -88,21 +86,21 @@ void generate_atom_row(std::vector<Type_atom>& atom_block, Type_atom first_atom,
     atom.z = first_atom.z;
     for (int i = 0; i < number_repeats; i++)
     {
-        atom.x = first_atom.x + (i * atom_spacing);
+        atom.x = first_atom.x + (i * parameters.atom_spacing);
         atom_block.push_back(atom);
     }
 }
 
-void generate_atom_xy_plane(std::vector<Type_atom>& atom_block, Type_atom first_atom, block_dimensions cubes_in, std::string atom_type)
+void generate_atom_xy_plane(std::vector<Type_atom>& atom_block, Type_atom first_atom, block_parameters parameters, std::string atom_type)
 {
     int number_repeats;
     if(atom_type == "corner")
     {
-        number_repeats = cubes_in.y + 1;
+        number_repeats = parameters.y_cubes + 1;
     }
     else if (atom_type == "centre")
     {
-        number_repeats = cubes_in.y;
+        number_repeats = parameters.y_cubes;
     }
     else
     {
@@ -110,26 +108,29 @@ void generate_atom_xy_plane(std::vector<Type_atom>& atom_block, Type_atom first_
         return;
     }
 
+    
+
     Type_atom atom;
     atom.x = first_atom.x;
     atom.z = first_atom.z;
     for (int i = 0; i < number_repeats; i++)
     {
-        atom.y = first_atom.y + (i * atom_spacing);
-        generate_atom_row(atom_block, atom, cubes_in, atom_type);
+        atom.y = first_atom.y + (i * parameters.atom_spacing);
+        generate_atom_row(atom_block, atom, parameters, atom_type);
     }
 }
 
-void generate_atom_xyz_space(std::vector<Type_atom>& atom_block, Type_atom first_atom, block_dimensions cubes_in, std::string atom_type)
+void generate_atom_xyz_space(std::vector<Type_atom>& atom_block, Type_atom first_atom, block_parameters parameters, std::string atom_type)
 {
+    std::cout << "1" << std::endl;
     int number_repeats;
     if(atom_type == "corner")
     {
-        number_repeats = cubes_in.z + 1;
+        number_repeats = parameters.z_cubes + 1;
     }
     else if (atom_type == "centre")
     {
-        number_repeats = cubes_in.z;
+        number_repeats = parameters.z_cubes;
     }
     else
     {
@@ -137,32 +138,40 @@ void generate_atom_xyz_space(std::vector<Type_atom>& atom_block, Type_atom first
         return;
     }
 
+
     Type_atom atom;
     atom.x = first_atom.x;
     atom.y = first_atom.y;
     
     for (int i = 0; i < number_repeats; i++)
     {
-        atom.z = first_atom.z + (i * atom_spacing);
-        generate_atom_xy_plane(atom_block, atom, cubes_in, atom_type);
+        atom.z = first_atom.z + (i * parameters.atom_spacing);
+        generate_atom_xy_plane(atom_block, atom, parameters, atom_type);
     }
 }
 
-void add_impact_atom(std::vector<Type_atom>& atom_block, double z_offset, double applied_energy, block_dimensions cubes_in)
+void add_impact_atom(std::vector<Type_atom>& atom_block, Settings settings)
 {
     // Adds an impact atom z-offset above the centre of the top xy_surface of the block
     // This function assumes that the input atom block was generated by the other functions in this file. 
     Type_atom impact_atom;
 
-    double highest_x = cubes_in.x * atom_spacing;
+    double x_cubes  = settings.GetCubesInX();
+    double y_cubes = settings.GetCubesInY();
+    double z_cubes = settings.GetCubesInZ();
+    double atom_spacing = settings.GetAtomSpacing();
+    double z_offset = settings.GetImpactAtomYOffset();
+
+
+    double highest_x = x_cubes * atom_spacing;
     double x = (highest_x) / 2;
     impact_atom.x = x;
 
-    double highest_y = cubes_in.y * atom_spacing;
+    double highest_y = y_cubes * atom_spacing;
     double y = (highest_y) / 2;
     impact_atom.y = y;
 
-    double highest_z = cubes_in.z * atom_spacing;
+    double highest_z = z_cubes * atom_spacing;
     impact_atom.z = highest_z + z_offset;
 
     impact_atom.fx = 0;
@@ -171,8 +180,14 @@ void add_impact_atom(std::vector<Type_atom>& atom_block, double z_offset, double
 
     impact_atom.vx = 0;
     impact_atom.vy = 0;
-    applied_energy *= EV_TO_J_PER_MOLE;
-    impact_atom.vz = -std::sqrt((2.0*applied_energy)/cu_mass);
+    double ev_to_j_per_mole = settings.GetEVToJPerMole();
+    double atom_mass = settings.GetAtomMass();
+    double applied_energy = settings.GetEnergyAppliedToImpactAtom();
+    applied_energy *= ev_to_j_per_mole;
+    
+    impact_atom.vz = -std::sqrt((2.0*applied_energy)/atom_mass);
 
     atom_block.push_back(impact_atom);
 }
+
+#endif

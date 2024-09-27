@@ -1,3 +1,6 @@
+#ifndef __Type_atom_h
+#define __Type_atom_h
+
 #include <vector>
 
 typedef struct {
@@ -34,3 +37,5 @@ std::vector<Type_atom_coordinates> trim_atom_data(std::vector<Type_atom> atom_da
 
    return trimmed_atom_data;
 }
+
+#endif

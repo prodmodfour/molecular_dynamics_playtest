@@ -1,24 +1,28 @@
-
+#ifndef __animate_atoms_h
+#define __animates_atoms_h
 #include "AtomAnimator.h"
 #include <vector>
 #include <iostream>
 
+#include "Settings.h"
+#include "Type_atom.h"
+#include "generate_atoms.h"
 
 
 
 
 
-int animate_atoms(std::vector<std::vector<Type_atom>> &atom_trajectory_data, int step_duration);
+int animate_atoms(std::vector<std::vector<Type_atom>> &atom_trajectory_data, Settings settings);
 
 
 
-int animate_atoms(std::vector<std::vector<Type_atom>> &atom_trajectory_data, int step_duration)
+int animate_atoms(std::vector<std::vector<Type_atom>> &atom_trajectory_data, Settings settings)
 {
     vtkNew<vtkNamedColors> colors;
     // Create and actor for each atom
     std::vector<vtkSmartPointer<vtkActor>> actors;
 
-    double copper_atom_radius = 1.28; //Angstroms
+    double atom_radius = settings.GetAtomRadius(); //Angstroms
     for (int i = 0; i < atom_trajectory_data[0].size(); i++)
     {
         vtkNew<vtkSphereSource> sphereSource;
@@ -26,7 +30,7 @@ int animate_atoms(std::vector<std::vector<Type_atom>> &atom_trajectory_data, int
         sphereSource->SetCenter(atom_trajectory_data[0][i].x, atom_trajectory_data[0][i].y, atom_trajectory_data[0][i].z);
 
 
-        sphereSource->SetRadius(copper_atom_radius);
+        sphereSource->SetRadius(atom_radius);
 
         vtkNew<vtkPolyDataMapper> mapper;
         mapper->SetInputConnection(sphereSource->GetOutputPort());
@@ -75,6 +79,7 @@ int animate_atoms(std::vector<std::vector<Type_atom>> &atom_trajectory_data, int
 
     // Create an Animation Scene
     vtkNew<vtkAnimationScene> scene;
+    int step_duration = settings.GetAnimationStepDuration();
     int start_time = 0;
     int end_time = start_time + step_duration;
 
@@ -97,14 +102,19 @@ int animate_atoms(std::vector<std::vector<Type_atom>> &atom_trajectory_data, int
         animators[i] = animator;
     }
 
-    renderer->GetActiveCamera()->ParallelProjectionOn();
-    double parallel_scale;
-    parallel_scale = renderer->GetActiveCamera()->GetParallelScale();
-    std::cout << parallel_scale << std::endl;
+    // renderer->GetActiveCamera()->ParallelProjectionOn();
+    // double parallel_scale;
+    // parallel_scale = renderer->GetActiveCamera()->GetParallelScale();
+    // std::cout << parallel_scale << std::endl;
 
-
+    std::cout << "Total animation steps " << atom_trajectory_data.size() << std::endl;
     for (int step = 0; step < atom_trajectory_data.size(); step++)
     {
+        // Set up start position
+        for (int i = 0; i < atom_trajectory_data[step].size(); i++)
+        {
+            animators[i].SetStartPosition(vtkVector3d(atom_trajectory_data[step][i].x, atom_trajectory_data[step][i].y, atom_trajectory_data[step][i].z));
+        }
         scene->SetStartTime(start_time);
         scene->SetEndTime(end_time);
         // Create an Animation Cue for each actor
@@ -115,6 +125,8 @@ int animate_atoms(std::vector<std::vector<Type_atom>> &atom_trajectory_data, int
         // Update start and end time for the next animation step
         start_time = end_time;
         end_time += step_duration;
+
+        print_atoms(atom_trajectory_data[step]);
 
         // Set up the animation for each actor in the animation step
         for (int i = 0; i < atom_trajectory_data[step].size(); i++)
@@ -128,6 +140,7 @@ int animate_atoms(std::vector<std::vector<Type_atom>> &atom_trajectory_data, int
 
         scene->Play();
         scene->Stop();
+        std::cout << "Step "<< step << std::endl;
         
 
         if (step == atom_trajectory_data.size() - 1)
@@ -136,10 +149,10 @@ int animate_atoms(std::vector<std::vector<Type_atom>> &atom_trajectory_data, int
 
         }
         // Set up start positions for the next animation step
-        for (int i = 0; i < atom_trajectory_data[step].size(); i++)
-        {
-            animators[i].SetStartPosition(vtkVector3d(atom_trajectory_data[step][i].x, atom_trajectory_data[step][i].y, atom_trajectory_data[step][i].z));
-        }
+        // for (int i = 0; i < atom_trajectory_data[step].size(); i++)
+        // {
+        //     animators[i].SetStartPosition(vtkVector3d(atom_trajectory_data[step][i].x, atom_trajectory_data[step][i].y, atom_trajectory_data[step][i].z));
+        // }
     }
 
 
@@ -152,3 +165,4 @@ int animate_atoms(std::vector<std::vector<Type_atom>> &atom_trajectory_data, int
 
 }
 
+#endif

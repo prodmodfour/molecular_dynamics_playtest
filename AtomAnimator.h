@@ -1,4 +1,5 @@
-
+#ifndef __AtomAnimator_h
+#define __AtomAnimator_h
 
 class AtomAnimator
 {
@@ -73,3 +74,5 @@ private:
   vtkVector3d StartPosition;
   vtkVector3d EndPosition;
 };
+
+#endif
