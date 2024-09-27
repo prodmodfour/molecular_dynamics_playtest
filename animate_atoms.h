@@ -108,7 +108,7 @@ int animate_atoms(std::vector<std::vector<Type_atom>> &atom_trajectory_data, Set
     // std::cout << parallel_scale << std::endl;
 
     std::cout << "Total animation steps " << atom_trajectory_data.size() << std::endl;
-    for (int step = 0; step < atom_trajectory_data.size(); step++)
+    for (int step = 0; step < atom_trajectory_data.size() - 1; step++)
     {
         // Set up start position
         for (int i = 0; i < atom_trajectory_data[step].size(); i++)
@@ -131,7 +131,7 @@ int animate_atoms(std::vector<std::vector<Type_atom>> &atom_trajectory_data, Set
         // Set up the animation for each actor in the animation step
         for (int i = 0; i < atom_trajectory_data[step].size(); i++)
         {
-            animators[i].SetEndPosition(vtkVector3d(atom_trajectory_data[step][i].x, atom_trajectory_data[step][i].y, atom_trajectory_data[step][i].z));
+            animators[i].SetEndPosition(vtkVector3d(atom_trajectory_data[step + 1][i].x, atom_trajectory_data[step + 1][i].y, atom_trajectory_data[step + 1][i].z));
             animators[i].AddObserversToCue(cue1);
         }
 

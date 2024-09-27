@@ -24,7 +24,7 @@ void generate_atom_xy_plane(std::vector<Type_atom>& atom_block, block_parameters
 void generate_atom_xyz_space(std::vector<Type_atom>& atom_block, Type_atom first_atom, block_parameters parameters,  std::string atom_type);
 std::vector<Type_atom> generate_atom_block(block_parameters parameters);
 
-void add_impact_atom(std::vector<Type_atom>& atom_block, double z_offset, double applied_energy, Settings settings);
+void add_impact_atom(std::vector<Type_atom>& atom_block, Settings settings);
 
 void print_atoms(std::vector<Type_atom>& atoms)
 {
@@ -41,7 +41,7 @@ std::vector<Type_atom> generate_atom_block(Settings settings)
 {
     std::vector<Type_atom> atom_block;
     block_parameters parameters;
-    settings.PrintBlockParameters();
+
     parameters.x_cubes  = settings.GetCubesInX();
     parameters.y_cubes = settings.GetCubesInY();
     parameters.z_cubes = settings.GetCubesInZ();
@@ -165,7 +165,7 @@ void add_impact_atom(std::vector<Type_atom>& atom_block, Settings settings)
 
     double highest_x = x_cubes * atom_spacing;
     double x = (highest_x) / 2;
-    impact_atom.x = x;
+    impact_atom.x = x + 0.5;
 
     double highest_y = y_cubes * atom_spacing;
     impact_atom.y = highest_y + y_offset;

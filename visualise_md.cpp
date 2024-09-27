@@ -30,18 +30,18 @@
 int main(int argc, char *argv[])
 {
   // Get input arguments
-  if(argc != 7 && argc != 1)
-  {
-    printf("Incorrect number of input arguments.\n");
-    printf("First 3 arguments must be integers (Cubes in x, Cubes in y, Cubes in z)\n");
-    printf("The fourth argument must be an integer (Duration of each animation step)\n");
-    printf("The bigger this number, the slower the animation\n");
-    std::cout << "The fifth argument should be the timstep size for the simulation" << std::endl;
-    std::cout << "The sixth argument should be the number of timesteps in the simulation" << std::endl;
-    printf("e.g. '2 2 2 100 0.001 1000'/n");  
+  // if(argc != 7 && argc != 1)
+  // {
+  //   printf("Incorrect number of input arguments.\n");
+  //   printf("First 3 arguments must be integers (Cubes in x, Cubes in y, Cubes in z)\n");
+  //   printf("The fourth argument must be an integer (Duration of each animation step)\n");
+  //   printf("The bigger this number, the slower the animation\n");
+  //   std::cout << "The fifth argument should be the timestep size for the simulation" << std::endl;
+  //   std::cout << "The sixth argument should be the number of timesteps in the simulation" << std::endl;
+  //   printf("e.g. '2 2 2 100 0.001 1000'/n");  
 
-    return 0;
-  }
+  //   return 0;
+  // }
   Settings settings(argc, argv);
 
 
@@ -49,6 +49,7 @@ int main(int argc, char *argv[])
   
 
   std::vector<Type_atom> all_atoms = generate_atom_block(settings);
+  // print_system_to_file(all_atoms);
   
   // We add an impact atom to the end of the vector
   add_impact_atom(all_atoms, settings);
@@ -65,7 +66,7 @@ int main(int argc, char *argv[])
   // // Simulate molecular dynamics and obtain atom trajectory data
    
   std::vector<std::vector<Type_atom>> atom_trajectory_data;
-
+  // atom_trajectory_data.push_back(all_atoms);
   // Type_atom atom;
   atom_trajectory_data = simulate_atom_movement(all_atoms, settings);
   std::cout << atom_trajectory_data.size() << std::endl;

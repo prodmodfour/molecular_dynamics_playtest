@@ -9,6 +9,7 @@
 #include <cmath>
 #include <chrono>
 #include <thread>
+#include <cstdlib>
 
 #include "Settings.h"
 #include "Type_atom.h"
@@ -23,6 +24,7 @@ std::vector<std::string> split_sentence(std::string sen);
 void zero_forces(std::vector<Type_atom> &all_atoms);
 double evaluate_forces(std::vector<Type_atom> &all_atoms, Settings settings);
 double calculate_kinetic_energy(double sum_v_squared, Settings settings);
+void print_system_to_file(std::vector<Type_atom> &all_atoms);
 
 
 
@@ -31,7 +33,7 @@ std::vector<std::vector<Type_atom>> simulate_atom_movement(std::vector<Type_atom
     std::vector<std::vector<Type_atom>> atom_trajectory_data;
 
     atom_trajectory_data.push_back(all_atoms);
-    // atom_trajectory_data.push_back(all_atoms);
+
 
     auto start = std::chrono::high_resolution_clock::now();
  
@@ -267,6 +269,18 @@ double calculate_kinetic_energy(double sum_v_squared, Settings settings)
     double j_per_mole_to_ev = settings.GetJPerMoleToEV();
     kinetic_energy *= j_per_mole_to_ev;
     return kinetic_energy;
+}
+
+void print_system_to_file(std::vector<Type_atom> &all_atoms)
+{
+    std::ofstream file;
+    file.open("block.xyz");
+
+    file << all_atoms.size() << std::endl;
+    for (int i = 0; i < all_atoms.size(); i++)
+    {
+        file << all_atoms[i].x << " " << all_atoms[i].y << " " << all_atoms[i].z << std::endl;
+    }
 }
 
 #endif
