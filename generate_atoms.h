@@ -160,7 +160,7 @@ void add_impact_atom(std::vector<Type_atom>& atom_block, Settings settings)
     double y_cubes = settings.GetCubesInY();
     double z_cubes = settings.GetCubesInZ();
     double atom_spacing = settings.GetAtomSpacing();
-    double z_offset = settings.GetImpactAtomYOffset();
+    double y_offset = settings.GetImpactAtomYOffset();
 
 
     double highest_x = x_cubes * atom_spacing;
@@ -168,24 +168,26 @@ void add_impact_atom(std::vector<Type_atom>& atom_block, Settings settings)
     impact_atom.x = x;
 
     double highest_y = y_cubes * atom_spacing;
-    double y = (highest_y) / 2;
-    impact_atom.y = y;
+    impact_atom.y = highest_y + y_offset;
+
 
     double highest_z = z_cubes * atom_spacing;
-    impact_atom.z = highest_z + z_offset;
+    double z = (highest_z / 2);
+    impact_atom.z = z;
+
 
     impact_atom.fx = 0;
     impact_atom.fy = 0;
     impact_atom.fz = 0;
 
     impact_atom.vx = 0;
-    impact_atom.vy = 0;
+    impact_atom.vz = 0;
     double ev_to_j_per_mole = settings.GetEVToJPerMole();
     double atom_mass = settings.GetAtomMass();
     double applied_energy = settings.GetEnergyAppliedToImpactAtom();
     applied_energy *= ev_to_j_per_mole;
     
-    impact_atom.vz = -std::sqrt((2.0*applied_energy)/atom_mass);
+    impact_atom.vy = -std::sqrt((2.0*applied_energy)/atom_mass);
 
     atom_block.push_back(impact_atom);
 }
