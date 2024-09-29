@@ -2,6 +2,7 @@
 #define __Settings_h
 #include "Type_atom.h"
 #include "file_functions.h"
+#include "string_functions.h"
 #include <iostream>
 #include <fstream>
 #include <vector>
@@ -68,7 +69,8 @@ class Settings
 
                 switch (setting_hash)
                 {
-
+                    case 0:
+                        break;
                 }
             }
         }
@@ -78,7 +80,6 @@ class Settings
             std::ofstream settings_file;
             settings_file.open("settings.ini");
 
-            // settings_file << "cubes_in_x = 4\n";
             settings_file << "cubes_in_x = 4" << std::endl;
             settings_file << "cubes_in_y = 4" << std::endl;
             settings_file.close();
