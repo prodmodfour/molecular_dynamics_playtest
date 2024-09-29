@@ -25,6 +25,7 @@
 #include "animate_atoms.h"
 #include "md_driver.h"
 #include "file_functions.h"
+#include "string_functions.h"
 
 
 
@@ -33,7 +34,7 @@ int main(int argc, char *argv[])
   std::vector<std::string> arguments(argv, argv+argc);
   Settings settings(arguments);
 
-  if (arguments[1] == "-help")
+  if (flag_in_arguments_exactly_once(arguments, "-help"))
   {
     settings.PrintHelpMessage();
     return 0;

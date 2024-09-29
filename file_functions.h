@@ -1,5 +1,4 @@
-#ifndef __file_functions_h
-#define __file_functions_h
+
 
 #include <vector>
 #include "Type_atom.h"
@@ -9,7 +8,7 @@
 #include <fstream>
 #include <sstream>
 
-std::vector<std::string> split_sentence(std::string sen);
+
 
 void write_atoms_to_file(std::vector<Type_atom> &all_atoms)
 {
@@ -55,26 +54,6 @@ std::vector<Type_atom> read_atoms_from_file(std::string filename)
 
 }
 
-std::vector<std::string> split_sentence(std::string sentence) 
-{
-  
-    // Create a stringstream object
-    std::stringstream ss(sentence);
-    
-    // Variable to hold each word
-    std::string word;
-    
-    // Vector to store the words
-    std::vector<std::string> words;
-    
-    // Extract words from the sentence
-    while (ss >> word) {
-      
-        // Add the word to the vector
-        words.push_back(word);
-    }
-    
-    return words;
-}
+
 
 #endif
