@@ -24,6 +24,7 @@
 #include "generate_atoms.h"
 #include "animate_atoms.h"
 #include "md_driver.h"
+#include "file_functions.h"
 
 
 
@@ -42,19 +43,20 @@ int main(int argc, char *argv[])
 
   //   return 0;
   // }
-  Settings settings(argc, argv);
+  // Settings settings(argc, argv);
 
 
   // Generate Atom system based on user input
   
 
-  std::vector<Type_atom> all_atoms = generate_atom_block(settings);
-  // print_system_to_file(all_atoms);
+  // std::vector<Type_atom> all_atoms = generate_atom_block(settings);
+  std::vector<Type_atom> all_atoms = read_atoms_from_file("config");
+  Settings settings(all_atoms, argc, argv);
   
   // We add an impact atom to the end of the vector
-  add_impact_atom(all_atoms, settings);
+  // add_impact_atom(all_atoms, settings);
 
-  print_atoms(all_atoms);
+  // print_atoms(all_atoms);
 
   if (all_atoms.size() > 12000)
   {
@@ -71,7 +73,7 @@ int main(int argc, char *argv[])
   atom_trajectory_data = simulate_atom_movement(all_atoms, settings);
   std::cout << atom_trajectory_data.size() << std::endl;
   // print_atoms(atom_trajectory_data[0]);
-  print_atoms(atom_trajectory_data[atom_trajectory_data.size() - 1]);
+  // print_atoms(atom_trajectory_data[atom_trajectory_data.size() - 1]);
 
   // // // // Render animation
   animate_atoms(atom_trajectory_data, settings);

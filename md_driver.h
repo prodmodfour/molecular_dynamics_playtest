@@ -14,19 +14,9 @@
 #include "Settings.h"
 #include "Type_atom.h"
 
-
-
-
-
-std::string line;
-
-std::vector<std::string> split_sentence(std::string sen);
 void zero_forces(std::vector<Type_atom> &all_atoms);
 double evaluate_forces(std::vector<Type_atom> &all_atoms, Settings settings);
 double calculate_kinetic_energy(double sum_v_squared, Settings settings);
-void print_system_to_file(std::vector<Type_atom> &all_atoms);
-
-
 
 std::vector<std::vector<Type_atom>> simulate_atom_movement(std::vector<Type_atom> &all_atoms, Settings settings)
 {
@@ -115,27 +105,7 @@ std::vector<std::vector<Type_atom>> simulate_atom_movement(std::vector<Type_atom
     return atom_trajectory_data;
 }
 
-std::vector<std::string> split_sentence(std::string sen) 
-{
-  
-    // Create a stringstream object
-    std::stringstream ss(sen);
-    
-    // Variable to hold each word
-    std::string word;
-    
-    // Vector to store the words
-    std::vector<std::string> words;
-    
-    // Extract words from the sentence
-    while (ss >> word) {
-      
-        // Add the word to the vector
-        words.push_back(word);
-    }
-    
-    return words;
-}
+
 
 void zero_forces(std::vector<Type_atom> &all_atoms)
 {
@@ -271,16 +241,6 @@ double calculate_kinetic_energy(double sum_v_squared, Settings settings)
     return kinetic_energy;
 }
 
-void print_system_to_file(std::vector<Type_atom> &all_atoms)
-{
-    std::ofstream file;
-    file.open("block.xyz");
 
-    file << all_atoms.size() << std::endl;
-    for (int i = 0; i < all_atoms.size(); i++)
-    {
-        file << all_atoms[i].x << " " << all_atoms[i].y << " " << all_atoms[i].z << std::endl;
-    }
-}
 
 #endif

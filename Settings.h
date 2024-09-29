@@ -1,5 +1,6 @@
 #ifndef __Settings_h
 #define __Settings_h
+#include "Type_atom.h"
 class Settings
 {
     private:
@@ -56,6 +57,36 @@ class Settings
             }
             
             atom_spacing = 3.61;
+            impact_atom_y_offset = 3;
+            
+
+            atom_mass = 63.546;
+            atom_radius = 1.28;
+
+            ev_to_j_per_mole = 96400.0;
+            j_per_mole_to_ev = 1.037e-5;
+
+            scaling = 0.01;
+
+            epsilon = 0.4802 * ev_to_j_per_mole;
+            sigma = 2.285;
+            r_cutoff = 2.5 * sigma;
+            velocity_scale = scaling * simulation_timestep_size / atom_mass;
+
+            simulation_history_interval = 50;
+
+        }
+
+        Settings(std::vector<Type_atom> all_atoms, int argc, char *argv[])
+        {
+
+
+            animation_step_duration = std::stoi(argv[1]);
+            simulation_timestep_size = std::stod(argv[2]);
+            simulation_total_timesteps = std::stoi(argv[3]);
+            energy_applied_to_impact_atom = std::stod(argv[4]);
+
+            
             impact_atom_y_offset = 3;
             
 
