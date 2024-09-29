@@ -30,31 +30,37 @@
 
 int main(int argc, char *argv[])
 {
-  // Get input arguments
-  // if(argc != 7 && argc != 1)
-  // {
-  //   printf("Incorrect number of input arguments.\n");
-  //   printf("First 3 arguments must be integers (Cubes in x, Cubes in y, Cubes in z)\n");
-  //   printf("The fourth argument must be an integer (Duration of each animation step)\n");
-  //   printf("The bigger this number, the slower the animation\n");
-  //   std::cout << "The fifth argument should be the timestep size for the simulation" << std::endl;
-  //   std::cout << "The sixth argument should be the number of timesteps in the simulation" << std::endl;
-  //   printf("e.g. '2 2 2 100 0.001 1000'/n");  
+  std::vector<std::string> arguments(argv, argv+argc);
+  Settings settings(arguments);
 
-  //   return 0;
-  // }
-  // Settings settings(argc, argv);
+  if (arguments[1] == "-help")
+  {
+    settings.PrintHelpMessage();
+    return 0;
+  }
+  std::vector<Type_atom> all_atoms;
 
 
-  // Generate Atom system based on user input
+  if (arguments[1] == "-f")
+  {
+    std::string filename = argv[2];
+    all_atoms = read_atoms_from_file(filename);
+
+    settings = Settings(all_atoms, argc, argv);
+  }
+  else
+  {
+    settings = Settings(argc, argv);all_atoms = generate_atom_block(settings);
+  }
+
   
 
-  // std::vector<Type_atom> all_atoms = generate_atom_block(settings);
-  std::vector<Type_atom> all_atoms = read_atoms_from_file("config");
-  Settings settings(all_atoms, argc, argv);
+  
+  
+  
   
   // We add an impact atom to the end of the vector
-  // add_impact_atom(all_atoms, settings);
+  add_impact_atom(all_atoms, settings);
 
   // print_atoms(all_atoms);
 
@@ -71,7 +77,6 @@ int main(int argc, char *argv[])
   // atom_trajectory_data.push_back(all_atoms);
   // Type_atom atom;
   atom_trajectory_data = simulate_atom_movement(all_atoms, settings);
-  std::cout << atom_trajectory_data.size() << std::endl;
   // print_atoms(atom_trajectory_data[0]);
   // print_atoms(atom_trajectory_data[atom_trajectory_data.size() - 1]);
 

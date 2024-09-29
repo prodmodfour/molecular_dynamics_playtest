@@ -1,6 +1,13 @@
 #ifndef __Settings_h
 #define __Settings_h
 #include "Type_atom.h"
+#include "file_functions.h"
+#include <iostream>
+#include <fstream>
+#include <vector>
+#include <map>
+
+
 class Settings
 {
     private:
@@ -29,10 +36,75 @@ class Settings
         double sigma;
         double r_cutoff;
 
+        std::string mode; // This can be file or generate
 
+        std::map <std::string, int> setting_hash_map;
+
+
+        void _InitialiseDefaults()
+        {
+            cubes_in_x = 4;
+            cubes_in_y = 4;
+
+        }
+        
+        void _UpdateSettingsFromFile(std::ifstream settings_file)
+        {
+            std::string line;
+            std::vector<std::string> words;
+            int setting_hash;
+            while (getline(settings_file, line))
+            {
+                words = split_sentence(line);
+
+                try
+                {
+                    setting_hash = setting_hash_map.at(words[0]);
+                }
+                catch (const std::out_of_range)
+                {
+                    setting_hash = 0;
+                }
+
+                switch (setting_hash)
+                {
+
+                }
+            }
+        }
+
+        void _SaveToFile()
+        {
+            std::ofstream settings_file;
+            settings_file.open("settings.ini");
+
+            // settings_file << "cubes_in_x = 4\n";
+            settings_file << "cubes_in_x = 4" << std::endl;
+            settings_file << "cubes_in_y = 4" << std::endl;
+            settings_file.close();
+        }
 
 
     public:
+        Settings(std::vector<std::string> arguments)
+        {
+            _InitialiseDefaults();
+            std::ifstream settings_file;
+            settings_file.open("settings.ini");
+            if (settings_file)
+            {
+                _UpdateSettingsFromFile(settings_file);
+            }
+            settings_file.close();
+
+            _SaveToFile();
+
+            
+            
+
+
+        }
+
         Settings(int argc, char *argv[])
         {
             if (argc == 1)
@@ -81,10 +153,10 @@ class Settings
         {
 
 
-            animation_step_duration = std::stoi(argv[1]);
-            simulation_timestep_size = std::stod(argv[2]);
-            simulation_total_timesteps = std::stoi(argv[3]);
-            energy_applied_to_impact_atom = std::stod(argv[4]);
+            animation_step_duration = std::stoi(argv[3]);
+            simulation_timestep_size = std::stod(argv[4]);
+            simulation_total_timesteps = std::stoi(argv[5]);
+            energy_applied_to_impact_atom = std::stod(argv[6]);
 
             
             impact_atom_y_offset = 3;
@@ -144,10 +216,8 @@ class Settings
         void SetAtomRadius(double AtomRadius) { atom_radius = AtomRadius; }
 
         double GetEVToJPerMole() const { return ev_to_j_per_mole; }
-        void SetEVToJPerMole(double EvToJPerMole) { ev_to_j_per_mole = EvToJPerMole; }
 
         double GetJPerMoleToEV() const { return j_per_mole_to_ev; }
-        void SetJPerMoleToEV(double JPerMoleToEv) { j_per_mole_to_ev = JPerMoleToEv; }
 
         double GetVelocityScale() const { return velocity_scale; }
         void SetVelocityScale(double VelocityScale) { velocity_scale = VelocityScale; }
@@ -161,6 +231,18 @@ class Settings
         double GetRCutoff() const { return r_cutoff; }
         void SetRCutoff(double RCutoff) { r_cutoff = RCutoff; }
 
+        // Printers
+        void PrintSettings()
+        {
+
+        }
+
+        void PrintHelpMessage()
+        {
+            std::cout << "Console Flags" << std::endl;
+            std::cout << "-h Show help message" << std::endl;
+
+        }
 
 
 };

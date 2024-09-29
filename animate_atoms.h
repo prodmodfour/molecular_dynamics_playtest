@@ -126,8 +126,6 @@ int animate_atoms(std::vector<std::vector<Type_atom>> &atom_trajectory_data, Set
         start_time = end_time;
         end_time += step_duration;
 
-        print_atoms(atom_trajectory_data[step]);
-
         // Set up the animation for each actor in the animation step
         for (int i = 0; i < atom_trajectory_data[step].size(); i++)
         {
