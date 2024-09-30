@@ -28,10 +28,6 @@ class Settings
         double atom_mass;
         double atom_radius;
 
-
-
-
-
         double epsilon;
         double sigma;
         double r_cutoff;
@@ -39,9 +35,9 @@ class Settings
         std::string mode; // This can be file or generate
         std::string atoms_filename; // This would be a file that contains xyz coordinates of an atom system to be read
 
-        // Not Directly Settable Class Variables
+        // Not Directly Settable Variables
 
-        std::map <std::string, int> setting_hash_map;
+        std::map <std::string, int> setting_hash_map; // Hash map variable name
         double ev_to_j_per_mole;
         double j_per_mole_to_ev;
         double velocity_scale;
@@ -53,6 +49,11 @@ class Settings
         {
             cubes_in_x = 4;
             cubes_in_y = 4;
+
+        }
+
+        void _CreateSettingsHashMap()
+        {
 
         }
         
@@ -87,7 +88,7 @@ class Settings
             std::ofstream settings_file;
             settings_file.open("settings.ini");
 
-            settings_file << "cubes_in_x = 4" << std::endl;
+            settings_file << 'cubes_in_x = 4' << std::endl;
             settings_file << "cubes_in_y = 4" << std::endl;
             settings_file.close();
         }
@@ -113,80 +114,7 @@ class Settings
 
         }
 
-        Settings(int argc, char *argv[])
-        {
-            if (argc == 1)
-            {
-                cubes_in_x = 2;
-                cubes_in_z = 2;
-                cubes_in_y = 2;
-                animation_step_duration = 50;
-                simulation_timestep_size = 0.0001;
-                simulation_total_timesteps = 1000;
-                energy_applied_to_impact_atom = 1000;
-            }
-            else
-            {
-                cubes_in_x = std::stoi(argv[1]);
-                cubes_in_y = std::stoi(argv[2]);
-                cubes_in_z = std::stoi(argv[3]);
-                animation_step_duration = std::stoi(argv[4]);
-                simulation_timestep_size = std::stod(argv[5]);
-                simulation_total_timesteps = std::stoi(argv[6]);
-                energy_applied_to_impact_atom = std::stod(argv[7]);
-            }
-            
-            atom_spacing = 3.61;
-            impact_atom_y_offset = 3;
-            
-
-            atom_mass = 63.546;
-            atom_radius = 1.28;
-
-            ev_to_j_per_mole = 96400.0;
-            j_per_mole_to_ev = 1.037e-5;
-
-            scaling = 0.01;
-
-            epsilon = 0.4802 * ev_to_j_per_mole;
-            sigma = 2.285;
-            r_cutoff = 2.5 * sigma;
-            velocity_scale = scaling * simulation_timestep_size / atom_mass;
-
-            simulation_history_interval = 50;
-
-        }
-
-        Settings(std::vector<Type_atom> all_atoms, int argc, char *argv[])
-        {
-
-
-            animation_step_duration = std::stoi(argv[3]);
-            simulation_timestep_size = std::stod(argv[4]);
-            simulation_total_timesteps = std::stoi(argv[5]);
-            energy_applied_to_impact_atom = std::stod(argv[6]);
-
-            
-            impact_atom_y_offset = 3;
-            
-
-            atom_mass = 63.546;
-            atom_radius = 1.28;
-
-            ev_to_j_per_mole = 96400.0;
-            j_per_mole_to_ev = 1.037e-5;
-
-            scaling = 0.01;
-
-            epsilon = 0.4802 * ev_to_j_per_mole;
-            sigma = 2.285;
-            r_cutoff = 2.5 * sigma;
-            velocity_scale = scaling * simulation_timestep_size / atom_mass;
-
-            simulation_history_interval = 50;
-
-        }
-
+        // Getters and Setters
         int GetCubesInX() const { return cubes_in_x; }
         void SetCubesInX(int CubesInX) { cubes_in_x = CubesInX; }
 
