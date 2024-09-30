@@ -12,6 +12,7 @@
 class Settings
 {
     private:
+        // Settable Class Variables
         int cubes_in_x;
         int cubes_in_y; 
         int cubes_in_z;
@@ -21,25 +22,31 @@ class Settings
         int simulation_total_timesteps;
 
         double atom_spacing;
-        double impact_atom_y_offset;
+        Type_atom impact_atom_offsets;
         double energy_applied_to_impact_atom;
 
         double atom_mass;
         double atom_radius;
 
-        double ev_to_j_per_mole;
-        double j_per_mole_to_ev;
 
-        double velocity_scale;
-        double scaling;
+
+
 
         double epsilon;
         double sigma;
         double r_cutoff;
 
         std::string mode; // This can be file or generate
+        std::string atoms_filename; // This would be a file that contains xyz coordinates of an atom system to be read
+
+        // Not Directly Settable Class Variables
 
         std::map <std::string, int> setting_hash_map;
+        double ev_to_j_per_mole;
+        double j_per_mole_to_ev;
+        double velocity_scale;
+        double scaling;
+
 
 
         void _InitialiseDefaults()
@@ -204,9 +211,6 @@ class Settings
         double GetAtomSpacing() const { return atom_spacing; }
         void SetAtomSpacing(double AtomSpacing) { atom_spacing = AtomSpacing; }
 
-        double GetImpactAtomYOffset() const { return impact_atom_y_offset; }
-        void SetImpactAtomYOffset(double ImpactAtomYOffset) { impact_atom_y_offset = ImpactAtomYOffset; }
-
         double GetEnergyAppliedToImpactAtom() const { return energy_applied_to_impact_atom; }
         void SetEnergyAppliedToImpactAtom(double EnergyAppliedToImpactAtom) { energy_applied_to_impact_atom = EnergyAppliedToImpactAtom; }
 
@@ -231,6 +235,15 @@ class Settings
 
         double GetRCutoff() const { return r_cutoff; }
         void SetRCutoff(double RCutoff) { r_cutoff = RCutoff; }
+        
+        Type_atom ImpactAtomOffsets() const { return impact_atom_offsets; }
+        void SetImpactAtomOffsets(double x_offset, double y_offset, double z_offset) 
+        { 
+            impact_atom_offsets.x = x_offset;
+            impact_atom_offsets.y = y_offset;
+            impact_atom_offsets.z = y_offset;
+        }
+
 
         // Printers
         void PrintSettings()
@@ -241,9 +254,13 @@ class Settings
         void PrintHelpMessage()
         {
             std::cout << "Console Flags" << std::endl;
-            std::cout << "-h Show help message" << std::endl;
+            std::cout << "-help Show help message" << std::endl;
 
         }
+
+
+
+
 
 
 };
