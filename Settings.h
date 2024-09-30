@@ -8,6 +8,12 @@
 #include <vector>
 #include <map>
 
+class SettingHashMap:
+{
+    private:
+        std::map <std::string, int> string_pointer_map;
+        std::map <std::string, int> string_int_map;
+};
 
 class Settings
 {
