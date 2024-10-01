@@ -10,11 +10,11 @@
 
 typedef struct 
 {
-    parameter* parameter;
+    parameter* value;
     std::string data_type;
-} parameter_accessor;
-typedef std::map<std::string, parameter_accessor> parameter_map;
-typedef std::pair<std::string, parameter_accessor> string_parameter_accessor_pair;
+} parameter;
+typedef std::map<std::string, parameter> parameter_map;
+typedef std::pair<std::string, parameter> string_parameter_pair;
 
 class Settings
 {
@@ -41,7 +41,7 @@ class Settings
         std::string mode; // This can be file or generate
         std::string atoms_filename; // This would be a file that contains xyz coordinates of an atom system to be read
 
-        settings_map settings_map; 
+        parameter_map parameter_map; 
         double ev_to_j_per_mole;
         double j_per_mole_to_ev;
         double velocity_scale;
@@ -56,43 +56,28 @@ class Settings
 
         }
 
-        void _create_settings_map()
+        void _populate_parameter_map()
         {
+            parameter parameter;
+            parameter.value = cubes_in_x*;
+            parameter.data_type = "int";
+            string_parameter_pair pair;
+            pair.first("cubes_in_x");
+            pair.second(parameter);
+            parameter_map.insert(pair);
+        }
+
+        void _load(std::string parameter_string)
+        {
+            parameter parameter = parameter_map.at(parameter_string);
 
         }
 
-        void _load(std::string setting)
-        {
-
-        }
+        void _convert_string_to_value
         
-        void _UpdateSettingsFromFile(std::ifstream settings_file)
-        {
-            std::string line;
-            std::vector<std::string> words;
-            int setting_hash;
-            while (getline(settings_file, line))
-            {
-                words = split_sentence(line);
 
-                try
-                {
-                    setting_hash = setting_hash_map.at(words[0]);
-                }
-                catch (const std::out_of_range)
-                {
-                    setting_hash = 0;
-                }
 
-                switch (setting_hash)
-                {
-                    case 0:
-                        break;
-                }
-            }
-        }
-
-        void _SaveToFile()
+        void _save_all()
         {
             std::ofstream settings_file;
             settings_file.open("settings.ini");
@@ -106,21 +91,12 @@ class Settings
     public:
         Settings(std::vector<std::string> arguments)
         {
-            _InitialiseDefaults();
-            std::ifstream settings_file;
-            settings_file.open("settings.ini");
-            if (settings_file)
-            {
-                _UpdateSettingsFromFile(settings_file);
-            }
-            settings_file.close();
 
-            _SaveToFile();
+        }
 
-            
-            
-
-
+        Settings()
+        {
+            _populate_parameter_map()
         }
 
         // Getters and Setters
