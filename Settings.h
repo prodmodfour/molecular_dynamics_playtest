@@ -8,17 +8,17 @@
 #include <vector>
 #include <map>
 
-class SettingHashMap:
+typedef struct 
 {
-    private:
-        std::map <std::string, int> string_pointer_map;
-        std::map <std::string, int> string_int_map;
-};
+    parameter* parameter;
+    std::string data_type;
+} parameter_accessor;
+typedef std::map<std::string, parameter_accessor> parameter_map;
+typedef std::pair<std::string, parameter_accessor> string_parameter_accessor_pair;
 
 class Settings
 {
     private:
-        // Settable Class Variables
         int cubes_in_x;
         int cubes_in_y; 
         int cubes_in_z;
@@ -41,9 +41,7 @@ class Settings
         std::string mode; // This can be file or generate
         std::string atoms_filename; // This would be a file that contains xyz coordinates of an atom system to be read
 
-        // Not Directly Settable Variables
-
-        std::map <std::string, int> setting_hash_map; // Hash map variable name
+        settings_map settings_map; 
         double ev_to_j_per_mole;
         double j_per_mole_to_ev;
         double velocity_scale;
@@ -51,14 +49,19 @@ class Settings
 
 
 
-        void _InitialiseDefaults()
+        void _initialise_default()
         {
             cubes_in_x = 4;
             cubes_in_y = 4;
 
         }
 
-        void _CreateSettingsHashMap()
+        void _create_settings_map()
+        {
+
+        }
+
+        void _load(std::string setting)
         {
 
         }
