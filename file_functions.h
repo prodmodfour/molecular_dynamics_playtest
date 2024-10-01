@@ -1,4 +1,5 @@
-
+#ifndef __file_functions_h
+#define __file_functions_h
 
 #include <vector>
 #include "Type_atom.h"
@@ -7,6 +8,7 @@
 #include <iostream>
 #include <fstream>
 #include <sstream>
+#include "string_functions.h"
 
 
 

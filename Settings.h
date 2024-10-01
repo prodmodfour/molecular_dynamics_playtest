@@ -8,11 +8,54 @@
 #include <vector>
 #include <map>
 
-typedef struct 
+class parameter
 {
-    parameter* value;
-    std::string data_type;
-} parameter;
+    private:
+        std::string value;
+        std::string data_type;
+
+    public:
+        parameter()
+        {
+
+        }
+
+        parameter(int value)
+        {
+            this->value = std::to_string(value);
+            this->data_type = "int";
+        }
+
+        parameter(double value)
+        {
+            this->value = std::to_string(value);
+            this->data_type = "double";
+        }
+
+        void operator=(int value)
+        {
+            this->value = std::to_string(value);
+            this->data_type = "int";
+        }
+        
+        void operator=(double value)
+        {
+            this->value = std::to_string(value);
+            this->data_type = "double";
+        }
+        
+        void operator=(std::string value)
+        {
+            this->value = value;
+            this->data_type = "std::string";
+        }
+
+        void print()
+        {
+            std::cout << value << std::endl;
+        }
+
+};
 typedef std::map<std::string, parameter> parameter_map;
 typedef std::pair<std::string, parameter> string_parameter_pair;
 
@@ -48,56 +91,13 @@ class Settings
         double scaling;
 
 
-
-        void _initialise_default()
-        {
-            cubes_in_x = 4;
-            cubes_in_y = 4;
-
-        }
-
-        void _populate_parameter_map()
-        {
-            parameter parameter;
-            parameter.value = cubes_in_x*;
-            parameter.data_type = "int";
-            string_parameter_pair pair;
-            pair.first("cubes_in_x");
-            pair.second(parameter);
-            parameter_map.insert(pair);
-        }
-
-        void _load(std::string parameter_string)
-        {
-            parameter parameter = parameter_map.at(parameter_string);
-
-        }
-
-        void _convert_string_to_value
-        
-
-
-        void _save_all()
-        {
-            std::ofstream settings_file;
-            settings_file.open("settings.ini");
-
-            settings_file << 'cubes_in_x = 4' << std::endl;
-            settings_file << "cubes_in_y = 4" << std::endl;
-            settings_file.close();
-        }
-
-
     public:
         Settings(std::vector<std::string> arguments)
         {
 
         }
 
-        Settings()
-        {
-            _populate_parameter_map()
-        }
+
 
         // Getters and Setters
         int GetCubesInX() const { return cubes_in_x; }

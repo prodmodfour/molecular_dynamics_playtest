@@ -1,12 +1,11 @@
-#ifndef __file_functions_h
-#define __file_functions_h
+#ifndef __string_functions_h
+#define __string_functions_h
 
 #include <vector>
 #include <string>
 #include <sstream>
 #include <iostream>
 
-std::vector<std::string> split_sentence(std::string sen);
 
 std::vector<std::string> split_sentence(std::string sentence) 
 {
@@ -54,6 +53,8 @@ bool flag_in_arguments_exactly_once(std::vector<std::string> arguments, std::str
         std::cout << "Flag " << flag << " used more than once (" << count << " times) and was ignored." << std::endl;
         return false;
     }
+
+    return false;
 }
 
 #endif
