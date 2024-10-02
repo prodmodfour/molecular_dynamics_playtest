@@ -16,11 +16,6 @@ class parameter
         std::string data_type;
 
     public:
-        parameter(std::string name)
-        {
-
-        }
-
         parameter(std::string name, int value)
         {
             this->value = std::to_string(value);
@@ -58,9 +53,21 @@ class parameter
             this->data_type = "std::string";
         }
 
+        bool operator==(std::string name)
+        {
+            if (this->name == name)
+            {
+                return true;
+            }
+            else
+            {
+                return false;
+            }
+        }
+
         void print()
         {
-            std::cout << value << std::endl;
+            std::cout << data_type << " " << name << " " << value << std::endl;
         }
 
 };
