@@ -11,25 +11,33 @@
 class parameter
 {
     private:
+        std::string name;
         std::string value;
         std::string data_type;
 
     public:
-        parameter()
+        parameter(std::string name)
         {
 
         }
 
-        parameter(int value)
+        parameter(std::string name, int value)
         {
             this->value = std::to_string(value);
             this->data_type = "int";
         }
 
-        parameter(double value)
+        parameter(std::string name, double value)
         {
             this->value = std::to_string(value);
             this->data_type = "double";
+        }
+
+        
+        parameter(std::string name, std::string value)
+        {
+            this->value = value;
+            this->data_type = "std::string";
         }
 
         void operator=(int value)
