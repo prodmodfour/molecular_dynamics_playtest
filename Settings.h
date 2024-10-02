@@ -15,24 +15,28 @@ class parameter
         std::string value;
         std::string data_type;
 
+        bool is_mutable;
+
     public:
-        parameter(std::string name, int value)
+        parameter(std::string name, int value, bool is_mutable = true)
         {
             this->value = std::to_string(value);
             this->data_type = "int";
+            this->is_mutable = is_mutable;
         }
 
-        parameter(std::string name, double value)
+        parameter(std::string name, double value, bool is_mutable = true)
         {
             this->value = std::to_string(value);
             this->data_type = "double";
+            this->is_mutable = is_mutable;
         }
 
-        
-        parameter(std::string name, std::string value)
+        parameter(std::string name, std::string value, bool is_mutable = true)
         {
             this->value = value;
             this->data_type = "std::string";
+            this->is_mutable = is_mutable;
         }
 
         void operator=(int value)
@@ -71,12 +75,11 @@ class parameter
         }
 
 };
-typedef std::map<std::string, parameter> parameter_map;
-typedef std::pair<std::string, parameter> string_parameter_pair;
 
 class Settings
 {
     private:
+        std::vector<parameter> parameters;
         int cubes_in_x;
         int cubes_in_y; 
         int cubes_in_z;
@@ -97,99 +100,63 @@ class Settings
         double r_cutoff;
 
         std::string mode; // This can be file or generate
-        std::string atoms_filename; // This would be a file that contains xyz coordinates of an atom system to be read
+        std::string atoms_filename; 
 
-        parameter_map parameter_map; 
         double ev_to_j_per_mole;
         double j_per_mole_to_ev;
         double velocity_scale;
         double scaling;
 
+        void _set_default_values()
+        {
+            parameter cubes_in_x("cubes_in_x", 10);
+            parameter cubes_in_y("cubes_in_y", 10);
+            parameter cubes_in_z("cubes_in_z", 10);
+            
+            parameter animation_step_duration("animation_step_duration", 5);
+            parameter simulation_timestep_size("simulation_timestep_size", 0.001);
+            parameter simulation_history_interval("simulation_history_interval");
+            parameter simulation_total_timesteps("simulation_total_timesteps");
 
+            parameter atom_spacing("atom_spacing");
+            parameter impact_atom_offsets("impact_atom_offsets");
+            parameter energy_applied_to_impact_atom("energy_applied_to_impact_atom");
+
+            parameter atom_mass("atom_mass");
+            parameter atom_radius("atom_radius");
+
+            parameter epsilon("epsilon");
+            parameter sigma("sigma");
+            parameter r_cutoff("r_cutoff");
+
+            parameter mode("mode");
+            parameter atoms_filename("atoms_filename");
+
+            parameter ev_to_j_per_mole("ev_to_j_per_mole");
+            parameter j_per_mole_to_ev("j_per_mole_to_ev");
+            parameter velocity_scale("velocity_scale");
+            parameter scaling("scaling");
+
+        }
+        
     public:
         Settings(std::vector<std::string> arguments)
         {
 
         }
 
-
-
-        // Getters and Setters
-        int GetCubesInX() const { return cubes_in_x; }
-        void SetCubesInX(int CubesInX) { cubes_in_x = CubesInX; }
-
-        int GetCubesInY() const { return cubes_in_y; }
-        void SetCubesInY(int CubesInY) { cubes_in_y = CubesInY; }
-
-        int GetCubesInZ() const { return cubes_in_z; }
-        void SetCubesInZ(int CubesInZ) { cubes_in_z = CubesInZ; }
-
-        int GetAnimationStepDuration() const { return animation_step_duration; }
-        void SetAnimationStepDuration(int AnimationStepDuration) { animation_step_duration = AnimationStepDuration; }
-
-        double GetSimulationTimestepSize() const { return simulation_timestep_size; }
-        void SetSimulationTimestepSize(double SimulationTimestepSize) { simulation_timestep_size = SimulationTimestepSize; }
-
-        int GetSimulationTotalTimesteps() const { return simulation_total_timesteps; }
-        void SetSimulationTotalTimesteps(int TotalTimesteps) { simulation_total_timesteps = TotalTimesteps; }
-
-        double GetSimulationHistoryInterval() const { return simulation_history_interval; }
-        void SetSimulationHistoryInterval(double SimulationHistoryInterval) { simulation_history_interval = SimulationHistoryInterval; }
-
-        double GetAtomSpacing() const { return atom_spacing; }
-        void SetAtomSpacing(double AtomSpacing) { atom_spacing = AtomSpacing; }
-
-        double GetEnergyAppliedToImpactAtom() const { return energy_applied_to_impact_atom; }
-        void SetEnergyAppliedToImpactAtom(double EnergyAppliedToImpactAtom) { energy_applied_to_impact_atom = EnergyAppliedToImpactAtom; }
-
-        double GetAtomMass() const { return atom_mass; }
-        void SetAtomMass(double AtomMass) { atom_mass = AtomMass; }
-
-        double GetAtomRadius() const { return atom_radius; }
-        void SetAtomRadius(double AtomRadius) { atom_radius = AtomRadius; }
-
-        double GetEVToJPerMole() const { return ev_to_j_per_mole; }
-
-        double GetJPerMoleToEV() const { return j_per_mole_to_ev; }
-
-        double GetVelocityScale() const { return velocity_scale; }
-        void SetVelocityScale(double VelocityScale) { velocity_scale = VelocityScale; }
-
-        double GetEpsilon() const { return epsilon; }
-        void SetEpsilon(double Epsilon) { epsilon = Epsilon; }
-
-        double GetSigma() const { return sigma; }
-        void SetSigma(double Sigma) { sigma = Sigma; }
-
-        double GetRCutoff() const { return r_cutoff; }
-        void SetRCutoff(double RCutoff) { r_cutoff = RCutoff; }
-        
-        Type_atom ImpactAtomOffsets() const { return impact_atom_offsets; }
-        void SetImpactAtomOffsets(double x_offset, double y_offset, double z_offset) 
-        { 
-            impact_atom_offsets.x = x_offset;
-            impact_atom_offsets.y = y_offset;
-            impact_atom_offsets.z = y_offset;
-        }
-
-
         // Printers
-        void PrintSettings()
+        void print()
         {
 
         }
 
-        void PrintHelpMessage()
+        void print_help_message()
         {
             std::cout << "Console Flags" << std::endl;
             std::cout << "-help Show help message" << std::endl;
 
         }
-
-
-
-
-
 
 };
 
