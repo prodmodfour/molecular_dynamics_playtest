@@ -80,32 +80,6 @@ class Settings
 {
     private:
         std::vector<parameter> parameters;
-        int cubes_in_x;
-        int cubes_in_y; 
-        int cubes_in_z;
-        int animation_step_duration;
-        double simulation_timestep_size;
-        double simulation_history_interval;
-        int simulation_total_timesteps;
-
-        double atom_spacing;
-        Type_atom impact_atom_offsets;
-        double energy_applied_to_impact_atom;
-
-        double atom_mass;
-        double atom_radius;
-
-        double epsilon;
-        double sigma;
-        double r_cutoff;
-
-        std::string mode; // This can be file or generate
-        std::string atoms_filename; 
-
-        double ev_to_j_per_mole;
-        double j_per_mole_to_ev;
-        double velocity_scale;
-        double scaling;
 
         void _set_default_values()
         {
@@ -115,10 +89,10 @@ class Settings
             
             parameter animation_step_duration("animation_step_duration", 5);
             parameter simulation_timestep_size("simulation_timestep_size", 0.001);
-            parameter simulation_history_interval("simulation_history_interval");
-            parameter simulation_total_timesteps("simulation_total_timesteps");
+            parameter simulation_history_interval("simulation_history_interval", 50);
+            parameter simulation_total_timesteps("simulation_total_timesteps", 5000);
 
-            parameter atom_spacing("atom_spacing");
+            parameter atom_spacing("atom_spacing", 3.61);
             parameter impact_atom_offsets("impact_atom_offsets");
             parameter energy_applied_to_impact_atom("energy_applied_to_impact_atom");
 
