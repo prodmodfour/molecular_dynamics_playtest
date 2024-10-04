@@ -39,9 +39,13 @@ int animate_atoms(std::vector<std::vector<Type_atom>> &atom_trajectory_data, Set
         actor->SetMapper(mapper);
         actor->GetProperty()->SetColor(colors->GetColor3d("White").GetData());
 
+        // Make the impact atom red
         if (i == (atom_trajectory_data[0].size() - 1))
         {
-        actor->GetProperty()->SetColor(colors->GetColor3d("Red").GetData());
+            if (settings.get_add_impact_on() == true)
+            {
+                actor->GetProperty()->SetColor(colors->GetColor3d("Red").GetData());
+            }
         }
 
         actors.push_back(actor);
@@ -70,6 +74,11 @@ int animate_atoms(std::vector<std::vector<Type_atom>> &atom_trajectory_data, Set
     // Render
     renderWindow->Render();
 
+    if (settings.get_parallel_projection_on() == true)
+    {
+        renderer->GetActiveCamera()->ParallelProjectionOn();
+    }
+    
     vtkNew<vtkInteractorStyleTrackballCamera> style;
 
     renderWindowInteractor->SetInteractorStyle(style);
@@ -102,10 +111,6 @@ int animate_atoms(std::vector<std::vector<Type_atom>> &atom_trajectory_data, Set
         animators[i] = animator;
     }
 
-    // renderer->GetActiveCamera()->ParallelProjectionOn();
-    // double parallel_scale;
-    // parallel_scale = renderer->GetActiveCamera()->GetParallelScale();
-    // std::cout << parallel_scale << std::endl;
 
     std::cout << "Total animation steps " << atom_trajectory_data.size() << std::endl;
     for (int step = 0; step < atom_trajectory_data.size() - 1; step++)

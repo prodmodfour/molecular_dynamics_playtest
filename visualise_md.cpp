@@ -52,7 +52,7 @@ int main(int argc, char *argv[])
 
   // We add an impact atom to the end of the vector
 
-  if (settings.get_add_impact() == "true")
+  if (settings.get_add_impact_on() == true)
   {
     add_impact_atom(all_atoms, settings);
   }
@@ -68,6 +68,10 @@ int main(int argc, char *argv[])
 
   // // Simulate molecular dynamics and obtain atom trajectory data
   
+  if (settings.get_simulation_on() == false)
+  {
+    return 0;
+  }
   std::cout << "Simulating dynamics" << std::endl << std::endl;
   std::vector<std::vector<Type_atom>> atom_trajectory_data;
   // atom_trajectory_data.push_back(all_atoms);
@@ -75,6 +79,11 @@ int main(int argc, char *argv[])
   atom_trajectory_data = simulate_atom_movement(all_atoms, settings);
   // print_atoms(atom_trajectory_data[atom_trajectory_data.size() - 1]);
 
+
+  if (settings.get_animation_on() == false)
+  {
+    return 0;
+  }
   // // // // Render animation
   std::cout << "Animating" << std::endl;
   animate_atoms(atom_trajectory_data, settings);

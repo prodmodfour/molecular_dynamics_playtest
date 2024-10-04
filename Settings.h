@@ -10,6 +10,7 @@
 #include <sstream>
 #include <stdexcept>
 
+// Converts any value to a string representation
 template<typename T>
 std::string to_string(T value)
 {
@@ -18,6 +19,7 @@ std::string to_string(T value)
     return oss.str();
 }
 
+// Converts a string back to the given type T
 template<typename T>
 T from_string(const std::string& str)
 {
@@ -36,7 +38,7 @@ class parameter
         bool is_mutable;
 
     public:
-        // Default constructor
+        // Default constructor initializing empty values
         parameter() : name(""), is_mutable(true), data_type("double") {}
 
 
@@ -65,6 +67,14 @@ class parameter
         {
             this->data_type = "std::string";  
             add_values(first, args...);
+        }
+
+         // Constructor for boolean values
+        parameter(std::string name, bool value)
+            : name(name), is_mutable(true)
+        {
+            this->data_type = "bool";
+            values.push_back(value ? "true" : "false");
         }
 
         // Expands variadic arguments and stores them as strings
@@ -114,12 +124,14 @@ class Settings
         const std::string default_filename = "settings.txt"; 
 
 
+        // Internal helper to add a new parameter to the map
         void add_parameter(const std::string& name, const parameter& parameter)
         {
             parameters[name] = parameter;
         }
 
 
+        // Creates a default settings file if one doesn't exist
         void create_default_settings_file()
         {
             std::ofstream file(default_filename);
@@ -131,7 +143,7 @@ class Settings
             // Add default parameters with their data types
             file << "atom_radius double 1.28\n";
             file << "atom_mass double 63.546\n";
-            file << "animation_step_duration int 10\n";
+            file << "animation_step_duration int 1\n";
             file << "cubes_in_x int 5\n";
             file << "cubes_in_y int 5\n";
             file << "cubes_in_z int 5\n";
@@ -151,8 +163,12 @@ class Settings
             file << "simulation_timestep_size double 0.001\n";
             file << "simulation_total_timesteps int 1000\n";
             file << "atom_mode std::string generate\n"; // from_file or generate
-            file << "atom_filename std::string config\n"; // from_file or generate
-            file << "add_impact std::string true\n"; // 
+            file << "atom_filename std::string config.txt\n"; // 
+            file << "add_impact_on bool true\n";
+            file << "parallel_projection_on bool false\n";
+            file << "animation_on bool true\n";
+            file << "simulation_on bool true\n";
+
 
 
             file.close();
@@ -291,6 +307,30 @@ class Settings
             throw std::runtime_error("Parameter not found");
         }
 
+        bool get_bool(const std::string& name) const
+        {
+            auto it = parameters.find(name);
+            if (it != parameters.end())
+            {
+                const parameter& param = it->second;
+
+                if (param.get_data_type() == "bool")
+                {
+                    return param.get_values()[0] == "true";  // Return boolean
+                }
+                else
+                {
+                    throw std::runtime_error("Requested data type does not match parameter data type.");
+                }
+            }
+            throw std::runtime_error("Parameter not found");
+        }
+
+        void set_bool(const std::string& name, bool value)
+        {
+            add_parameter(name, parameter(name, value));
+        }
+
 
         void load_from_file()
         {
@@ -312,7 +352,7 @@ class Settings
                 std::string name, data_type;
                 std::istringstream iss(line);
 
-                // Read parameter name and data type
+                // Read parameter name and data type, then values based on the type
                 if (iss >> name >> data_type)
                 {
                     if (data_type == "double")
@@ -337,6 +377,15 @@ class Settings
                         if (iss >> value1)
                         {
                             add_parameter(name, parameter(name, value1));
+                        }
+                    }
+                    else if (data_type == "bool")
+                    {
+                        std::string bool_str;
+                        if (iss >> bool_str)
+                        {
+                            bool value = (bool_str == "true");
+                            add_parameter(name, parameter(name, value));
                         }
                     }
                     else
@@ -379,10 +428,9 @@ class Settings
                         file << value_str << " ";
                     }
                 }
-                else if (param.get_data_type() == "std::string")
+                else if (param.get_data_type() == "std::string" || param.get_data_type() == "bool")
                 {
-                    // Save single string value
-                    file << param.get_values()[0] << " ";
+                    file << param.get_values()[0] << " ";  // Save single string or bool value
                 }
                 file << "\n";  // Ensure a new line after each parameter
             }
@@ -462,11 +510,18 @@ class Settings
         { 
             return get_string("atom_filename"); 
         }
+       
+        bool get_add_impact_on() const { return get_bool("add_impact_on"); }
+        void set_add_impact_on(bool value) { add_parameter("add_impact_on", parameter("add_impact_on", value)); }
 
-        std::string get_add_impact() const 
-        { 
-            return get_string("add_impact"); 
-        }
+        bool get_parallel_projection_on() const { return get_bool("parallel_projection_on"); }
+        void set_parallel_projection_on(bool value) { add_parameter("parallel_projection_on", parameter("parallel_projection_on", value)); }
+
+        bool get_animation_on() const { return get_bool("animation_on"); }
+        void set_animation_on(bool value) { add_parameter("animation_on", parameter("animation_on", value)); }
+
+        bool get_simulation_on() const { return get_bool("simulation_on"); }
+        void set_simulation_on(bool value) { add_parameter("simulation_on", parameter("simulation_on", value)); }
 
         // Method to print all settings with dynamic values and proper format
         void print_all_settings() const
