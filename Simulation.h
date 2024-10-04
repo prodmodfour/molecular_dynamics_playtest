@@ -99,6 +99,9 @@ class Snapshot {
 class Material
 {
     public:
+        Material(const std::string& element, double atomic_mass, double atom_radius, double avg_kinetic_energy)
+            : element(element), atomic_mass(atomic_mass), atom_radius(atom_radius), 
+            average_kinetic_energy_at_melting_point(avg_kinetic_energy) {}
 
         // Getters
         std::string get_element() const {
@@ -142,7 +145,6 @@ class Material
         std::string element;
         double atomic_mass;
         double atom_radius;
-        double melting_point; // In kelvin
         double average_kinetic_energy_at_melting_point;
 
 };
@@ -160,6 +162,29 @@ class Simulation
 
         void advance_to_next_snapshot() {
             // Logic to advance to the next snapshot in the simulation
+        }
+
+
+        void add_material(const Material& material) {
+            std::string element_name = material.get_element();
+            material_data[element_name] = material;  
+        }
+
+
+        void add_material(const std::string& element, double atomic_mass, double atom_radius, double avg_kinetic_energy) {
+            Material new_material(element, atomic_mass, atom_radius, avg_kinetic_energy);
+            material_data[element] = new_material;  
+        }
+
+        void display_materials() const {
+            for (const auto& pair : material_data) {
+                const Material& mat = pair.second;
+                std::cout << "Material: " << mat.get_element() 
+                        << ", Atomic Mass: " << mat.get_atomic_mass()
+                        << ", Atom Radius: " << mat.get_atom_radius()
+                        << ", Kinetic Energy at Melting Point: " << mat.get_average_kinetic_energy_at_melting_point() 
+                        << " eV" << std::endl;
+            }
         }
 
     private:
