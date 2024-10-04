@@ -33,10 +33,10 @@ std::vector<std::vector<Type_atom>> simulate_atom_movement(std::vector<Type_atom
     double vxi3, vyi3, vzi3;
     double fxi, fyi, fzi;
     double delta_vxi, delta_vyi, delta_vzi;
-    double total_timesteps = settings.GetSimulationTotalTimesteps();
-    double velocity_scale = settings.GetVelocityScale();
-    double timestep_size = settings.GetSimulationTimestepSize();
-    int history_interval = settings.GetSimulationHistoryInterval();
+    double total_timesteps = settings.get_simulation_total_timesteps();
+    double velocity_scale = settings.get_velocity_scale();
+    double timestep_size = settings.get_simulation_timestep_size();
+    int history_interval = settings.get_simulation_history_interval();
 
     // Leapfrog Verlet Algorithm
     for (int timestep = 0; timestep < total_timesteps; timestep++)
@@ -131,14 +131,14 @@ double evaluate_forces(std::vector<Type_atom> &all_atoms, Settings settings)
  potential_energy = 0;
 
 
- double epsilon = settings.GetEpsilon();
- double sigma = settings.GetSigma();
+ double epsilon = settings.get_epsilon();
+ double sigma = settings.get_sigma();
  // We will only ever have to deal with Cu-Cu interactions
  epsilon4 = 4 * epsilon;
  epsilon24 = 24 * epsilon;
  sigma_squared = sigma * sigma;
 
-double r_cutoff = settings.GetRCutoff();
+double r_cutoff = settings.get_rcutoff();
 double r_cutoff_squared = r_cutoff * r_cutoff;
  // Find forces from every unique pair interaction
  for (int i = 0; i < all_atoms.size(); i++)
@@ -222,7 +222,7 @@ double r_cutoff_squared = r_cutoff * r_cutoff;
     potential_energy *= epsilon4;
 
     // Convert to eV
-    double j_per_mole_to_ev = settings.GetJPerMoleToEV();
+    double j_per_mole_to_ev = settings.get_j_per_mole_to_ev();
     potential_energy *= j_per_mole_to_ev;
 
     return potential_energy;
@@ -232,11 +232,11 @@ double r_cutoff_squared = r_cutoff * r_cutoff;
 double calculate_kinetic_energy(double sum_v_squared, Settings settings)
 {
     double kinetic_energy;
-    double atom_mass = settings.GetAtomMass();
+    double atom_mass = settings.get_atom_mass();
     kinetic_energy = 0.5*atom_mass*sum_v_squared;
     
     // Convert to eV
-    double j_per_mole_to_ev = settings.GetJPerMoleToEV();
+    double j_per_mole_to_ev = settings.get_j_per_mole_to_ev();
     kinetic_energy *= j_per_mole_to_ev;
     return kinetic_energy;
 }

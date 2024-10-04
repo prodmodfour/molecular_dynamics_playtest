@@ -22,7 +22,7 @@ int animate_atoms(std::vector<std::vector<Type_atom>> &atom_trajectory_data, Set
     // Create and actor for each atom
     std::vector<vtkSmartPointer<vtkActor>> actors;
 
-    double atom_radius = settings.GetAtomRadius(); //Angstroms
+    double atom_radius = settings.get_atom_radius(); //Angstroms
     for (int i = 0; i < atom_trajectory_data[0].size(); i++)
     {
         vtkNew<vtkSphereSource> sphereSource;
@@ -79,7 +79,7 @@ int animate_atoms(std::vector<std::vector<Type_atom>> &atom_trajectory_data, Set
 
     // Create an Animation Scene
     vtkNew<vtkAnimationScene> scene;
-    int step_duration = settings.GetAnimationStepDuration();
+    int step_duration = settings.get_animation_step_duration();
     int start_time = 0;
     int end_time = start_time + step_duration;
 

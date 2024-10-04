@@ -129,82 +129,158 @@ class Settings
             }
 
             // Add default parameters with their data types
-            file << "parameter1 double 1.0 2.0 3.0\n";
-            file << "parameter2 int 1 2 3\n";
-            file << "parameter3 string hello world test\n";
-            
+            file << "atom_radius double 1.28\n";
+            file << "atom_mass double 63.546\n";
+            file << "animation_step_duration int 20\n";
+            file << "cubes_in_x int 10\n";
+            file << "cubes_in_y int 10\n";
+            file << "cubes_in_z int 10\n";
+            file << "atom_spacing double 3.61\n";
+            file << "energy_applied_to_impact_atom double 10\n";
+            file << "impact_atom_x_offset double 0\n";
+            file << "impact_atom_y_offset double 3\n";
+            file << "impact_atom_z_offset double 0\n";
+            file << "ev_to_j_per_mole double 96400.0\n";
+            file << "j_per_mole_to_ev double 1.037e-5\n";
+            file << "scaling double 0.01\n";
+            file << "epsilon double 0\n";
+            file << "sigma double 2.285\n";
+            file << "rcutoff double 0\n";
+            file << "velocity_scale double 0\n";
+            file << "simulation_history_interval int 50\n";
+            file << "simulation_timestep_size double 0.001\n";
+            file << "simulation_total_timesteps int 5000\n";
+
             file.close();
-}
+        }
 
     public:
 
-        parameter get_parameter(const std::string& name) const
+       // Retrieve the parameter's value(s) based on its data type
+        double* get_double(const std::string& name) const
         {
             auto it = parameters.find(name);
             if (it != parameters.end())
             {
-                return it->second;
+                const parameter& param = it->second;
+
+                if (param.get_data_type() == "double")
+                {
+                    static double values[3];
+                    for (size_t i = 0; i < param.get_values().size(); ++i)
+                    {
+                        values[i] = from_string<double>(param.get_values()[i]);
+                    }
+                    return values;
+                }
+                else
+                {
+                    throw std::runtime_error("Requested data type does not match parameter data type.");
+                }
+            }
+            throw std::runtime_error("Parameter not found");
+        }
+
+        int* get_int(const std::string& name) const
+        {
+            auto it = parameters.find(name);
+            if (it != parameters.end())
+            {
+                const parameter& param = it->second;
+
+                if (param.get_data_type() == "int")
+                {
+                    static int values[3];
+                    for (size_t i = 0; i < param.get_values().size(); ++i)
+                    {
+                        values[i] = from_string<int>(param.get_values()[i]);
+                    }
+                    return values;
+                }
+                else
+                {
+                    throw std::runtime_error("Requested data type does not match parameter data type.");
+                }
+            }
+            throw std::runtime_error("Parameter not found");
+        }
+
+        std::string get_string(const std::string& name) const
+        {
+            auto it = parameters.find(name);
+            if (it != parameters.end())
+            {
+                const parameter& param = it->second;
+
+                if (param.get_data_type() == "std::string")
+                {
+                    return param.get_values()[0]; // Return single string value
+                }
+                else
+                {
+                    throw std::runtime_error("Requested data type does not match parameter data type.");
+                }
             }
             throw std::runtime_error("Parameter not found");
         }
 
 
-   void load_from_file()
-{
-    std::ifstream file(default_filename);
-    if (!file)
-    {
-        std::cerr << "File not found, creating default settings.txt" << std::endl;
-        create_default_settings_file();
-        file.open(default_filename);  // Try opening the newly created file
-        if (!file)
+        void load_from_file()
         {
-            throw std::runtime_error("Unable to open settings.txt after creating it");
+            std::ifstream file(default_filename);
+            if (!file)
+            {
+                std::cerr << "File not found, creating default settings.txt" << std::endl;
+                create_default_settings_file();
+                file.open(default_filename);  
+                if (!file)
+                {
+                    throw std::runtime_error("Unable to open settings.txt after creating it");
+                }
+            }
+
+            std::string line;
+            while (std::getline(file, line))
+            {
+                std::string name, data_type;
+                std::istringstream iss(line);
+
+                // Read parameter name and data type
+                if (iss >> name >> data_type)
+                {
+                    if (data_type == "double")
+                    {
+                        double value1, value2, value3;
+                        if (iss >> value1 >> value2 >> value3)
+                        {
+                            add_parameter(name, parameter(name, value1, value2, value3));
+                        }
+                    }
+                    else if (data_type == "int")
+                    {
+                        int value1, value2, value3;
+                        if (iss >> value1 >> value2 >> value3)
+                        {
+                            add_parameter(name, parameter(name, value1, value2, value3));
+                        }
+                    }
+                    else if (data_type == "string")
+                    {
+                        std::string value1, value2, value3;
+                        if (iss >> value1 >> value2 >> value3)
+                        {
+                            add_parameter(name, parameter(name, value1, value2, value3));
+                        }
+                    }
+                    else
+                    {
+                        std::cerr << "Unknown data type: " << data_type << " for parameter: " << name << std::endl;
+                    }
+                }
+            }
+
+            file.close();
         }
-    }
-
-    std::string line;
-    while (std::getline(file, line))
-    {
-        std::string name, data_type;
-        std::istringstream iss(line);
-
-        // Read parameter name and data type
-        if (iss >> name >> data_type)
-        {
-            if (data_type == "double")
-            {
-                double value1, value2, value3;
-                if (iss >> value1 >> value2 >> value3)
-                {
-                    add_parameter(name, parameter(name, value1, value2, value3));
-                }
-            }
-            else if (data_type == "int")
-            {
-                int value1, value2, value3;
-                if (iss >> value1 >> value2 >> value3)
-                {
-                    add_parameter(name, parameter(name, value1, value2, value3));
-                }
-            }
-            else if (data_type == "string")
-            {
-                std::string value1, value2, value3;
-                if (iss >> value1 >> value2 >> value3)
-                {
-                    add_parameter(name, parameter(name, value1, value2, value3));
-                }
-            }
-            else
-            {
-                std::cerr << "Unknown data type: " << data_type << " for parameter: " << name << std::endl;
-            }
-        }
-    }
-
-    file.close();
-}
 
 
         void save_to_file() const
@@ -229,6 +305,70 @@ class Settings
             file.close();
         }
 
+          // Getters and setters
+        double get_atom_radius() const { return get_double("atom_radius")[0]; }
+        void set_atom_radius(double value) { add_parameter("atom_radius", parameter("atom_radius", value)); }
+
+        double get_atom_mass() const { return get_double("atom_mass")[0]; }
+        void set_atom_mass(double value) { add_parameter("atom_mass", parameter("atom_mass", value)); }
+
+        int get_animation_step_duration() const { return get_int("animation_step_duration")[0]; }
+        void set_animation_step_duration(int value) { add_parameter("animation_step_duration", parameter("animation_step_duration", value)); }
+
+        int get_cubes_in_x() const { return get_int("cubes_in_x")[0]; }
+        void set_cubes_in_x(int value) { add_parameter("cubes_in_x", parameter("cubes_in_x", value)); }
+
+        int get_cubes_in_y() const { return get_int("cubes_in_y")[0]; }
+        void set_cubes_in_y(int value) { add_parameter("cubes_in_y", parameter("cubes_in_y", value)); }
+
+        int get_cubes_in_z() const { return get_int("cubes_in_z")[0]; }
+        void set_cubes_in_z(int value) { add_parameter("cubes_in_z", parameter("cubes_in_z", value)); }
+
+        double get_atom_spacing() const { return get_double("atom_spacing")[0]; }
+        void set_atom_spacing(double value) { add_parameter("atom_spacing", parameter("atom_spacing", value)); }
+
+        double get_energy_applied_to_impact_atom() const { return get_double("energy_applied_to_impact_atom")[0]; }
+        void set_energy_applied_to_impact_atom(double value) { add_parameter("energy_applied_to_impact_atom", parameter("energy_applied_to_impact_atom", value)); }
+
+        double get_impact_atom_x_offset() const { return get_double("impact_atom_x_offset")[0]; }
+        void set_impact_atom_x_offset(double value) { add_parameter("impact_atom_x_offset", parameter("impact_atom_x_offset", value)); }
+
+        double get_impact_atom_y_offset() const { return get_double("impact_atom_y_offset")[0]; }
+        void set_impact_atom_y_offset(double value) { add_parameter("impact_atom_y_offset", parameter("impact_atom_y_offset", value)); }
+
+        double get_impact_atom_z_offset() const { return get_double("impact_atom_z_offset")[0]; }
+        void set_impact_atom_z_offset(double value) { add_parameter("impact_atom_z_offset", parameter("impact_atom_z_offset", value)); }
+
+        double get_ev_to_j_per_mole() const { return get_double("ev_to_j_per_mole")[0]; }
+        void set_ev_to_j_per_mole(double value) { add_parameter("ev_to_j_per_mole", parameter("ev_to_j_per_mole", value)); }
+
+        double get_j_per_mole_to_ev() const { return get_double("j_per_mole_to_ev")[0]; }
+        void set_j_per_mole_to_ev(double value) { add_parameter("j_per_mole_to_ev", parameter("j_per_mole_to_ev", value)); }
+
+        double get_scaling() const { return get_double("scaling")[0]; }
+        void set_scaling(double value) { add_parameter("scaling", parameter("scaling", value)); }
+
+        double get_epsilon() const { return get_double("epsilon")[0]; }
+        void set_epsilon(double value) { add_parameter("epsilon", parameter("epsilon", value)); }
+
+        double get_sigma() const { return get_double("sigma")[0]; }
+        void set_sigma(double value) { add_parameter("sigma", parameter("sigma", value)); }
+
+        double get_rcutoff() const { return get_double("rcutoff")[0]; }
+        void set_rcutoff(double value) { add_parameter("rcutoff", parameter("rcutoff", value)); }
+
+        double get_velocity_scale() const { return get_double("velocity_scale")[0]; }
+        void set_velocity_scale(double value) { add_parameter("velocity_scale", parameter("velocity_scale", value)); }
+
+        int get_simulation_history_interval() const { return get_int("simulation_history_interval")[0]; }
+        void set_simulation_history_interval(int value) { add_parameter("simulation_history_interval", parameter("simulation_history_interval", value)); }
+
+        double get_simulation_timestep_size() const { return get_double("simulation_timestep_size")[0]; }
+        void set_simulation_timestep_size(double value) { add_parameter("simulation_timestep_size", parameter("simulation_timestep_size", value)); }
+
+        int get_simulation_total_timesteps() const { return get_int("simulation_total_timesteps")[0]; }
+        void set_simulation_total_timesteps(int value) { add_parameter("simulation_total_timesteps", parameter("simulation_total_timesteps", value)); }
+
         // Method to print all settings with dynamic values and proper format
         void print_all_settings() const
         {
@@ -246,6 +386,8 @@ class Settings
                 std::cout << std::endl;
             }
         }
+
+
 };
 
 
