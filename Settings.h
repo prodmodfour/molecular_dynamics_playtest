@@ -131,10 +131,10 @@ class Settings
             // Add default parameters with their data types
             file << "atom_radius double 1.28\n";
             file << "atom_mass double 63.546\n";
-            file << "animation_step_duration int 20\n";
-            file << "cubes_in_x int 10\n";
-            file << "cubes_in_y int 10\n";
-            file << "cubes_in_z int 10\n";
+            file << "animation_step_duration int 10\n";
+            file << "cubes_in_x int 5\n";
+            file << "cubes_in_y int 5\n";
+            file << "cubes_in_z int 5\n";
             file << "atom_spacing double 3.61\n";
             file << "energy_applied_to_impact_atom double 10\n";
             file << "impact_atom_x_offset double 0\n";
@@ -149,7 +149,7 @@ class Settings
             file << "velocity_scale double 0\n";
             file << "simulation_history_interval int 50\n";
             file << "simulation_timestep_size double 0.001\n";
-            file << "simulation_total_timesteps int 5000\n";
+            file << "simulation_total_timesteps int 1000\n";
 
             file.close();
         }
@@ -177,11 +177,12 @@ class Settings
 
         Settings(std::vector<std::string> arguments)
         {
-            create_default_settings_file();
+
             load_from_file();
             calculate_derived_variables();
+
         }
-        
+
        // Retrieve the parameter's value(s) based on its data type
         double* get_double(const std::string& name) const
         {
@@ -204,6 +205,7 @@ class Settings
                     throw std::runtime_error("Requested data type does not match parameter data type.");
                 }
             }
+            std::cout << name << std::endl;
             throw std::runtime_error("Parameter not found");
         }
 
@@ -228,6 +230,7 @@ class Settings
                     throw std::runtime_error("Requested data type does not match parameter data type.");
                 }
             }
+            std::cout << name << std::endl;
             throw std::runtime_error("Parameter not found");
         }
 
@@ -247,6 +250,7 @@ class Settings
                     throw std::runtime_error("Requested data type does not match parameter data type.");
                 }
             }
+            std::cout << name << std::endl;
             throw std::runtime_error("Parameter not found");
         }
 
@@ -276,26 +280,26 @@ class Settings
                 {
                     if (data_type == "double")
                     {
-                        double value1, value2, value3;
-                        if (iss >> value1 >> value2 >> value3)
+                        double value1;
+                        if (iss >> value1)
                         {
-                            add_parameter(name, parameter(name, value1, value2, value3));
+                            add_parameter(name, parameter(name, value1));
                         }
                     }
                     else if (data_type == "int")
                     {
-                        int value1, value2, value3;
-                        if (iss >> value1 >> value2 >> value3)
+                        int value1;
+                        if (iss >> value1)
                         {
-                            add_parameter(name, parameter(name, value1, value2, value3));
+                            add_parameter(name, parameter(name, value1));
                         }
                     }
                     else if (data_type == "string")
                     {
-                        std::string value1, value2, value3;
-                        if (iss >> value1 >> value2 >> value3)
+                        std::string value1;
+                        if (iss >> value1)
                         {
-                            add_parameter(name, parameter(name, value1, value2, value3));
+                            add_parameter(name, parameter(name, value1));
                         }
                     }
                     else
@@ -402,7 +406,7 @@ class Settings
 
             for (const auto& pair : parameters)
             {
-                std::cout << "Parameter: " << pair.first << " | Data Type: " << pair.second.get_data_type() << " | Values: ";
+                std::cout<< pair.first << " " << pair.second.get_data_type() << " ";
                 
                 for (const auto& value : pair.second.get_values())
                 {

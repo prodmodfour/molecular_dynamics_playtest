@@ -122,7 +122,6 @@ void generate_atom_xy_plane(std::vector<Type_atom>& atom_block, Type_atom first_
 
 void generate_atom_xyz_space(std::vector<Type_atom>& atom_block, Type_atom first_atom, block_parameters parameters, std::string atom_type)
 {
-    std::cout << "1" << std::endl;
     int number_repeats;
     if(atom_type == "corner")
     {

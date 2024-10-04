@@ -33,21 +33,12 @@ int main(int argc, char *argv[])
 {
   std::vector<std::string> arguments(argv, argv+argc);
   Settings settings(arguments);
+  settings.print_all_settings();
 
 
   std::vector<Type_atom> all_atoms;
-
-
-
   all_atoms = generate_atom_block(settings);
 
-
-  
-
-  
-  
-  
-  
   // We add an impact atom to the end of the vector
   add_impact_atom(all_atoms, settings);
 
