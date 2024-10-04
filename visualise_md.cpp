@@ -35,7 +35,7 @@ int main(int argc, char *argv[])
   Settings settings(arguments);
   settings.print_all_settings();
 
-
+  std::cout << "Setting up atoms" << std::endl;
   std::vector<Type_atom> all_atoms;
   all_atoms = generate_atom_block(settings);
 
@@ -52,7 +52,8 @@ int main(int argc, char *argv[])
   }
 
   // // Simulate molecular dynamics and obtain atom trajectory data
-   
+  
+  std::cout << "Simulating dynamics" << std::endl;
   std::vector<std::vector<Type_atom>> atom_trajectory_data;
   // atom_trajectory_data.push_back(all_atoms);
   // Type_atom atom;
@@ -61,6 +62,7 @@ int main(int argc, char *argv[])
   // print_atoms(atom_trajectory_data[atom_trajectory_data.size() - 1]);
 
   // // // // Render animation
+  std::cout << "Animating" << std::endl;
   animate_atoms(atom_trajectory_data, settings);
   std::cout << "End of program reached" << std::endl;
 

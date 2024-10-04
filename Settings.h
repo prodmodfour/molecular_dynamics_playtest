@@ -150,6 +150,7 @@ class Settings
             file << "simulation_history_interval int 50\n";
             file << "simulation_timestep_size double 0.001\n";
             file << "simulation_total_timesteps int 1000\n";
+            file << "mode std::string file\n"; // file or generate
 
             file.close();
         }
@@ -179,8 +180,41 @@ class Settings
         {
 
             load_from_file();
+            update_from_flags(arguments);
+            save_to_file();
             calculate_derived_variables();
 
+        }
+
+        void update_from_flags(std::vector<std::string> arguments)
+        {
+            for (int i = 0; i < arguments.size(); i++)
+            {
+                std::string name = arguments[i];
+                auto it = parameters.find(name);
+                if (it != parameters.end())
+                {
+                    const parameter& param = it->second;
+
+                    if(param.get_data_type() == "double")
+                    {
+                        double value = std::stod(arguments[i + 1]);
+                        add_parameter(name, parameter(name, value));
+                    }
+                    else if(param.get_data_type() == "int")
+                    {
+                        int value = std::stoi(arguments[i + 1]);
+                        add_parameter(name, parameter(name, value));
+                    }
+                    else if(param.get_data_type() == "std::string")
+                    {
+                        std::string value = arguments[i + 1];
+                        add_parameter(name, parameter(name, value));
+                    }
+                }
+
+
+            }
         }
 
        // Retrieve the parameter's value(s) based on its data type
@@ -323,18 +357,35 @@ class Settings
 
             for (const auto& pair : parameters)
             {
-                const parameter& parameter = pair.second;
-                file << pair.first << " "; // Output the parameter name
-                double* values = parameter;
-                for (int i = 0; i < 3; ++i)
-                {
-                    file << values[i] << " ";
-                }
-                file << "\\n";  // Ensuring a new line is correctly inserted
-            }
-            file.close();
-        }
+                const parameter& param = pair.second;
+                file << pair.first << " " << param.get_data_type() << " ";  // Output parameter name and data type
 
+                if (param.get_data_type() == "double")
+                {
+                    // Save double values (up to 3 values)
+                    for (const auto& value_str : param.get_values())
+                    {
+                        file << value_str << " ";
+                    }
+                }
+                else if (param.get_data_type() == "int")
+                {
+                    // Save int values (up to 3 values)
+                    for (const auto& value_str : param.get_values())
+                    {
+                        file << value_str << " ";
+                    }
+                }
+                else if (param.get_data_type() == "std::string")
+                {
+                    // Save single string value
+                    file << param.get_values()[0] << " ";
+                }
+                file << "\n";  // Ensure a new line after each parameter
+            }
+
+            file.close();
+}
           // Getters and setters
         double get_atom_radius() const { return get_double("atom_radius")[0]; }
         void set_atom_radius(double value) { add_parameter("atom_radius", parameter("atom_radius", value)); }
