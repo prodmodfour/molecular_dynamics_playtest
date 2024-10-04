@@ -1,4 +1,3 @@
-
 #ifndef __Settings_h
 #define __Settings_h
 #include "Type_atom.h"
@@ -37,6 +36,10 @@ class parameter
         bool is_mutable;
 
     public:
+        // Default constructor
+        parameter() : name(""), is_mutable(true), data_type("double") {}
+
+
         // Constructor for multiple double values
         template<typename... Args>
         parameter(std::string name, double first, Args... args)
@@ -89,21 +92,51 @@ class parameter
             }
             return arr;
         }
+
+
+
+        std::string get_data_type() const
+        {
+            return data_type;
+        }
+
+
+        std::vector<std::string> get_values() const
+        {
+            return values;
+        }
 };
 
 class Settings
 {
     private:
         std::map<std::string, parameter> parameters;
+        const std::string default_filename = "settings.txt"; 
 
-    public:
-        // Add a new parameter
+
         void add_parameter(const std::string& name, const parameter& parameter)
         {
             parameters[name] = parameter;
         }
 
-        // Retrieve a parameter by name
+
+        void create_default_settings_file()
+        {
+            std::ofstream file(default_filename);
+            if (!file)
+            {
+                throw std::runtime_error("Unable to create default settings.txt");
+            }
+
+            // Add default parameters here
+            file << "parameter1 1.0 2.0 3.0\n";
+            file << "parameter2 4.5 5.5 6.5\n";
+            file << "parameter3 7 8 9\n";
+            file.close();
+        }
+
+    public:
+
         parameter get_parameter(const std::string& name) const
         {
             auto it = parameters.find(name);
@@ -114,13 +147,19 @@ class Settings
             throw std::runtime_error("Parameter not found");
         }
 
-        // Load parameters from a file
-        void load_from_file(const std::string& file_path)
+
+       void load_from_file()
         {
-            std::ifstream file(file_path);
+            std::ifstream file(default_filename);
             if (!file)
             {
-                throw std::runtime_error("Unable to open file");
+                std::cerr << "File not found, creating default settings.txt" << std::endl;
+                create_default_settings_file();
+                file.open(default_filename);  // Try opening the newly created file
+                if (!file)
+                {
+                    throw std::runtime_error("Unable to open settings.txt after creating it");
+                }
             }
 
             std::string line;
@@ -137,13 +176,13 @@ class Settings
             file.close();
         }
 
-        // Save parameters to a file
-        void save_to_file(const std::string& file_path) const
+
+        void save_to_file() const
         {
-            std::ofstream file(file_path);
+            std::ofstream file(default_filename);
             if (!file)
             {
-                throw std::runtime_error("Unable to open file for writing");
+                throw std::runtime_error("Unable to open settings.txt for writing");
             }
 
             for (const auto& pair : parameters)
@@ -155,10 +194,29 @@ class Settings
                 {
                     file << values[i] << " ";
                 }
-                file << "\n";  // Ensuring a new line is correctly inserted
+                file << "\\n";  // Ensuring a new line is correctly inserted
             }
             file.close();
         }
+
+        // Method to print all settings with dynamic values and proper format
+        void print_all_settings() const
+        {
+            std::cout << "Settings:" << std::endl;  // Print title
+
+            for (const auto& pair : parameters)
+            {
+                std::cout << "Parameter: " << pair.first << " | Data Type: " << pair.second.get_data_type() << " | Values: ";
+                
+                for (const auto& value : pair.second.get_values())
+                {
+                    std::cout << value << " "; // Print all values, dynamically
+                }
+
+                std::cout << std::endl;
+            }
+        }
 };
+
 
 #endif
