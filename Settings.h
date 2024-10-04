@@ -128,12 +128,13 @@ class Settings
                 throw std::runtime_error("Unable to create default settings.txt");
             }
 
-            // Add default parameters here
-            file << "parameter1 1.0 2.0 3.0\n";
-            file << "parameter2 4.5 5.5 6.5\n";
-            file << "parameter3 7 8 9\n";
+            // Add default parameters with their data types
+            file << "parameter1 double 1.0 2.0 3.0\n";
+            file << "parameter2 int 1 2 3\n";
+            file << "parameter3 string hello world test\n";
+            
             file.close();
-        }
+}
 
     public:
 
@@ -148,33 +149,62 @@ class Settings
         }
 
 
-       void load_from_file()
+   void load_from_file()
+{
+    std::ifstream file(default_filename);
+    if (!file)
+    {
+        std::cerr << "File not found, creating default settings.txt" << std::endl;
+        create_default_settings_file();
+        file.open(default_filename);  // Try opening the newly created file
+        if (!file)
         {
-            std::ifstream file(default_filename);
-            if (!file)
-            {
-                std::cerr << "File not found, creating default settings.txt" << std::endl;
-                create_default_settings_file();
-                file.open(default_filename);  // Try opening the newly created file
-                if (!file)
-                {
-                    throw std::runtime_error("Unable to open settings.txt after creating it");
-                }
-            }
+            throw std::runtime_error("Unable to open settings.txt after creating it");
+        }
+    }
 
-            std::string line;
-            while (std::getline(file, line))
+    std::string line;
+    while (std::getline(file, line))
+    {
+        std::string name, data_type;
+        std::istringstream iss(line);
+
+        // Read parameter name and data type
+        if (iss >> name >> data_type)
+        {
+            if (data_type == "double")
             {
-                std::string name;
                 double value1, value2, value3;
-                std::istringstream iss(line);
-                if (iss >> name >> value1 >> value2 >> value3)
+                if (iss >> value1 >> value2 >> value3)
                 {
                     add_parameter(name, parameter(name, value1, value2, value3));
                 }
             }
-            file.close();
+            else if (data_type == "int")
+            {
+                int value1, value2, value3;
+                if (iss >> value1 >> value2 >> value3)
+                {
+                    add_parameter(name, parameter(name, value1, value2, value3));
+                }
+            }
+            else if (data_type == "string")
+            {
+                std::string value1, value2, value3;
+                if (iss >> value1 >> value2 >> value3)
+                {
+                    add_parameter(name, parameter(name, value1, value2, value3));
+                }
+            }
+            else
+            {
+                std::cerr << "Unknown data type: " << data_type << " for parameter: " << name << std::endl;
+            }
         }
+    }
+
+    file.close();
+}
 
 
         void save_to_file() const
