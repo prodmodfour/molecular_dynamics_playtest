@@ -34,25 +34,13 @@ int main(int argc, char *argv[])
   std::vector<std::string> arguments(argv, argv+argc);
   Settings settings(arguments);
 
-  if (flag_in_arguments_exactly_once(arguments, "-help"))
-  {
-    settings.PrintHelpMessage();
-    return 0;
-  }
+
   std::vector<Type_atom> all_atoms;
 
 
-  if (arguments[1] == "-f")
-  {
-    std::string filename = argv[2];
-    all_atoms = read_atoms_from_file(filename);
 
-    settings = Settings(all_atoms, argc, argv);
-  }
-  else
-  {
-    settings = Settings(argc, argv);all_atoms = generate_atom_block(settings);
-  }
+  all_atoms = generate_atom_block(settings);
+
 
   
 

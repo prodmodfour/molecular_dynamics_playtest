@@ -154,8 +154,34 @@ class Settings
             file.close();
         }
 
+        void calculate_derived_variables()
+        {
+            double ev_j_per_mole = get_ev_to_j_per_mole();
+            double epsilon = 0.4802 * ev_j_per_mole;
+            set_epsilon(epsilon);
+
+            double sigma = get_sigma();
+            double r_cutoff = 2.5 * sigma;
+            set_rcutoff(r_cutoff);
+
+            double scaling = get_scaling();
+            double simulation_timestep_size = get_simulation_timestep_size();
+            double atom_mass = get_atom_mass();
+            double velocity_scale =  scaling * simulation_timestep_size / atom_mass;
+            set_velocity_scale(velocity_scale);
+
+
+        }
+
     public:
 
+        Settings(std::vector<std::string> arguments)
+        {
+            create_default_settings_file();
+            load_from_file();
+            calculate_derived_variables();
+        }
+        
        // Retrieve the parameter's value(s) based on its data type
         double* get_double(const std::string& name) const
         {
