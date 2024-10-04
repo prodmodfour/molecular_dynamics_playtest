@@ -117,7 +117,7 @@ int main()
     }
 
     kinetic_energy = calculate_kinetic_energy(sum_v_squared);
-    printf("Timestep %d Potential Energy: %f Kinetic Energy: %f Total Energy %f\n", timestep, potential_energy, kinetic_energy, potential_energy + kinetic_energy);
+    printf("Timestep %f Potential Energy: %f Kinetic Energy: %f Total Energy %f\n", timestep * timestep_size, potential_energy, kinetic_energy, potential_energy + kinetic_energy);
     }
 
     auto end = std::chrono::high_resolution_clock::now();

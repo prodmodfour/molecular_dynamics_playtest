@@ -33,7 +33,7 @@ std::vector<std::vector<Type_atom>> simulate_atom_movement(std::vector<Type_atom
     double vxi3, vyi3, vzi3;
     double fxi, fyi, fzi;
     double delta_vxi, delta_vyi, delta_vzi;
-    double total_timesteps = settings.get_simulation_total_timesteps();
+    int total_timesteps = settings.get_simulation_total_timesteps();
     double velocity_scale = settings.get_velocity_scale();
     double timestep_size = settings.get_simulation_timestep_size();
     int history_interval = settings.get_simulation_history_interval();
@@ -93,7 +93,7 @@ std::vector<std::vector<Type_atom>> simulate_atom_movement(std::vector<Type_atom
     
 
         kinetic_energy = calculate_kinetic_energy(sum_v_squared, settings);
-        // printf("Timestep %d Potential Energy: %f Kinetic Energy: %f Total Energy %f\n", timestep, potential_energy, kinetic_energy, potential_energy + kinetic_energy);
+        printf("Time %f Potential Energy: %f Kinetic Energy: %f Total Energy %f\n", timestep * timestep_size, potential_energy, kinetic_energy, potential_energy + kinetic_energy);
     }
 
     auto end = std::chrono::high_resolution_clock::now();
