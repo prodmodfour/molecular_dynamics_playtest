@@ -5,18 +5,18 @@
 #include <iostream>
 
 #include "Settings.h"
-#include "Type_atom.h"
+#include "Atom.h"
 #include "generate_atoms.h"
 
 
 
 
 
-int animate_atoms(std::vector<std::vector<Type_atom>> &atom_trajectory_data, Settings settings);
+int animate_atoms(std::vector<std::vector<Atom>> &atom_trajectory_data, Settings settings);
 
 
 
-int animate_atoms(std::vector<std::vector<Type_atom>> &atom_trajectory_data, Settings settings)
+int animate_atoms(std::vector<std::vector<Atom>> &atom_trajectory_data, Settings settings)
 {
     vtkNew<vtkNamedColors> colors;
     // Create and actor for each atom

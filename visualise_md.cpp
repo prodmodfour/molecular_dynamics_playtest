@@ -20,7 +20,7 @@
 #include <vtkVectorOperators.h>
 
 #include "Settings.h"
-#include "Type_atom.h"
+#include "Atom.h"
 #include "generate_atoms.h"
 #include "animate_atoms.h"
 #include "md_driver.h"
@@ -36,7 +36,7 @@ int main(int argc, char *argv[])
   settings.print_all_settings();
 
   std::cout << "Setting up atoms" << std::endl << std::endl;
-  std::vector<Type_atom> all_atoms;
+  std::vector<Atom> all_atoms;
   
   if (settings.get_atom_mode() == "generate")
   {
@@ -73,9 +73,9 @@ int main(int argc, char *argv[])
     return 0;
   }
   std::cout << "Simulating dynamics" << std::endl << std::endl;
-  std::vector<std::vector<Type_atom>> atom_trajectory_data;
+  std::vector<std::vector<Atom>> atom_trajectory_data;
   // atom_trajectory_data.push_back(all_atoms);
-  // Type_atom atom;
+  // Atom atom;
   atom_trajectory_data = simulate_atom_movement(all_atoms, settings);
   // print_atoms(atom_trajectory_data[atom_trajectory_data.size() - 1]);
 

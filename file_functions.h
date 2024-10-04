@@ -2,7 +2,7 @@
 #define __file_functions_h
 
 #include <vector>
-#include "Type_atom.h"
+#include "Atom.h"
 #include <cstdio>
 #include <string>
 #include <iostream>
@@ -12,7 +12,7 @@
 
 
 
-void write_atoms_to_file(std::vector<Type_atom> &all_atoms)
+void write_atoms_to_file(std::vector<Atom> &all_atoms)
 {
     std::ofstream file;
     file.open("block.xyz");
@@ -24,13 +24,13 @@ void write_atoms_to_file(std::vector<Type_atom> &all_atoms)
     }
 }
 
-std::vector<Type_atom> read_atoms_from_file(std::string filename)
+std::vector<Atom> read_atoms_from_file(std::string filename)
 {
     std::ifstream file;
     std::string line;
     std::vector<std::string> words;
-    Type_atom atom;
-    std::vector<Type_atom> all_atoms;
+    Atom atom;
+    std::vector<Atom> all_atoms;
 
     file.open(filename);
 

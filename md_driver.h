@@ -12,15 +12,15 @@
 #include <cstdlib>
 
 #include "Settings.h"
-#include "Type_atom.h"
+#include "Atom.h"
 
-void zero_forces(std::vector<Type_atom> &all_atoms);
-double evaluate_forces(std::vector<Type_atom> &all_atoms, Settings settings);
+void zero_forces(std::vector<Atom> &all_atoms);
+double evaluate_forces(std::vector<Atom> &all_atoms, Settings settings);
 double calculate_kinetic_energy(double sum_v_squared, Settings settings);
 
-std::vector<std::vector<Type_atom>> simulate_atom_movement(std::vector<Type_atom> &all_atoms, Settings settings)
+std::vector<std::vector<Atom>> simulate_atom_movement(std::vector<Atom> &all_atoms, Settings settings)
 {
-    std::vector<std::vector<Type_atom>> atom_trajectory_data;
+    std::vector<std::vector<Atom>> atom_trajectory_data;
 
     atom_trajectory_data.push_back(all_atoms);
 
@@ -126,7 +126,7 @@ std::vector<std::vector<Type_atom>> simulate_atom_movement(std::vector<Type_atom
 
 
 
-void zero_forces(std::vector<Type_atom> &all_atoms)
+void zero_forces(std::vector<Atom> &all_atoms)
 {
     for (int i = 0; i < all_atoms.size(); i++)
     {
@@ -136,7 +136,7 @@ void zero_forces(std::vector<Type_atom> &all_atoms)
     }
 }
 
-double evaluate_forces(std::vector<Type_atom> &all_atoms, Settings settings)
+double evaluate_forces(std::vector<Atom> &all_atoms, Settings settings)
 {
  double xi, yi, zi;
  double xj, yj, zj;

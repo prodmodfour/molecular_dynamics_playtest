@@ -1,6 +1,6 @@
 #ifndef __Settings_h
 #define __Settings_h
-#include "Type_atom.h"
+#include "Atom.h"
 #include "file_functions.h"
 #include "string_functions.h"
 #include <iostream>
@@ -229,6 +229,19 @@ class Settings
                     {
                         std::string value = arguments[i + 1];
                         add_parameter(name, parameter(name, value));
+                    }
+                    else if(param.get_data_type() == "bool")
+                    {
+                        std::string value = arguments[i + 1];
+                        if (arguments[i + 1] == "true")
+                        {
+                            add_parameter(name, parameter(name, true));              
+                        }
+                        else if (arguments[i + 1] == "false")
+                        {
+                            add_parameter(name, parameter(name, false));     
+                        }
+                        
                     }
                 }
 
