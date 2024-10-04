@@ -35,7 +35,7 @@ int main(int argc, char *argv[])
   Settings settings(arguments);
   settings.print_all_settings();
 
-  std::cout << "Setting up atoms" << std::endl;
+  std::cout << "Setting up atoms" << std::endl << std::endl;
   std::vector<Type_atom> all_atoms;
   
   if (settings.get_atom_mode() == "generate")
@@ -45,7 +45,7 @@ int main(int argc, char *argv[])
   else if (settings.get_atom_mode() == "from_file")
   {
     std::string filename = settings.get_atom_filename();
-    std::cout << "Atom filename: " << filename << std::endl;
+    std::cout << "Atom filename: " << filename << std::endl << std::endl;;
     all_atoms = read_atoms_from_file(filename);
   }
 
@@ -68,7 +68,7 @@ int main(int argc, char *argv[])
 
   // // Simulate molecular dynamics and obtain atom trajectory data
   
-  std::cout << "Simulating dynamics" << std::endl;
+  std::cout << "Simulating dynamics" << std::endl << std::endl;
   std::vector<std::vector<Type_atom>> atom_trajectory_data;
   // atom_trajectory_data.push_back(all_atoms);
   // Type_atom atom;
