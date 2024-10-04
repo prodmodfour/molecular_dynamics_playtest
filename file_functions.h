@@ -20,7 +20,7 @@ void write_atoms_to_file(std::vector<Type_atom> &all_atoms)
     file << all_atoms.size() << std::endl;
     for (int i = 0; i < all_atoms.size(); i++)
     {
-        file << all_atoms[i].x << " " << all_atoms[i].y << " " << all_atoms[i].z << std::endl;
+        file << "Cu " << all_atoms[i].x << " " << all_atoms[i].y << " " << all_atoms[i].z << std::endl;
     }
 }
 
@@ -46,15 +46,15 @@ std::vector<Type_atom> read_atoms_from_file(std::string filename)
         words = split_sentence(line);
         if (words[0] == "Cu")
         {
-            atom.x = std::stoi(words[1]);
-            atom.y = std::stoi(words[2]);
-            atom.z = std::stoi(words[3]);
+            atom.x = std::stod(words[1]);
+            atom.y = std::stod(words[2]);
+            atom.z = std::stod(words[3]);
         }
         else
         {
-            atom.x = std::stoi(words[0]);
-            atom.y = std::stoi(words[1]);
-            atom.z = std::stoi(words[2]);
+            atom.x = std::stod(words[0]);
+            atom.y = std::stod(words[1]);
+            atom.z = std::stod(words[2]);
         }
 
         all_atoms.push_back(atom);

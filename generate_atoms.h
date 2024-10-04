@@ -35,6 +35,19 @@ void print_atoms(std::vector<Type_atom>& atoms)
     }
 }
 
+void print_atoms_full(std::vector<Type_atom>& atoms)
+{
+    // Print all atoms
+    for (int i = 0; i < atoms.size(); i++)
+    {
+        printf("Index %d x %f y %f z %f\n", i, atoms[i].x, atoms[i].y, atoms[i].z);
+        printf("         fx %f fy %f fz %f\n", atoms[i].fx, atoms[i].fy, atoms[i].fz);
+        printf("         vx %f vy %f vz %f\n", atoms[i].vx, atoms[i].vy, atoms[i].vz);
+    }
+}
+
+
+
 
 
 std::vector<Type_atom> generate_atom_block(Settings settings)
@@ -48,9 +61,9 @@ std::vector<Type_atom> generate_atom_block(Settings settings)
     parameters.atom_spacing = settings.get_atom_spacing();
 
     Type_atom first_corner_atom;
-    first_corner_atom.x = 0;
-    first_corner_atom.y = 0;
-    first_corner_atom.z = 0;
+    first_corner_atom.x = 0.0;
+    first_corner_atom.y = 0.0;
+    first_corner_atom.z = 0.0;
     generate_atom_xyz_space(atom_block, first_corner_atom, parameters, "corner");
 
 

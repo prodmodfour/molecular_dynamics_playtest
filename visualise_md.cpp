@@ -41,6 +41,7 @@ int main(int argc, char *argv[])
   if (settings.get_atom_mode() == "generate")
   {
     all_atoms = generate_atom_block(settings);
+    write_atoms_to_file(all_atoms);
   }
   else if (settings.get_atom_mode() == "from_file")
   {
@@ -56,8 +57,7 @@ int main(int argc, char *argv[])
     add_impact_atom(all_atoms, settings);
   }
   
-
-  // print_atoms(all_atoms);
+  
 
   if (all_atoms.size() > 12000)
   {
@@ -73,7 +73,6 @@ int main(int argc, char *argv[])
   // atom_trajectory_data.push_back(all_atoms);
   // Type_atom atom;
   atom_trajectory_data = simulate_atom_movement(all_atoms, settings);
-  // print_atoms(atom_trajectory_data[0]);
   // print_atoms(atom_trajectory_data[atom_trajectory_data.size() - 1]);
 
   // // // // Render animation

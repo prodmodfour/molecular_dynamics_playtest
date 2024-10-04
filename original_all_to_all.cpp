@@ -21,7 +21,7 @@ double sigma = 2.285;                    /* Angstrom */
 double r_cutoff = 2.5 * sigma;                            /* 2.5 sigma */
 double r_cutoff_squared = r_cutoff * r_cutoff;
 int number_atoms;
-int number_timesteps = 5000;
+int number_timesteps = 1000;
 double velocity_scale = SCALING*timestep_size/cu_mass;
 
 double lowest_x = 0;
@@ -37,7 +37,7 @@ double highest_z = 0;
    double fx, fy, fz;
 } Type_atoms;
 
- std::ifstream xyz_file("config");
+ std::ifstream xyz_file("block.xyz");
  std::string line;
 
  Type_atoms *Atoms;
