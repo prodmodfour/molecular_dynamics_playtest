@@ -1,98 +1,121 @@
-#ifndef __AtomSystemData_h
-#define __AtomSystemData_h
+#ifndef __SimulationData_h
+#define __SimulationData_h
 #include <vector>
 #include <Atom.h>
+#include "Settings.h"
 
-class Energy 
-{
-    public:
-        Energy(double kineticEnergy, double potentialEnergy)
-            : kinetic(kineticEnergy), potential(potentialEnergy), total(kineticEnergy + potentialEnergy) {}
+#include <iostream>
+#include <vector>
 
-        double getTotal() const {
-            return total;
-        }
+class Energy {
+public:
+    Energy() : kinetic(0.0), potential(0.0), total(0.0) {}
 
-        double getKinetic() const {
-            return kinetic;
-        }
+    Energy(double kineticEnergy, double potentialEnergy)
+        : kinetic(kineticEnergy), potential(potentialEnergy), total(kineticEnergy + potentialEnergy) {}
 
-        double getPotential() const {
-            return potential;
-        }
+    double get_total() const {
+        return total;
+    }
 
-    private:
-        double total;
-        double kinetic;
-        double potential;
+    double get_kinetic() const {
+        return kinetic;
+    }
+
+    double get_potential() const {
+        return potential;
+    }
+
+private:
+    double total;
+    double kinetic;
+    double potential;
 };
 
-class State
-{
+class Snapshot {
     public:
-    State(std::vector<Atom> atoms, double potential_energy)
-    {
-        this-> atoms = atoms;
-        double kinetic_energy = sum_kinetic_energies();
-        Energy energy(kinetic_energy, potential_energy);
-        this->energy = energy;
-        this->temperature = calculate_temperature();
+        Snapshot(std::vector<Atom> atoms, Settings settings)
+        {
+            this->settings = settings;
+            this->atoms = atoms;
+            double potential_energy = calculate_potential_energy();
 
-    }
+            double kinetic_energy = sum_kinetic_energies();
+            Energy energy(kinetic_energy, potential_energy);
+            this->energy = energy;
+            this->temperature = calculate_temperature();
+        }
 
-    State(std::vector<Atom> atoms, double kinetic_energy, double potential_energy)
-    {
-        this-> atoms = atoms;
-        Energy energy(kinetic_energy, potential_energy);
-        this->energy = energy;
-        this->temperature = calculate_temperature();
-    }
-    
-    std::vector<Atom> get_atoms()
-    {
-        return atoms;
-    }
+        Snapshot(std::vector<Atom> atoms, double potential_energy, Settings settings)
+        {
+            this->settings = settings;
+            this->atoms = atoms;
+            double kinetic_energy = sum_kinetic_energies();
+            Energy energy(kinetic_energy, potential_energy);
+            this->energy = energy;
+            this->temperature = calculate_temperature();
+        }
 
-    double get_temperature()
-    {
-        return temperature;
-    }
+        Snapshot(std::vector<Atom> atoms, double kinetic_energy, double potential_energy, Settings settings)
+        {
+            this->settings = settings;
+            this->atoms = atoms;
+            Energy energy(kinetic_energy, potential_energy);
+            this->energy = energy;
+            this->temperature = calculate_temperature();
+        }
 
+        std::vector<Atom> get_atoms() const {
+            return atoms;
+        }
+
+        double get_temperature() const {
+            return temperature;
+        }
 
     private:
         std::vector<Atom> atoms;
         double temperature; // In Kelvin
         Energy energy;
-    
-        double sum_kinetic_energies()
-        {
+        Settings settings;
 
+        double sum_kinetic_energies() {
+            // Implementation for summing kinetic energies
         }
 
-        double calculate_temperature()
-        {
-
+        double calculate_potential_energy() {
+            // Implementation for calculating potential energy
         }
-    
+
+        double calculate_temperature() {
+            // Implementation for calculating temperature
+        }
 };
 
-class SimulationData
-{
-    public:
+class SimulationData {
+public:
+    SimulationData(Snapshot original_snapshot, Settings& settings)
+        : original_snapshot(original_snapshot), current_snapshot(original_snapshot), settings(settings) 
+    {
+        this->settings = settings;
+        this->current_time = 0.0;
+        this->current_snapshot_index = 0;
+        this->total_snapshots = 1;
+    }
 
-    private:
-        int current_state_index;
-        int total_states;
+    void advance_to_next_snapshot() {
+        // Logic to advance to the next snapshot in the simulation
+    }
 
-        const State original_state;
-        std::vector<State> states;
+private:
+    double current_time;
+    int current_snapshot_index;
+    int total_snapshots;
 
-
-    
-
-
+    const Snapshot original_snapshot;
+    Snapshot current_snapshot;
+    std::vector<Snapshot> snapshots;
+    Settings& settings;
 };
-
-
 
 #endif

@@ -121,7 +121,7 @@ class Settings
 {
     private:
         std::map<std::string, parameter> parameters;
-        const std::string default_filename = "settings.txt"; 
+        std::string default_filename = "settings.txt"; 
 
 
         // Internal helper to add a new parameter to the map
@@ -194,6 +194,8 @@ class Settings
         }
 
     public:
+
+        Settings(){}
 
         Settings(std::vector<std::string> arguments)
         {
