@@ -51,7 +51,11 @@ int main(int argc, char *argv[])
 
   // We add an impact atom to the end of the vector
 
-  // add_impact_atom(all_atoms, settings);
+  if (settings.get_add_impact() == "true")
+  {
+    add_impact_atom(all_atoms, settings);
+  }
+  
 
   // print_atoms(all_atoms);
 

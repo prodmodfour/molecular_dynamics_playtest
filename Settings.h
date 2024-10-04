@@ -152,6 +152,7 @@ class Settings
             file << "simulation_total_timesteps int 1000\n";
             file << "atom_mode std::string generate\n"; // from_file or generate
             file << "atom_filename std::string config\n"; // from_file or generate
+            file << "add_impact std::string true\n"; // 
 
 
             file.close();
@@ -460,6 +461,11 @@ class Settings
         std::string get_atom_filename() const 
         { 
             return get_string("atom_filename"); 
+        }
+
+        std::string get_add_impact() const 
+        { 
+            return get_string("add_impact"); 
         }
 
         // Method to print all settings with dynamic values and proper format
