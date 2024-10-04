@@ -150,7 +150,9 @@ class Settings
             file << "simulation_history_interval int 50\n";
             file << "simulation_timestep_size double 0.001\n";
             file << "simulation_total_timesteps int 1000\n";
-            file << "mode std::string file\n"; // file or generate
+            file << "atom_mode std::string generate\n"; // from_file or generate
+            file << "atom_filename std::string config\n"; // from_file or generate
+
 
             file.close();
         }
@@ -328,7 +330,7 @@ class Settings
                             add_parameter(name, parameter(name, value1));
                         }
                     }
-                    else if (data_type == "string")
+                    else if (data_type == "std::string")
                     {
                         std::string value1;
                         if (iss >> value1)
@@ -449,6 +451,16 @@ class Settings
 
         int get_simulation_total_timesteps() const { return get_int("simulation_total_timesteps")[0]; }
         void set_simulation_total_timesteps(int value) { add_parameter("simulation_total_timesteps", parameter("simulation_total_timesteps", value)); }
+        
+        std::string get_atom_mode() const 
+        { 
+            return get_string("atom_mode"); 
+        }
+
+        std::string get_atom_filename() const 
+        { 
+            return get_string("atom_filename"); 
+        }
 
         // Method to print all settings with dynamic values and proper format
         void print_all_settings() const

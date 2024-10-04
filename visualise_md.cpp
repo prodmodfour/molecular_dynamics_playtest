@@ -37,10 +37,21 @@ int main(int argc, char *argv[])
 
   std::cout << "Setting up atoms" << std::endl;
   std::vector<Type_atom> all_atoms;
-  all_atoms = generate_atom_block(settings);
+  
+  if (settings.get_atom_mode() == "generate")
+  {
+    all_atoms = generate_atom_block(settings);
+  }
+  else if (settings.get_atom_mode() == "from_file")
+  {
+    std::string filename = settings.get_atom_filename();
+    std::cout << "Atom filename: " << filename << std::endl;
+    all_atoms = read_atoms_from_file(filename);
+  }
 
   // We add an impact atom to the end of the vector
-  add_impact_atom(all_atoms, settings);
+
+  // add_impact_atom(all_atoms, settings);
 
   // print_atoms(all_atoms);
 

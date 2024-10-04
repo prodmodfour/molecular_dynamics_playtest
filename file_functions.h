@@ -44,9 +44,19 @@ std::vector<Type_atom> read_atoms_from_file(std::string filename)
         }
 
         words = split_sentence(line);
-        atom.x = std::stoi(words[0]);
-        atom.y = std::stoi(words[1]);
-        atom.z = std::stoi(words[2]);
+        if (words[0] == "Cu")
+        {
+            atom.x = std::stoi(words[1]);
+            atom.y = std::stoi(words[2]);
+            atom.z = std::stoi(words[3]);
+        }
+        else
+        {
+            atom.x = std::stoi(words[0]);
+            atom.y = std::stoi(words[1]);
+            atom.z = std::stoi(words[2]);
+        }
+
         all_atoms.push_back(atom);
 
 
