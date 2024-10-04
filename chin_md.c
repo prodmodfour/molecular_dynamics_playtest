@@ -139,9 +139,9 @@ static void initialise_system()
  fp = NULL;
 
  /* Assign new impact atom with 10 eV on atom 912 (which is at the middle) */
- applied_energy = 0.0;        /* eV */
- applied_energy *= EV_TO_J_PER_MOLE;   /* To J/mol */
- Atom[912].vz = -sqrt((2.0*applied_energy)/Cu_mass);
+//  applied_energy = 0.0;        /* eV */
+//  applied_energy *= EV_TO_J_PER_MOLE;   /* To J/mol */
+//  Atom[912].vz = -sqrt((2.0*applied_energy)/Cu_mass);
 
  /* Print status */
  print_status();

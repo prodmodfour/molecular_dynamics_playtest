@@ -21,7 +21,7 @@ double sigma = 2.285;                    /* Angstrom */
 double r_cutoff = 2.5 * sigma;                            /* 2.5 sigma */
 double r_cutoff_squared = r_cutoff * r_cutoff;
 int number_atoms;
-int number_timesteps = 1000;
+int number_timesteps = 5000;
 double velocity_scale = SCALING*timestep_size/cu_mass;
 
 double lowest_x = 0;
@@ -37,7 +37,7 @@ double highest_z = 0;
    double fx, fy, fz;
 } Type_atoms;
 
- std::ifstream xyz_file("case11.xyz");
+ std::ifstream xyz_file("config");
  std::string line;
 
  Type_atoms *Atoms;
@@ -56,7 +56,7 @@ int main()
     auto start = std::chrono::high_resolution_clock::now();
  
     read_xyz();
-    add_impact_atom(1, 1000);
+    // add_impact_atom(1, 1000);
 
 
     double kinetic_energy, potential_energy, sum_v_squared, total_energy;
@@ -164,7 +164,7 @@ int line_count = 0;
     if (line_count == 0)
     {
         number_atoms = std::stoi(line);
-        number_atoms++;
+        // number_atoms++;
         printf("Number of Atoms: %d\n", number_atoms);
         Atoms = new Type_atoms[number_atoms];
         line_count++;
