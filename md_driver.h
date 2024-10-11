@@ -89,9 +89,9 @@ std::vector<Atom> simulate_atom_movement(std::vector<Atom> &all_atoms, Settings 
             all_atoms[i].vy = vyi2;
             all_atoms[i].vz = vzi2;
 
-            time += timestep_size;
+            
     }
-
+        time += timestep_size;
         std::ostringstream oss;
         // Set time to 3 decimal place
         oss << std::fixed << std::setprecision(3) << time;

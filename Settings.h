@@ -212,6 +212,16 @@ class Settings
             for (int i = 0; i < arguments.size(); i++)
             {
                 std::string name = arguments[i];
+                if (name == "-cubes")
+                {
+                    set_cubes_in_x(std::stoi(arguments[i + 1]));
+                    set_cubes_in_y(std::stoi(arguments[i + 2]));
+                    set_cubes_in_z(std::stoi(arguments[i + 3]));
+                    continue;
+
+                }
+
+
                 auto it = parameters.find(name);
                 if (it != parameters.end())
                 {
