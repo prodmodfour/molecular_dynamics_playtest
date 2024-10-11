@@ -16,6 +16,8 @@
 
 int animate_atoms(std::vector<Atom> all_atoms, Settings settings);
 
+void set_particle_color(vtkSmartPointer<vtkActor> actor, Atom atom);
+
 
 int animate_atoms(std::vector<Atom> all_atoms, Settings settings)
 {
@@ -123,7 +125,6 @@ int animate_atoms(std::vector<Atom> all_atoms, Settings settings)
     double current_potential = 0;
     while (true)
     {
-        std::cout << "Snapshot:" << snapshot_count << std::endl;
         // Set up start position
         for (int i = 0; i < current_snapshot.size(); i++)
         {
@@ -142,11 +143,12 @@ int animate_atoms(std::vector<Atom> all_atoms, Settings settings)
 
         // Create the next snapshot
         next_snapshot = simulate_atom_movement(current_snapshot, settings, time, readings_actor);
-        // Set up the animation for each actor in the animation step
+        // Set up the animation for each actor in the animation step and set new colour based on kinetic energy
         for (int i = 0; i < next_snapshot.size(); i++)
         {
             animators[i].SetEndPosition(vtkVector3d(next_snapshot[i].x, next_snapshot[i].y, next_snapshot[i].z));
             animators[i].AddObserversToCue(cue1);
+            set_particle_color(actors[i], next_snapshot[i]);
         }
 
         // Play the Scene
@@ -162,7 +164,28 @@ int animate_atoms(std::vector<Atom> all_atoms, Settings settings)
     renderWindowInteractor->Start();
 
     return EXIT_SUCCESS;
+}
 
+void set_particle_color(vtkSmartPointer<vtkActor> actor, Atom atom)
+{
+    if (atom.ke > atom.reference_ke)
+    {
+        actor->GetProperty()->SetColor(1.0, 0, 0);
+        return;
+    }
+
+    // Calculate the interpolation factor
+    double ratio = atom.ke / atom.reference_ke;
+
+    // Interpolating from white (1, 1, 1) to red (1, 0, 0)
+    double red = 1.0;
+    double green = 1.0 - ratio;
+    double blue = 1.0 - ratio;
+
+    // Set the color of the actor based on the kinetic energy
+    actor->GetProperty()->SetColor(red, green, blue);
+
+    return;
 
 }
 

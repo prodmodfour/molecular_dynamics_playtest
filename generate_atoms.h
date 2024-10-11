@@ -251,6 +251,8 @@ void add_impact_atom(std::vector<Atom>& atom_block, Settings settings)
     
     impact_atom.vy = -std::sqrt((2.0*applied_energy)/atom_mass);
 
+    impact_atom.reference_ke = 0.175;
+
     atom_block.push_back(impact_atom);
 }
 
@@ -283,6 +285,7 @@ std::vector<Atom> generate_fcc(Settings settings)
                     atom.x = (ix + b[0]) * atom_spacing;
                     atom.y = (iy + b[1]) * atom_spacing;
                     atom.z = (iz + b[2]) * atom_spacing;
+                    atom.reference_ke = 0.175;
 
                     // Add the atom to the crystal
                     crystal.push_back(atom);

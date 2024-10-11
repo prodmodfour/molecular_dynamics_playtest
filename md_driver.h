@@ -27,7 +27,7 @@ std::vector<Atom> simulate_atom_movement(std::vector<Atom> &all_atoms, Settings 
 
     auto start = std::chrono::high_resolution_clock::now();
  
-    double kinetic_energy, potential_energy, sum_v_squared;
+    double potential_energy, v_squared, total_kinetic_energy;
     double vxi, vyi, vzi;
     double vxi2, vyi2, vzi2;
     double vxi3, vyi3, vzi3;
@@ -43,9 +43,8 @@ std::vector<Atom> simulate_atom_movement(std::vector<Atom> &all_atoms, Settings 
         // Reset variables
         zero_forces(all_atoms);
 
+        total_kinetic_energy = 0.0;
 
-        
-        sum_v_squared = 0.0;
 
         potential_energy = evaluate_forces(all_atoms, settings);
 
@@ -79,7 +78,11 @@ std::vector<Atom> simulate_atom_movement(std::vector<Atom> &all_atoms, Settings 
             vxi3 = (vxi + vxi2) / 2;
             vyi3 = (vyi + vyi2) / 2;
             vzi3 = (vzi + vzi2) / 2;
-            sum_v_squared += vxi3*vxi3 + vyi3*vyi3 + vzi3*vzi3;
+            v_squared = vxi3*vxi3 + vyi3*vyi3 + vzi3*vzi3;
+            all_atoms[i].ke = calculate_kinetic_energy(v_squared, settings);
+            total_kinetic_energy += all_atoms[i].ke;
+
+
 
             // Update velocities
             all_atoms[i].vx = vxi2;
@@ -89,12 +92,7 @@ std::vector<Atom> simulate_atom_movement(std::vector<Atom> &all_atoms, Settings 
             time += timestep_size;
     }
 
-
-
-    
-
-        kinetic_energy = calculate_kinetic_energy(sum_v_squared, settings);
-        std::string reading = "Time: " + std::to_string(time) + " TE " + std::to_string(kinetic_energy + potential_energy) + " KE: " + std::to_string(kinetic_energy) + " PE: "  + std::to_string(potential_energy);
+        std::string reading = "Time: " + std::to_string(time) + " TE " + std::to_string(total_kinetic_energy + potential_energy) + " KE: " + std::to_string(total_kinetic_energy) + " PE: "  + std::to_string(potential_energy);
         std::cout << reading << std::endl;
         readings_actor->SetInput(reading.c_str());
     }
