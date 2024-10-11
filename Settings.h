@@ -168,6 +168,9 @@ class Settings
             file << "parallel_projection_on bool false\n";
             file << "animation_on bool true\n";
             file << "simulation_on bool true\n";
+            file << "impact_atom_x_energy_share double 0.0\n";
+            file << "impact_atom_y_energy_share double 1.0\n";
+            file << "impact_atom_z_energy_share double 0.0\n";
 
 
 
@@ -217,6 +220,15 @@ class Settings
                     set_cubes_in_x(std::stoi(arguments[i + 1]));
                     set_cubes_in_y(std::stoi(arguments[i + 2]));
                     set_cubes_in_z(std::stoi(arguments[i + 3]));
+                    continue;
+
+                }
+
+                if (name == "-energy_share")
+                {
+                    set_impact_atom_x_energy_share(std::stod(arguments[i + 1]));
+                    set_impact_atom_y_energy_share(std::stod(arguments[i + 2]));
+                    set_impact_atom_z_energy_share(std::stod(arguments[i + 3]));
                     continue;
 
                 }
@@ -547,6 +559,18 @@ class Settings
 
         bool get_simulation_on() const { return get_bool("simulation_on"); }
         void set_simulation_on(bool value) { add_parameter("simulation_on", parameter("simulation_on", value)); }
+
+        // Getter and setter for impact_atom_x_energy_share
+        double get_impact_atom_x_energy_share() const { return get_double("impact_atom_x_energy_share")[0]; }
+        void set_impact_atom_x_energy_share(double value) { add_parameter("impact_atom_x_energy_share", parameter("impact_atom_x_energy_share", value)); }
+
+        // Getter and setter for impact_atom_y_energy_share
+        double get_impact_atom_y_energy_share() const { return get_double("impact_atom_y_energy_share")[0]; }
+        void set_impact_atom_y_energy_share(double value) { add_parameter("impact_atom_y_energy_share", parameter("impact_atom_y_energy_share", value)); }
+
+        // Getter and setter for impact_atom_z_energy_share
+        double get_impact_atom_z_energy_share() const { return get_double("impact_atom_z_energy_share")[0]; }
+        void set_impact_atom_z_energy_share(double value) { add_parameter("impact_atom_z_energy_share", parameter("impact_atom_z_energy_share", value)); }
 
         // Method to print all settings with dynamic values and proper format
         void print_all_settings() const

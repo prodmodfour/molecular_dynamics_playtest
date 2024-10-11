@@ -176,10 +176,11 @@ void set_particle_color(vtkSmartPointer<vtkActor> actor, Atom atom)
 
     // Calculate the interpolation factor
     double ratio = atom.ke / atom.reference_ke;
+    
 
     // Interpolating from white (1, 1, 1) to red (1, 0, 0)
-    double red = 1.0;
-    double green = 1.0 - ratio;
+    double red = 1.0 * ratio;
+    double green = 0;
     double blue = 1.0 - ratio;
 
     // Set the color of the actor based on the kinetic energy

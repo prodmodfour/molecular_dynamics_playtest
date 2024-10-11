@@ -27,7 +27,7 @@ std::vector<Atom> simulate_atom_movement(std::vector<Atom> &all_atoms, Settings 
 
     auto start = std::chrono::high_resolution_clock::now();
  
-    double potential_energy, v_squared, total_kinetic_energy;
+    double potential_energy, v_squared, total_kinetic_energy, average_ke;
     double vxi, vyi, vzi;
     double vxi2, vyi2, vzi2;
     double vxi3, vyi3, vzi3;
@@ -91,6 +91,7 @@ std::vector<Atom> simulate_atom_movement(std::vector<Atom> &all_atoms, Settings 
 
             
     }
+        average_ke = total_kinetic_energy / all_atoms.size();
         time += timestep_size;
         std::ostringstream oss;
         // Set time to 3 decimal place
@@ -111,10 +112,15 @@ std::vector<Atom> simulate_atom_movement(std::vector<Atom> &all_atoms, Settings 
         oss1.clear();
         oss1 << std::setprecision(4) << (potential_energy);
         std::string pe_string = oss1.str();
+        oss1.str("");
+        oss1.clear();
+        oss1 << std::setprecision(4) << (average_ke);
+        std::string ake_string = oss1.str();
 
-        std::string reading = "Time: " + time_string + " ps " " TE: " + te_string + " eV " + " KE: " + ke_string + " eV "  + " PE: "  + pe_string + " eV";
-        std::cout << reading << std::endl;
+        std::string reading = "Time: " + time_string + " ps " " TE: " + te_string + " eV " + " KE: " + ke_string + " eV "  + " PE: "  + pe_string + " eV" + " Average ke: " + ake_string + " eV";
+        // std::cout << reading << std::endl;
         readings_actor->SetInput(reading.c_str());
+        
     }
 
     auto end = std::chrono::high_resolution_clock::now();

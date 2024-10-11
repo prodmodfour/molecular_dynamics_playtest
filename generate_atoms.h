@@ -248,10 +248,20 @@ void add_impact_atom(std::vector<Atom>& atom_block, Settings settings)
     double atom_mass = settings.get_atom_mass();
     double applied_energy = settings.get_energy_applied_to_impact_atom();
     applied_energy *= ev_to_j_per_mole;
-    
-    impact_atom.vy = -std::sqrt((2.0*applied_energy)/atom_mass);
 
-    impact_atom.reference_ke = 0.175;
+    double x_energy_share = settings.get_impact_atom_x_energy_share();
+    double y_energy_share = settings.get_impact_atom_y_energy_share();
+    double z_energy_share = settings.get_impact_atom_z_energy_share();
+
+    double x_applied_energy = applied_energy * x_energy_share;
+    double y_applied_energy = applied_energy * y_energy_share;
+    double z_applied_energy = applied_energy * z_energy_share;
+    
+    impact_atom.vx = -std::sqrt((2.0*x_applied_energy)/atom_mass);
+    impact_atom.vy = -std::sqrt((2.0*y_applied_energy)/atom_mass);
+    impact_atom.vz = -std::sqrt((2.0*z_applied_energy)/atom_mass);
+
+    impact_atom.reference_ke = 0.02;
 
     atom_block.push_back(impact_atom);
 }
@@ -285,7 +295,7 @@ std::vector<Atom> generate_fcc(Settings settings)
                     atom.x = (ix + b[0]) * atom_spacing;
                     atom.y = (iy + b[1]) * atom_spacing;
                     atom.z = (iz + b[2]) * atom_spacing;
-                    atom.reference_ke = 0.175;
+                    atom.reference_ke = 0.02;
 
                     // Add the atom to the crystal
                     crystal.push_back(atom);
