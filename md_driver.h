@@ -44,22 +44,6 @@ std::vector<std::vector<Atom>> simulate_atom_movement(std::vector<Atom> &all_ato
         // Reset variables
         zero_forces(all_atoms);
 
-        for (int i = 0; i < all_atoms.size(); i++)
-        {
-
-            if (all_atoms[i].fx != 0)
-            {
-                throw std::runtime_error("Force zeroing failed");
-            }
-            if (all_atoms[i].fy != 0)
-            {
-                throw std::runtime_error("Force zeroing failed");
-            }
-            if (all_atoms[i].fz != 0)
-            {
-                throw std::runtime_error("Force zeroing failed");
-            }
-        }
 
         
         sum_v_squared = 0.0;
