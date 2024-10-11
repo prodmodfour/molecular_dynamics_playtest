@@ -12,6 +12,7 @@ typedef struct {
    double ke;
    double reference_ke;
    double m;
+   bool hidden;
 } Atom;
 
 
