@@ -92,7 +92,27 @@ std::vector<Atom> simulate_atom_movement(std::vector<Atom> &all_atoms, Settings 
             time += timestep_size;
     }
 
-        std::string reading = "Time: " + std::to_string(time) + " TE " + std::to_string(total_kinetic_energy + potential_energy) + " KE: " + std::to_string(total_kinetic_energy) + " PE: "  + std::to_string(potential_energy);
+        std::ostringstream oss;
+        // Set time to 3 decimal place
+        oss << std::fixed << std::setprecision(3) << time;
+        std::string time_string = oss.str();
+
+        // Set energies to 4 sig fig
+        oss.str("");
+        oss.clear();
+        double te = (total_kinetic_energy + potential_energy);
+        oss << std::setprecision(4) << te;
+        std::string te_string = oss.str();
+        oss.str("");
+        oss.clear();
+        oss << std::setprecision(4) << (total_kinetic_energy);
+        std::string ke_string = oss.str();
+        oss.str("");
+        oss.clear();
+        oss << std::setprecision(4) << (potential_energy);
+        std::string pe_string = oss.str();
+
+        std::string reading = "Time: " + time_string + " TE " + te_string + " KE: " + ke_string + " PE: "  + pe_string;
         std::cout << reading << std::endl;
         readings_actor->SetInput(reading.c_str());
     }
