@@ -40,7 +40,7 @@ int main(int argc, char *argv[])
   
   if (settings.get_atom_mode() == "generate")
   {
-    all_atoms = generate_atom_block(settings);
+    all_atoms = generate_fcc(settings);
     write_atoms_to_file(all_atoms);
   }
   else if (settings.get_atom_mode() == "from_file")

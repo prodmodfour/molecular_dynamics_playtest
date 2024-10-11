@@ -22,7 +22,8 @@ void print_atoms(std::vector<Atom>& atoms);
 void generate_atom_row(std::vector<Atom>& atom_block, Atom first_atom, block_parameters parameters,  std::string atom_type);
 void generate_atom_xy_plane(std::vector<Atom>& atom_block, block_parameters parameters,  std::string atom_type);
 void generate_atom_xyz_space(std::vector<Atom>& atom_block, Atom first_atom, block_parameters parameters,  std::string atom_type);
-std::vector<Atom> generate_atom_block(block_parameters parameters);
+std::vector<Atom> generate_bcc(Settings settings);
+std::vector<Atom> generate_fcc(Settings settings);
 
 void add_impact_atom(std::vector<Atom>& atom_block, Settings settings);
 
@@ -50,7 +51,7 @@ void print_atoms_full(std::vector<Atom>& atoms)
 
 
 
-std::vector<Atom> generate_atom_block(Settings settings)
+std::vector<Atom> generate_bcc(Settings settings)
 {
     std::vector<Atom> atom_block;
     block_parameters parameters;
@@ -251,6 +252,46 @@ void add_impact_atom(std::vector<Atom>& atom_block, Settings settings)
     impact_atom.vy = -std::sqrt((2.0*applied_energy)/atom_mass);
 
     atom_block.push_back(impact_atom);
+}
+
+std::vector<Atom> generate_fcc(Settings settings)
+{
+    std::vector<Atom> crystal;
+
+    int x_cubes  = settings.get_cubes_in_x();
+    int y_cubes = settings.get_cubes_in_y();
+    int z_cubes = settings.get_cubes_in_z();
+    double atom_spacing = settings.get_atom_spacing();
+
+
+    // FCC basis vectors
+    std::vector<std::vector<double>> basis =
+     {
+        {0.0, 0.0, 0.0},
+        {0.0, 0.5, 0.5},
+        {0.5, 0.0, 0.5},
+        {0.5, 0.5, 0.0}
+    };
+
+    // Generate crystal structure
+    for (int ix = 0; ix < x_cubes; ix++) {
+        for (int iy = 0; iy < y_cubes; iy++) {
+            for (int iz = 0; iz < z_cubes; iz++) {
+                for (const auto &b : basis) {
+                    // Calculate atom coordinates based on unit cell and displacement
+                    Atom atom;
+                    atom.x = (ix + b[0]) * atom_spacing;
+                    atom.y = (iy + b[1]) * atom_spacing;
+                    atom.z = (iz + b[2]) * atom_spacing;
+
+                    // Add the atom to the crystal
+                    crystal.push_back(atom);
+                }
+            }
+        }
+    }
+
+    return crystal;
 }
 
 #endif
