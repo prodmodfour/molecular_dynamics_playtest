@@ -112,7 +112,7 @@ std::vector<Atom> simulate_atom_movement(std::vector<Atom> &all_atoms, Settings 
         oss1 << std::setprecision(4) << (potential_energy);
         std::string pe_string = oss1.str();
 
-        std::string reading = "Time: " + time_string + " TE " + te_string + " KE: " + ke_string + " PE: "  + pe_string;
+        std::string reading = "Time: " + time_string + " ps " " TE: " + te_string + " eV " + " KE: " + ke_string + " eV "  + " PE: "  + pe_string + " eV";
         std::cout << reading << std::endl;
         readings_actor->SetInput(reading.c_str());
     }
