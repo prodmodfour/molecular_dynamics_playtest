@@ -10,6 +10,8 @@
 #include <chrono>
 #include <thread>
 #include <cstdlib>
+#include <vtkTextActor.h>
+#include <vtkTextProperty.h>
 
 #include "Settings.h"
 #include "Atom.h"
@@ -18,11 +20,9 @@ void zero_forces(std::vector<Atom> &all_atoms);
 double evaluate_forces(std::vector<Atom> &all_atoms, Settings settings);
 double calculate_kinetic_energy(double sum_v_squared, Settings settings);
 
-std::vector<Atom> simulate_atom_movement(std::vector<Atom> &all_atoms, Settings settings, double &time)
+std::vector<Atom> simulate_atom_movement(std::vector<Atom> &all_atoms, Settings settings, double &time, vtkSmartPointer<vtkTextActor> &readings_actor)
 {
-    std::vector<std::vector<Atom>> atom_trajectory_data;
 
-    atom_trajectory_data.push_back(all_atoms);
 
 
     auto start = std::chrono::high_resolution_clock::now();
@@ -94,7 +94,9 @@ std::vector<Atom> simulate_atom_movement(std::vector<Atom> &all_atoms, Settings 
     
 
         kinetic_energy = calculate_kinetic_energy(sum_v_squared, settings);
-        printf("Time %f Potential Energy: %f Kinetic Energy: %f Total Energy %f\n", time, potential_energy, kinetic_energy, potential_energy + kinetic_energy);
+        std::string reading = "Time: " + std::to_string(time) + " TE " + std::to_string(kinetic_energy + potential_energy) + " KE: " + std::to_string(kinetic_energy) + " PE: "  + std::to_string(potential_energy);
+        std::cout << reading << std::endl;
+        readings_actor->SetInput(reading.c_str());
     }
 
     auto end = std::chrono::high_resolution_clock::now();

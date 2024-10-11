@@ -3,6 +3,8 @@
 #include "AtomAnimator.h"
 #include <vector>
 #include <iostream>
+#include <vtkTextActor.h>
+#include <vtkTextProperty.h>
 
 #include "Settings.h"
 #include "Atom.h"
@@ -51,6 +53,17 @@ int animate_atoms(std::vector<Atom> all_atoms, Settings settings)
     vtkNew<vtkRenderWindowInteractor> renderWindowInteractor;
     renderWindowInteractor->SetRenderWindow(renderWindow);
 
+    // Create a text actor
+    vtkSmartPointer<vtkTextActor> readings_actor = vtkSmartPointer<vtkTextActor>::New();
+    readings_actor->SetInput("Time: 0.000 s TE: 0.0 KE: 0.0 PE 0.0");
+    readings_actor->GetTextProperty()->SetFontSize(24);
+    readings_actor->GetTextProperty()->SetColor(0.0, 0.0, 0.0); // White
+
+    // Set the position of the text (in normalized viewport coordinates)
+    readings_actor->SetPosition(10, 10); // Lower left corner
+
+    // Add the actor to the renderer
+    renderer->AddActor2D(readings_actor);
 
     // Add the actors to the scene.
     for (int i = 0; i < actors.size(); i++)
@@ -128,7 +141,7 @@ int animate_atoms(std::vector<Atom> all_atoms, Settings settings)
         end_time += step_duration;
 
         // Create the next snapshot
-        next_snapshot = simulate_atom_movement(current_snapshot, settings, time);
+        next_snapshot = simulate_atom_movement(current_snapshot, settings, time, readings_actor);
         // Set up the animation for each actor in the animation step
         for (int i = 0; i < next_snapshot.size(); i++)
         {
