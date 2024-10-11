@@ -7,27 +7,26 @@
 #include "Settings.h"
 #include "Atom.h"
 #include "generate_atoms.h"
+#include "md_driver.h"
 
 
 
 
-
-int animate_atoms(std::vector<std::vector<Atom>> &atom_trajectory_data, Settings settings);
-
+int animate_atoms(std::vector<Atom> all_atoms, Settings settings);
 
 
-int animate_atoms(std::vector<std::vector<Atom>> &atom_trajectory_data, Settings settings)
+int animate_atoms(std::vector<Atom> all_atoms, Settings settings)
 {
     vtkNew<vtkNamedColors> colors;
     // Create and actor for each atom
     std::vector<vtkSmartPointer<vtkActor>> actors;
 
     double atom_radius = settings.get_atom_radius(); //Angstroms
-    for (int i = 0; i < atom_trajectory_data[0].size(); i++)
+    for (int i = 0; i < all_atoms.size(); i++)
     {
         vtkNew<vtkSphereSource> sphereSource;
 
-        sphereSource->SetCenter(atom_trajectory_data[0][i].x, atom_trajectory_data[0][i].y, atom_trajectory_data[0][i].z);
+        sphereSource->SetCenter(all_atoms[i].x, all_atoms[i].y, all_atoms[i].z);
 
 
         sphereSource->SetRadius(atom_radius);
@@ -38,16 +37,6 @@ int animate_atoms(std::vector<std::vector<Atom>> &atom_trajectory_data, Settings
         vtkNew<vtkActor> actor;
         actor->SetMapper(mapper);
         actor->GetProperty()->SetColor(colors->GetColor3d("White").GetData());
-
-        // Make the impact atom red
-        if (i == (atom_trajectory_data[0].size() - 1))
-        {
-            if (settings.get_add_impact_on() == true)
-            {
-                actor->GetProperty()->SetColor(colors->GetColor3d("Red").GetData());
-            }
-        }
-
         actors.push_back(actor);
     }
 
@@ -103,8 +92,8 @@ int animate_atoms(std::vector<std::vector<Atom>> &atom_trajectory_data, Settings
     // Set up atom animators
     // For some reason, the animations don't function properly if I use a
     // vector to store the animators.
-    AtomAnimator* animators = new AtomAnimator[atom_trajectory_data[0].size()];
-    for (int i = 0; i < atom_trajectory_data[0].size(); i++)
+    AtomAnimator* animators = new AtomAnimator[all_atoms.size()];
+    for (int i = 0; i < all_atoms.size(); i++)
     {
         AtomAnimator animator;
         animator.SetActor(actors[i]);
@@ -112,13 +101,20 @@ int animate_atoms(std::vector<std::vector<Atom>> &atom_trajectory_data, Settings
     }
 
 
-    std::cout << "Total animation steps " << atom_trajectory_data.size() << std::endl;
-    for (int step = 0; step < atom_trajectory_data.size() - 1; step++)
+    std::vector<Atom> current_snapshot = all_atoms;
+    std::vector<Atom> next_snapshot;
+    int snapshot_interval = settings.get_simulation_history_interval();
+    int snapshot_count = 0;
+    double time = 0;
+    double current_kinetic = 0;
+    double current_potential = 0;
+    while (true)
     {
+        std::cout << "Snapshot:" << snapshot_count << std::endl;
         // Set up start position
-        for (int i = 0; i < atom_trajectory_data[step].size(); i++)
+        for (int i = 0; i < current_snapshot.size(); i++)
         {
-            animators[i].SetStartPosition(vtkVector3d(atom_trajectory_data[step][i].x, atom_trajectory_data[step][i].y, atom_trajectory_data[step][i].z));
+            animators[i].SetStartPosition(vtkVector3d(current_snapshot[i].x, current_snapshot[i].y, current_snapshot[i].z));
         }
         scene->SetStartTime(start_time);
         scene->SetEndTime(end_time);
@@ -131,31 +127,20 @@ int animate_atoms(std::vector<std::vector<Atom>> &atom_trajectory_data, Settings
         start_time = end_time;
         end_time += step_duration;
 
+        // Create the next snapshot
+        next_snapshot = simulate_atom_movement(current_snapshot, settings, time);
         // Set up the animation for each actor in the animation step
-        for (int i = 0; i < atom_trajectory_data[step].size(); i++)
+        for (int i = 0; i < next_snapshot.size(); i++)
         {
-            animators[i].SetEndPosition(vtkVector3d(atom_trajectory_data[step + 1][i].x, atom_trajectory_data[step + 1][i].y, atom_trajectory_data[step + 1][i].z));
+            animators[i].SetEndPosition(vtkVector3d(next_snapshot[i].x, next_snapshot[i].y, next_snapshot[i].z));
             animators[i].AddObserversToCue(cue1);
         }
 
         // Play the Scene
-        
-
         scene->Play();
         scene->Stop();
-        std::cout << "Step "<< step << std::endl;
-        
 
-        if (step == atom_trajectory_data.size() - 1)
-        {
-            continue;
-
-        }
-        // Set up start positions for the next animation step
-        // for (int i = 0; i < atom_trajectory_data[step].size(); i++)
-        // {
-        //     animators[i].SetStartPosition(vtkVector3d(atom_trajectory_data[step][i].x, atom_trajectory_data[step][i].y, atom_trajectory_data[step][i].z));
-        // }
+        current_snapshot = next_snapshot;
     }
 
 

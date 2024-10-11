@@ -18,7 +18,7 @@ void zero_forces(std::vector<Atom> &all_atoms);
 double evaluate_forces(std::vector<Atom> &all_atoms, Settings settings);
 double calculate_kinetic_energy(double sum_v_squared, Settings settings);
 
-std::vector<std::vector<Atom>> simulate_atom_movement(std::vector<Atom> &all_atoms, Settings settings)
+std::vector<Atom> simulate_atom_movement(std::vector<Atom> &all_atoms, Settings settings, double &time)
 {
     std::vector<std::vector<Atom>> atom_trajectory_data;
 
@@ -33,10 +33,9 @@ std::vector<std::vector<Atom>> simulate_atom_movement(std::vector<Atom> &all_ato
     double vxi3, vyi3, vzi3;
     double fxi, fyi, fzi;
     double delta_vxi, delta_vyi, delta_vzi;
-    int total_timesteps = settings.get_simulation_total_timesteps();
+    int total_timesteps = settings.get_simulation_history_interval();
     double velocity_scale = settings.get_velocity_scale();
     double timestep_size = settings.get_simulation_timestep_size();
-    int history_interval = settings.get_simulation_history_interval();
 
     // Leapfrog Verlet Algorithm
     for (int timestep = 0; timestep < total_timesteps; timestep++)
@@ -86,26 +85,25 @@ std::vector<std::vector<Atom>> simulate_atom_movement(std::vector<Atom> &all_ato
             all_atoms[i].vx = vxi2;
             all_atoms[i].vy = vyi2;
             all_atoms[i].vz = vzi2;
+
+            time += timestep_size;
     }
 
-        if ((timestep + 1) % history_interval == 0)
-        {
-            atom_trajectory_data.push_back(all_atoms);
-        }
+
 
     
 
         kinetic_energy = calculate_kinetic_energy(sum_v_squared, settings);
-        printf("Time %f Potential Energy: %f Kinetic Energy: %f Total Energy %f\n", timestep * timestep_size, potential_energy, kinetic_energy, potential_energy + kinetic_energy);
+        printf("Time %f Potential Energy: %f Kinetic Energy: %f Total Energy %f\n", time, potential_energy, kinetic_energy, potential_energy + kinetic_energy);
     }
 
     auto end = std::chrono::high_resolution_clock::now();
 
     std::chrono::duration<float> duration = end - start;
-    std::cout << duration.count() << "s " << std::endl;
+    // std::cout << duration.count() << "s " << std::endl;
 
 
-    return atom_trajectory_data;
+    return all_atoms;
 }
 
 
