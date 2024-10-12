@@ -119,9 +119,12 @@ public:
 
         if (key == "space") {  
             pauseAnimation = !pauseAnimation;
-            if (pauseAnimation) {
+            if (pauseAnimation) 
+            {
                 std::cout << "Animation Paused" << std::endl;
-            } else {
+            } 
+            else 
+            {
                 std::cout << "Animation Resumed" << std::endl;
             }
         }
@@ -152,7 +155,7 @@ int main(int argc, char *argv[])
     std::cout << "Atoms initialized: " << all_atoms.size() << std::endl;
 
     // Create the simulation data
-    SimulationData simData;
+    SimulationData simData(all_atoms, settings);
 
     // Create the VTK components for rendering
     vtkNew<vtkNamedColors> colors;
@@ -171,9 +174,10 @@ int main(int argc, char *argv[])
     timerCallback->renderWindow = renderWindow;
     timerCallback->atomActors = &atom_actors;
     
-    // Create a repeating timer to call the animation update every 100ms
+
     renderWindowInteractor->AddObserver(vtkCommand::TimerEvent, timerCallback);
-    renderWindowInteractor->CreateRepeatingTimer(100);  // 100 ms interval for animation updates
+    const int timer_interval = 1000 / frame_rate;
+    renderWindowInteractor->CreateRepeatingTimer(timer_interval);  
 
     // Set up the keypress callback for pausing
     vtkNew<KeyPressCallback> keyPressCallback;
@@ -183,10 +187,11 @@ int main(int argc, char *argv[])
     std::thread simulationThread([&simData]() {
         while (true) 
         {
-            int timestepsPerFrame = timestepsPerSecond / frameRate;
-            Frame new_frame(/* Generate frame with atom data, energy, etc. */);
-            simData.add_frame(new_frame);
-            std::this_thread::sleep_for(std::chrono::milliseconds(1000 / frame_rate));  // Simulate simulation step time
+            int timesteps_per_frame = timesteps_animated_per_second / frame_rate;
+
+            Frame frame = simData.get_latest_frame();
+            frame = create_next_frame(frame, settings, timesteps_per_frame);
+            simData.add_frame(frame);
         }
     });
 
