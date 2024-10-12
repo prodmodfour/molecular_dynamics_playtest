@@ -1,8 +1,11 @@
 #ifndef __animate_atoms_h
 #define __animates_atoms_h
-#include "AtomAnimator.h"
+
 #include <vector>
 #include <iostream>
+#include <thread>
+
+
 #include <vtkTextActor.h>
 #include <vtkTextProperty.h>
 
@@ -10,16 +13,17 @@
 #include "Atom.h"
 #include "generate_atoms.h"
 #include "md_driver.h"
+#include "AtomAnimator.h"
 
 
 
 
-int animate_atoms(std::vector<Atom> all_atoms, Settings settings);
+int run_playtest(std::vector<Atom> all_atoms, Settings settings);
 
 void set_particle_color(vtkSmartPointer<vtkActor> actor, Atom atom);
 
 
-int animate_atoms(std::vector<Atom> all_atoms, Settings settings)
+int run_playtest(std::vector<Atom> all_atoms, Settings settings)
 {
     vtkNew<vtkNamedColors> colors;
     // Create and actor for each atom

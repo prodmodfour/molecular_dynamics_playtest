@@ -15,15 +15,17 @@
 
 #include "Settings.h"
 #include "Atom.h"
+#include "SimulationData.h"
 
 void zero_forces(std::vector<Atom> &all_atoms);
 double evaluate_forces(std::vector<Atom> &all_atoms, Settings settings);
 double calculate_kinetic_energy(double sum_v_squared, Settings settings);
 
-std::vector<Atom> simulate_atom_movement(std::vector<Atom> &all_atoms, Settings settings, double &time, vtkSmartPointer<vtkTextActor> &readings_actor)
+Snapshot simulate_atom_movement(Snapshot snapshot, Settings settings)
 {
 
-
+    std::vector<Atom> all_atoms = snapshot.all_atoms;
+    double time = snapshot.time;
 
     auto start = std::chrono::high_resolution_clock::now();
  
@@ -118,8 +120,7 @@ std::vector<Atom> simulate_atom_movement(std::vector<Atom> &all_atoms, Settings 
         std::string ake_string = oss1.str();
 
         std::string reading = "Time: " + time_string + " ps " " TE: " + te_string + " eV " + " KE: " + ke_string + " eV "  + " PE: "  + pe_string + " eV" + " Average ke: " + ake_string + " eV";
-        // std::cout << reading << std::endl;
-        readings_actor->SetInput(reading.c_str());
+
         
     }
 
@@ -128,8 +129,10 @@ std::vector<Atom> simulate_atom_movement(std::vector<Atom> &all_atoms, Settings 
     std::chrono::duration<float> duration = end - start;
     // std::cout << duration.count() << "s " << std::endl;
 
+    Snapshot new_snapshot(all_atoms, total_kinetic_energy, potential_energy, total_kinetic_energy + potential_energy, time);
 
-    return all_atoms;
+
+    return new_snapshot;
 }
 
 
