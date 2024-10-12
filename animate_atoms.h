@@ -120,19 +120,19 @@ int run_playtest(std::vector<Atom> all_atoms, Settings settings)
     }
 
 
-    std::vector<Atom> current_snapshot = all_atoms;
-    std::vector<Atom> next_snapshot;
-    int snapshot_interval = settings.get_simulation_history_interval();
-    int snapshot_count = 0;
+    std::vector<Atom> current_frame = all_atoms;
+    std::vector<Atom> next_frame;
+    int frame_interval = settings.get_simulation_history_interval();
+    int frame_count = 0;
     double time = 0;
     double current_kinetic = 0;
     double current_potential = 0;
     while (true)
     {
         // Set up start position
-        for (int i = 0; i < current_snapshot.size(); i++)
+        for (int i = 0; i < current_frame.size(); i++)
         {
-            animators[i].SetStartPosition(vtkVector3d(current_snapshot[i].x, current_snapshot[i].y, current_snapshot[i].z));
+            animators[i].SetStartPosition(vtkVector3d(current_frame[i].x, current_frame[i].y, current_frame[i].z));
         }
         scene->SetStartTime(start_time);
         scene->SetEndTime(end_time);
@@ -145,21 +145,21 @@ int run_playtest(std::vector<Atom> all_atoms, Settings settings)
         start_time = end_time;
         end_time += step_duration;
 
-        // Create the next snapshot
-        next_snapshot = simulate_atom_movement(current_snapshot, settings, time, readings_actor);
+        // Create the next frame
+        next_frame = simulate_atom_movement(current_frame, settings, time, readings_actor);
         // Set up the animation for each actor in the animation step and set new colour based on kinetic energy
-        for (int i = 0; i < next_snapshot.size(); i++)
+        for (int i = 0; i < next_frame.size(); i++)
         {
-            animators[i].SetEndPosition(vtkVector3d(next_snapshot[i].x, next_snapshot[i].y, next_snapshot[i].z));
+            animators[i].SetEndPosition(vtkVector3d(next_frame[i].x, next_frame[i].y, next_frame[i].z));
             animators[i].AddObserversToCue(cue1);
-            set_particle_color(actors[i], next_snapshot[i]);
+            set_particle_color(actors[i], next_frame[i]);
         }
 
         // Play the Scene
         scene->Play();
         scene->Stop();
 
-        current_snapshot = next_snapshot;
+        current_frame = next_frame;
     }
 
 

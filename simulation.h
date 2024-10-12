@@ -1,5 +1,5 @@
-#ifndef __md_driver_h
-#define __md_driver_h
+#ifndef __simulation_h
+#define __simulation_h
 
 #include <string>
 #include <iostream>
@@ -21,11 +21,11 @@ void zero_forces(std::vector<Atom> &all_atoms);
 double evaluate_forces(std::vector<Atom> &all_atoms, Settings settings);
 double calculate_kinetic_energy(double sum_v_squared, Settings settings);
 
-Snapshot simulate_atom_movement(Snapshot snapshot, Settings settings)
+Frame create_next_frame(Frame frame, Settings settings, int timesteps)
 {
 
-    std::vector<Atom> all_atoms = snapshot.all_atoms;
-    double time = snapshot.time;
+    std::vector<Atom> all_atoms = frame.all_atoms;
+    double time = frame.time;
 
     auto start = std::chrono::high_resolution_clock::now();
  
@@ -35,7 +35,7 @@ Snapshot simulate_atom_movement(Snapshot snapshot, Settings settings)
     double vxi3, vyi3, vzi3;
     double fxi, fyi, fzi;
     double delta_vxi, delta_vyi, delta_vzi;
-    int total_timesteps = settings.get_simulation_history_interval();
+    int total_timesteps = timesteps;
     double velocity_scale = settings.get_velocity_scale();
     double timestep_size = settings.get_simulation_timestep_size();
 
@@ -129,10 +129,10 @@ Snapshot simulate_atom_movement(Snapshot snapshot, Settings settings)
     std::chrono::duration<float> duration = end - start;
     // std::cout << duration.count() << "s " << std::endl;
 
-    Snapshot new_snapshot(all_atoms, total_kinetic_energy, potential_energy, total_kinetic_energy + potential_energy, time);
+    Frame new_frame(all_atoms, total_kinetic_energy, potential_energy, total_kinetic_energy + potential_energy, time);
 
 
-    return new_snapshot;
+    return new_frame;
 }
 
 

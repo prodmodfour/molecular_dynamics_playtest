@@ -14,24 +14,24 @@ std::mutex timeline_mutex;
 class SimulationData
 {
     public:
-        std::vector<Snapshot> timeline;
+        std::vector<Frame> timeline;
         int current_position;
-        int total_snapshots;
+        int total_frames;
 
         SimulationData()
         {
             current_position = 0;
-            total_snapshots = 0;
+            total_frames = 0;
         }
 
-        void add_snapshot(Snapshot snapshot)
+        void add_frame(Frame frame)
         {
             std::lock_guard<std::mutex> lock(timeline_mutex); 
-            timeline.push_back(snapshot);
-            total_snapshots++;
+            timeline.push_back(frame);
+            total_frames++;
         }
 
-        Snapshot get_next_snapshot()
+        Frame get_next_frame()
         {
             std::lock_guard<std::mutex> lock(timeline_mutex);
             current_position++;
@@ -40,12 +40,12 @@ class SimulationData
 
         bool ready()
         {
-            return current_position <  total_snapshots;
+            return current_position <  total_frames;
         }
     
 };
 
-class Snapshot
+class Frame
 {
     public:
         const std::vector<Atom> all_atoms;
@@ -54,7 +54,7 @@ class Snapshot
         const double te;
         const double time;
 
-        Snapshot(std::vector<Atom> all_atoms, double ke, double pe, double te, double time)
+        Frame(std::vector<Atom> all_atoms, double ke, double pe, double te, double time)
         {
             this->all_atoms = all_atoms;
             this->ke = ke;

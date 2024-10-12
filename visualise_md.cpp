@@ -20,7 +20,7 @@
 #include "Atom.h"
 #include "generate_atoms.h"
 #include "animate_atoms.h"
-#include "md_driver.h"
+#include "simulation.h"
 #include "file_functions.h"
 #include "SimulationData.h"
 #include <thread>
@@ -29,6 +29,7 @@
 
 bool pauseAnimation = false;  // Global pause flag for controlling animation
 int timesteps_animated_per_second = 100;
+const int frame_rate = 30;
 
 void set_particle_color(vtkSmartPointer<vtkActor> actor, const Atom& atom)
 {
@@ -54,8 +55,8 @@ class TimerCallback : public vtkCommand
             if (!pauseAnimation) {  
                 if (simData->ready()) 
                 {
-                    Snapshot snapshot = simData->get_next_snapshot();
-                    updateSceneWithSnapshot(snapshot);
+                    Frame frame = simData->get_next_frame();
+                    updateSceneWithFrame(frame);
                     
                 }
                 renderWindow->Render();
@@ -67,12 +68,12 @@ class TimerCallback : public vtkCommand
         std::vector<vtkSmartPointer<vtkActor>>* atomActors;
 
         // Function to update the scene (user-defined)
-        void updateSceneWithSnapshot(const Snapshot& snapshot) 
+        void updateSceneWithFrame(const Frame& frame) 
         {
-            for (size_t i = 0; i < snapshot.all_atoms.size(); ++i) 
+            for (size_t i = 0; i < frame.all_atoms.size(); ++i) 
             {
 
-                Atom& atom = snapshot.all_atoms[i];
+                Atom& atom = frame.all_atoms[i];
                 vtkSmartPointer<vtkActor> actor = (*atomActors)[i]; 
                 actor->SetPosition(atom.x, atom.y, atom.z); 
                 set_particle_color(actor, atom);
@@ -180,12 +181,26 @@ int main(int argc, char *argv[])
 
     // Start a separate thread for molecular dynamics simulation (infinite loop)
     std::thread simulationThread([&simData]() {
-        while (true) {
-            Snapshot new_snapshot(/* Generate snapshot with atom data, energy, etc. */);
-            simData.add_snapshot(new_snapshot);
-            std::this_thread::sleep_for(std::chrono::milliseconds(50));  // Simulate simulation step time
+        while (true) 
+        {
+            int timestepsPerFrame = timestepsPerSecond / frameRate;
+            Frame new_frame(/* Generate frame with atom data, energy, etc. */);
+            simData.add_frame(new_frame);
+            std::this_thread::sleep_for(std::chrono::milliseconds(1000 / frame_rate));  // Simulate simulation step time
         }
     });
+
+    vtkNew<vtkInteractorStyleTrackballCamera> style;
+    renderWindowInteractor->SetInteractorStyle(style);
+    if (settings.get_parallel_projection_on() == true)
+    {
+        renderer->GetActiveCamera()->ParallelProjectionOn();
+    }
+    
+    vtkNew<vtkInteractorStyleTrackballCamera> style;
+    renderer->ResetCamera();
+    renderer->GetActiveCamera()->Dolly(.5);
+    renderer->ResetCameraClippingRange();
 
     // Start the interaction loop (keeps window interactive while running animation)
     renderWindow->Render();
