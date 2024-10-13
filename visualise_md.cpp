@@ -189,6 +189,7 @@ public:
         {
             adjustplayback_speed(-1); // Decrease playback speed
         }
+
     }
     
     void adjustplayback_speed(int delta)
