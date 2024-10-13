@@ -84,9 +84,6 @@ class TimerCallback : public vtkCommand
                         success = simData->move_backward();
                         if (!success)
                         {
-                            // Reached the beginning
-                            pauseAnimation = true;
-                            std::cout << "Reached the beginning of the frames. Animation paused." << std::endl;
                             break;
                         }
                     }
