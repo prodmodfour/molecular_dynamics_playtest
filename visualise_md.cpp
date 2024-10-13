@@ -33,6 +33,7 @@
 bool pauseAnimation = false;  // Global pause flag for controlling animation
 int playback_speed = 1;
 const int frame_rate = 30;
+int playback_direction = 1; // 1 for forwards, -1 for backward
 
 void set_particle_color(vtkSmartPointer<vtkActor> actor, const Atom& atom)
 {
@@ -68,17 +69,29 @@ class TimerCallback : public vtkCommand
             {  
                 for (int i = 0; i < playback_speed; i++)
                 {
-                    if (simData->move_forward()) 
+                    bool success;
+                    if (playback_direction > 0)
                     {
-                        Frame frame = simData->get_current_frame();
-                        updateSceneWithFrame(frame);
-                        
+                        success = simData->move_forward();
+                        if (!success)
+                        {
+                            // Wait for new frames or pause if simulation has ended
+                            break;
+                        }
                     }
                     else
                     {
-                        break;
+                        success = simData->move_backward();
+                        if (!success)
+                        {
+                            // Reached the beginning
+                            pauseAnimation = true;
+                            std::cout << "Reached the beginning of the frames. Animation paused." << std::endl;
+                            break;
+                        }
                     }
-                    
+                    Frame frame = simData->get_current_frame();
+                    updateSceneWithFrame(frame);
                 }
                 renderWindow->Render();
 
@@ -188,6 +201,18 @@ public:
         else if (key == "minus" || key == "underscore")
         {
             adjustplayback_speed(-1); // Decrease playback speed
+        }
+        else if (key == "r") 
+        {
+            playback_direction *= -1; // Reverse the playback direction
+            if (playback_direction > 0) 
+            {
+                std::cout << "Playback direction: forward" << std::endl;
+            } 
+            else 
+            {
+                std::cout << "Playback direction: backward" << std::endl;
+            }
         }
 
     }
