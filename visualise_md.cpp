@@ -19,21 +19,31 @@
 #include "Settings.h"
 #include "Atom.h"
 #include "generate_atoms.h"
-#include "animate_atoms.h"
+
 #include "simulation.h"
 #include "file_functions.h"
 #include "SimulationData.h"
 #include <thread>
 #include <mutex>
 #include <chrono>
+#include <algorithm>
 
 bool pauseAnimation = false;  // Global pause flag for controlling animation
-int timesteps_animated_per_second = 100;
+int playback_speed = 1;
 const int frame_rate = 30;
 
 void set_particle_color(vtkSmartPointer<vtkActor> actor, const Atom& atom)
 {
-    double ratio = std::clamp(atom.ke / atom.reference_ke,  0.0, 1.0);
+    double ratio = atom.ke / atom.reference_ke;
+    if (ratio > 1)
+    {
+        ratio = 1;
+    }
+    else if (ratio < 0)
+    {
+        ratio = 0;
+    }
+
     double red = ratio;
     double blue = 1.0 - ratio;
     actor->GetProperty()->SetColor(red, 0.0, blue);
@@ -52,14 +62,24 @@ class TimerCallback : public vtkCommand
 
         void Execute(vtkObject* caller, unsigned long eventId, void* callData) override 
         {
-            if (!pauseAnimation) {  
-                if (simData->ready()) 
+            if (!pauseAnimation) 
+            {  
+                for (int i = 0; i < playback_speed; i++)
                 {
-                    Frame frame = simData->get_next_frame();
-                    updateSceneWithFrame(frame);
+                    if (simData->move_forward()) 
+                    {
+                        Frame frame = simData->get_current_frame();
+                        updateSceneWithFrame(frame);
+                        
+                    }
+                    else
+                    {
+                        break;
+                    }
                     
                 }
                 renderWindow->Render();
+
             }
         }
 
@@ -70,10 +90,10 @@ class TimerCallback : public vtkCommand
         // Function to update the scene (user-defined)
         void updateSceneWithFrame(const Frame& frame) 
         {
-            for (size_t i = 0; i < frame.all_atoms.size(); ++i) 
+            for (size_t i = 0; i < frame.all_atoms.size(); i++) 
             {
 
-                Atom& atom = frame.all_atoms[i];
+                Atom atom = frame.all_atoms[i];
                 vtkSmartPointer<vtkActor> actor = (*atomActors)[i]; 
                 actor->SetPosition(atom.x, atom.y, atom.z); 
                 set_particle_color(actor, atom);
@@ -113,7 +133,8 @@ public:
         return new KeyPressCallback;
     }
 
-    virtual void Execute(vtkObject* caller, unsigned long eventId, void* callData) override {
+    virtual void Execute(vtkObject* caller, unsigned long eventId, void* callData) override 
+    {
         vtkRenderWindowInteractor* interactor = static_cast<vtkRenderWindowInteractor*>(caller);
         std::string key = interactor->GetKeySym();
 
@@ -128,6 +149,19 @@ public:
                 std::cout << "Animation Resumed" << std::endl;
             }
         }
+        else if (key == "plus" || key == "equal")
+        {
+            adjustplayback_speed(1); // Increase playback speed
+        }
+        else if (key == "minus" || key == "underscore")
+        {
+            adjustplayback_speed(-1); // Decrease playback speed
+        }
+    }
+    
+    void adjustplayback_speed(int delta)
+    {
+        playback_speed = std::max(1, playback_speed + delta); 
     }
 };
 
@@ -150,6 +184,13 @@ int main(int argc, char *argv[])
         std::string filename = settings.get_atom_filename();
         std::cout << "Atom filename: " << filename << std::endl << std::endl;;
         all_atoms = read_atoms_from_file(filename);
+    }
+
+    // We add an impact atom to the end of the vector
+
+    if (settings.get_add_impact_on() == true)
+    {
+        add_impact_atom(all_atoms, settings);
     }
 
     std::cout << "Atoms initialized: " << all_atoms.size() << std::endl;
@@ -184,13 +225,16 @@ int main(int argc, char *argv[])
     renderWindowInteractor->AddObserver(vtkCommand::KeyPressEvent, keyPressCallback);
 
     // Start a separate thread for molecular dynamics simulation (infinite loop)
-    std::thread simulationThread([&simData]() {
+    std::thread simulationThread([&simData, &settings]() 
+    {
         while (true) 
         {
-            int timesteps_per_frame = timesteps_animated_per_second / frame_rate;
-
+            if (simData.buffer_full())
+            {
+                continue;
+            }
             Frame frame = simData.get_latest_frame();
-            frame = create_next_frame(frame, settings, timesteps_per_frame);
+            frame = create_next_frame(frame, settings);
             simData.add_frame(frame);
         }
     });
@@ -201,8 +245,6 @@ int main(int argc, char *argv[])
     {
         renderer->GetActiveCamera()->ParallelProjectionOn();
     }
-    
-    vtkNew<vtkInteractorStyleTrackballCamera> style;
     renderer->ResetCamera();
     renderer->GetActiveCamera()->Dolly(.5);
     renderer->ResetCameraClippingRange();

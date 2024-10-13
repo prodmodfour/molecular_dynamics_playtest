@@ -21,7 +21,7 @@ void zero_forces(std::vector<Atom> &all_atoms);
 double evaluate_forces(std::vector<Atom> &all_atoms, Settings settings);
 double calculate_kinetic_energy(double sum_v_squared, Settings settings);
 
-Frame create_next_frame(Frame frame, Settings settings, int timesteps)
+Frame create_next_frame(Frame frame, Settings settings)
 {
 
     std::vector<Atom> all_atoms = frame.all_atoms;
@@ -35,7 +35,7 @@ Frame create_next_frame(Frame frame, Settings settings, int timesteps)
     double vxi3, vyi3, vzi3;
     double fxi, fyi, fzi;
     double delta_vxi, delta_vyi, delta_vzi;
-    int total_timesteps = timesteps;
+    int total_timesteps = 1;
     double velocity_scale = settings.get_velocity_scale();
     double timestep_size = settings.get_simulation_timestep_size();
 
