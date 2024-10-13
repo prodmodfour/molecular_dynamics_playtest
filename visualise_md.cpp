@@ -343,8 +343,10 @@ int main(int argc, char *argv[])
     std::thread simulationThread([&simData, &settings]() 
     {
         int timesteps_per_frame = 5;
+        double next_bombardment_time = settings.get_bombardment_interval();
         while (true) 
-        {
+        {   
+
             if (simData.buffer_full())
             {
                 std::this_thread::sleep_for(std::chrono::milliseconds(100));
@@ -354,14 +356,11 @@ int main(int argc, char *argv[])
 
             if (settings.get_bombardment_on())
             {
-                double remainder = std::fmod(frame.time, settings.get_bombardment_interval());
-                double interval = settings.get_bombardment_interval();
-                double tolerance = 1e-6; // Tolerance for floating-point comparison
-
-                if ((remainder < tolerance || std::abs(remainder - interval) < tolerance) && frame.time > 0)
+                if (frame.time >= next_bombardment_time)
                 {
                     add_impact_atom(frame.all_atoms, settings);
                     std::cout << "Added impact atom at " << frame.time << std::endl;
+                    next_bombardment_time += settings.get_bombardment_interval();
                 }
             }
             frame = create_next_frame(frame, settings, timesteps_per_frame);
