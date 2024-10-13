@@ -21,7 +21,7 @@ void zero_forces(std::vector<Atom> &all_atoms);
 double evaluate_forces(std::vector<Atom> &all_atoms, Settings settings);
 double calculate_kinetic_energy(double sum_v_squared, Settings settings);
 
-Frame create_next_frame(Frame frame, Settings settings)
+Frame create_next_frame(Frame frame, Settings settings, int timesteps_per_frame)
 {
 
     std::vector<Atom> all_atoms = frame.all_atoms;
@@ -35,7 +35,7 @@ Frame create_next_frame(Frame frame, Settings settings)
     double vxi3, vyi3, vzi3;
     double fxi, fyi, fzi;
     double delta_vxi, delta_vyi, delta_vzi;
-    int total_timesteps = 1;
+    int total_timesteps = timesteps_per_frame;
     double velocity_scale = settings.get_velocity_scale();
     double timestep_size = settings.get_simulation_timestep_size();
 
@@ -95,31 +95,7 @@ Frame create_next_frame(Frame frame, Settings settings)
     }
         average_ke = total_kinetic_energy / all_atoms.size();
         time += timestep_size;
-        // std::ostringstream oss;
-        // // Set time to 3 decimal place
-        // oss << std::fixed << std::setprecision(3) << time;
-        // std::string time_string = oss.str();
 
-        // std::ostringstream oss1;
-
-        // // Set energies to 4 sig fig
-        // double te = (total_kinetic_energy + potential_energy);
-        // oss1 << std::setprecision(4) << te;
-        // std::string te_string = oss1.str();
-        // oss1.str("");
-        // oss1.clear();
-        // oss1 << std::setprecision(4) << (total_kinetic_energy);
-        // std::string ke_string = oss1.str();
-        // oss1.str("");
-        // oss1.clear();
-        // oss1 << std::setprecision(4) << (potential_energy);
-        // std::string pe_string = oss1.str();
-        // oss1.str("");
-        // oss1.clear();
-        // oss1 << std::setprecision(4) << (average_ke);
-        // std::string ake_string = oss1.str();
-
-        // std::string reading = "Time: " + time_string + " ps " " TE: " + te_string + " eV " + " KE: " + ke_string + " eV "  + " PE: "  + pe_string + " eV" + " Average ke: " + ake_string + " eV";
 
         
     }

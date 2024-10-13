@@ -11,7 +11,7 @@
 #include "Atom.h"
 #include "Settings.h"
 
-
+double reference_ke = 0.02;
 
 typedef struct {
     int x_cubes, y_cubes, z_cubes;
@@ -261,7 +261,7 @@ void add_impact_atom(std::vector<Atom>& atom_block, Settings settings)
     impact_atom.vy = -std::sqrt((2.0*y_applied_energy)/atom_mass);
     impact_atom.vz = -std::sqrt((2.0*z_applied_energy)/atom_mass);
 
-    impact_atom.reference_ke = 0.02;
+    impact_atom.reference_ke = reference_ke;
 
     atom_block.push_back(impact_atom);
 }
@@ -295,7 +295,7 @@ std::vector<Atom> generate_fcc(Settings settings)
                     atom.x = (ix + b[0]) * atom_spacing;
                     atom.y = (iy + b[1]) * atom_spacing;
                     atom.z = (iz + b[2]) * atom_spacing;
-                    atom.reference_ke = 0.02;
+                    atom.reference_ke = reference_ke;
 
                     // Add the atom to the crystal
                     crystal.push_back(atom);

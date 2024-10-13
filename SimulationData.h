@@ -58,7 +58,7 @@ class SimulationData
             
             Frame frame(all_atoms, ke, pe, ke + pe, time);
             add_frame(frame);
-            max_buffer_frames = 1000;
+            max_buffer_frames = 10000;
 
         }
 

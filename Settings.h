@@ -144,13 +144,13 @@ class Settings
             file << "atom_radius double 1.28\n";
             file << "atom_mass double 63.546\n";
             file << "animation_step_duration int 1\n";
-            file << "cubes_in_x int 5\n";
-            file << "cubes_in_y int 5\n";
-            file << "cubes_in_z int 5\n";
+            file << "cubes_in_x int 8\n";
+            file << "cubes_in_y int 4\n";
+            file << "cubes_in_z int 4\n";
             file << "atom_spacing double 3.61\n";
             file << "energy_applied_to_impact_atom double 10\n";
             file << "impact_atom_x_offset double 0\n";
-            file << "impact_atom_y_offset double 3\n";
+            file << "impact_atom_y_offset double 6\n";
             file << "impact_atom_z_offset double 0\n";
             file << "ev_to_j_per_mole double 96400.0\n";
             file << "j_per_mole_to_ev double 1.037e-5\n";

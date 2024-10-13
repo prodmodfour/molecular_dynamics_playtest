@@ -16,6 +16,8 @@
 #include <vtkSmartPointer.h>
 #include <vtkSphereSource.h>
 #include <vtkVectorOperators.h>
+#include <vtkTextActor.h>
+#include <vtkTextProperty.h>
 #include "Settings.h"
 #include "Atom.h"
 #include "generate_atoms.h"
@@ -62,7 +64,6 @@ class TimerCallback : public vtkCommand
 
         void Execute(vtkObject* caller, unsigned long eventId, void* callData) override 
         {
-            std::cout << "TimerCallback::Execute called" << std::endl;
             if (!pauseAnimation) 
             {  
                 for (int i = 0; i < playback_speed; i++)
@@ -87,6 +88,7 @@ class TimerCallback : public vtkCommand
         SimulationData* simData;
         vtkRenderWindow* renderWindow;
         std::vector<vtkSmartPointer<vtkActor>>* atomActors;
+        vtkSmartPointer<vtkTextActor> reading_actor;
 
         // Function to update the scene (user-defined)
         void updateSceneWithFrame(const Frame& frame) 
@@ -98,7 +100,36 @@ class TimerCallback : public vtkCommand
                 vtkSmartPointer<vtkActor> actor = (*atomActors)[i]; 
                 actor->SetPosition(atom.x, atom.y, atom.z); 
                 set_particle_color(actor, atom);
+
+
             }
+            std::ostringstream oss;
+            // Set time to 3 decimal place
+            oss << std::fixed << std::setprecision(3) << frame.time;
+            std::string time_string = oss.str();
+
+            std::ostringstream oss1;
+
+            // Set energies to 4 sig fig
+
+            oss1 << std::setprecision(4) << frame.te;
+            std::string te_string = oss1.str();
+            oss1.str("");
+            oss1.clear();
+            oss1 << std::setprecision(4) << frame.ke;
+            std::string ke_string = oss1.str();
+            oss1.str("");
+            oss1.clear();
+            oss1 << std::setprecision(4) << frame.pe;
+            std::string pe_string = oss1.str();
+            oss1.str("");
+            oss1.clear();
+            double average_ke = frame.ke / frame.all_atoms.size();
+            oss1 << std::setprecision(4) << (average_ke);
+            std::string ake_string = oss1.str();
+
+            std::string reading = "Time: " + time_string + " ps " " TE: " + te_string + " eV " + " KE: " + ke_string + " eV "  + " PE: "  + pe_string + " eV" + " Average ke: " + ake_string + " eV";
+            reading_actor->SetInput(reading.c_str());
         }
 };
 
@@ -204,17 +235,29 @@ int main(int argc, char *argv[])
     vtkNew<vtkRenderer> renderer;
     vtkNew<vtkRenderWindow> renderWindow;
     renderWindow->AddRenderer(renderer);
+    renderWindow->SetWindowName("Molecular Dynamics Playtest");
+    renderWindow->SetSize(1280, 720);
     vtkNew<vtkRenderWindowInteractor> renderWindowInteractor;
     renderWindowInteractor->SetRenderWindow(renderWindow);
 
+    
+    // Initialise actors
     std::vector<vtkSmartPointer<vtkActor>> atom_actors;
     initialise_atom_actors(all_atoms, renderer, settings, atom_actors);
+
+    vtkSmartPointer<vtkTextActor> reading_actor = vtkSmartPointer<vtkTextActor>::New();
+    reading_actor->SetInput("Time: 0.000 s TE: 0.0 KE: 0.0 PE 0.0");
+    reading_actor->GetTextProperty()->SetFontSize(24);
+    reading_actor->GetTextProperty()->SetColor(1.0, 1.0, 1.0);
+    reading_actor->SetPosition(10, 10);
 
     // Set up the timer-based callback for non-blocking animation
     vtkNew<TimerCallback> timerCallback;
     timerCallback->simData = &simData;
     timerCallback->renderWindow = renderWindow;
     timerCallback->atomActors = &atom_actors;
+    timerCallback->reading_actor = reading_actor;
+    renderer->AddActor2D(reading_actor);
 
     
     vtkNew<vtkInteractorStyleTrackballCamera> style;
@@ -243,15 +286,15 @@ int main(int argc, char *argv[])
     // Start a separate thread for molecular dynamics simulation (infinite loop)
     std::thread simulationThread([&simData, &settings]() 
     {
+        int timesteps_per_frame = 5;
         while (true) 
         {
             if (simData.buffer_full())
             {
-                std::cout << "buffer full" << std::endl;
-                std::this_thread::sleep_for(std::chrono::milliseconds(1000));
+                std::this_thread::sleep_for(std::chrono::milliseconds(100));
             }
             Frame frame = simData.get_latest_frame();
-            frame = create_next_frame(frame, settings);
+            frame = create_next_frame(frame, settings, timesteps_per_frame);
             simData.add_frame(frame);
         }
     });
