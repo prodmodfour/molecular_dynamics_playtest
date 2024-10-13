@@ -274,9 +274,9 @@ int main(int argc, char *argv[])
 
     // We add an impact atom to the end of the vector
 
-    if (settings.get_add_impact_on() == true)
+    if (settings.get_add_impact_on() == true  && settings.get_bombardment_on() == false)
     {
-        add_impact_atom(all_atoms, settings);
+        add_impact_atom(all_atoms, settings, settings.get_impact_surface());
     }
 
     std::cout << "Atoms initialized: " << all_atoms.size() << std::endl;
@@ -358,7 +358,20 @@ int main(int argc, char *argv[])
             {
                 if (frame.time >= next_bombardment_time)
                 {
-                    add_impact_atom(frame.all_atoms, settings);
+                    if (settings.get_bombardment_mode() == "consistent")
+                    {
+                        add_impact_atom(frame.all_atoms, settings, settings.get_impact_surface());
+                    }
+                    else if (settings.get_bombardment_mode() == "spread")
+                    {
+                        add_random_impact_atom(frame.all_atoms, settings, settings.get_impact_surface());
+                    }
+                    else if (settings.get_bombardment_mode() == "3d_spread")
+                    {
+                        add_impact_atom_random_surface(frame.all_atoms, settings);
+                    }
+
+
                     std::cout << "Added impact atom at " << frame.time << std::endl;
                     next_bombardment_time += settings.get_bombardment_interval();
                 }

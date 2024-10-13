@@ -168,8 +168,8 @@ class Settings
             file << "impact_atom_z_energy_share double 0.0\n";
             file << "bombardment_on bool false\n";
             file << "bombardment_interval double 0.1\n";
-
-
+            file << "bombardment_mode std::string spread\n"; // spread or consistent or 3d_spread
+            file << "impact_surface std::string top\n"; // surface can be "top", "bottom", "left", "right", "front", "back"
 
             file.close();
         }
@@ -592,6 +592,12 @@ class Settings
         // Getter and setter for bombardment_interval
         double get_bombardment_interval() const { return get_double("bombardment_interval")[0]; }
         void set_bombardment_interval(double value) { add_parameter("bombardment_interval", parameter("bombardment_interval", value)); }
+
+        std::string get_bombardment_mode() const { return get_string("bombardment_mode"); }
+        void set_bombardment_mode(const std::string& value) { add_parameter("bombardment_mode", parameter("bombardment_mode", value)); }
+
+        std::string get_impact_surface() const { return get_string("impact_surface"); }
+        void set_impact_surface(const std::string& value) { add_parameter("impact_surface", parameter("impact_surface", value)); }
 
         // Method to print all settings with dynamic values and proper format
         void print_all_settings() const
