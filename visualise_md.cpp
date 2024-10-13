@@ -62,6 +62,7 @@ class TimerCallback : public vtkCommand
 
         void Execute(vtkObject* caller, unsigned long eventId, void* callData) override 
         {
+            std::cout << "TimerCallback::Execute called" << std::endl;
             if (!pauseAnimation) 
             {  
                 for (int i = 0; i < playback_speed; i++)
@@ -214,7 +215,12 @@ int main(int argc, char *argv[])
     timerCallback->simData = &simData;
     timerCallback->renderWindow = renderWindow;
     timerCallback->atomActors = &atom_actors;
+
     
+    vtkNew<vtkInteractorStyleTrackballCamera> style;
+    renderWindowInteractor->SetInteractorStyle(style);
+    
+    renderWindowInteractor->Initialize();
 
     renderWindowInteractor->AddObserver(vtkCommand::TimerEvent, timerCallback);
     const int timer_interval = 1000 / frame_rate;
@@ -224,23 +230,8 @@ int main(int argc, char *argv[])
     vtkNew<KeyPressCallback> keyPressCallback;
     renderWindowInteractor->AddObserver(vtkCommand::KeyPressEvent, keyPressCallback);
 
-    // Start a separate thread for molecular dynamics simulation (infinite loop)
-    std::thread simulationThread([&simData, &settings]() 
-    {
-        while (true) 
-        {
-            if (simData.buffer_full())
-            {
-                continue;
-            }
-            Frame frame = simData.get_latest_frame();
-            frame = create_next_frame(frame, settings);
-            simData.add_frame(frame);
-        }
-    });
 
-    vtkNew<vtkInteractorStyleTrackballCamera> style;
-    renderWindowInteractor->SetInteractorStyle(style);
+    
     if (settings.get_parallel_projection_on() == true)
     {
         renderer->GetActiveCamera()->ParallelProjectionOn();
@@ -249,9 +240,30 @@ int main(int argc, char *argv[])
     renderer->GetActiveCamera()->Dolly(.5);
     renderer->ResetCameraClippingRange();
 
+    // Start a separate thread for molecular dynamics simulation (infinite loop)
+    std::thread simulationThread([&simData, &settings]() 
+    {
+        while (true) 
+        {
+            if (simData.buffer_full())
+            {
+                std::cout << "buffer full" << std::endl;
+                std::this_thread::sleep_for(std::chrono::milliseconds(1000));
+            }
+            Frame frame = simData.get_latest_frame();
+            frame = create_next_frame(frame, settings);
+            simData.add_frame(frame);
+        }
+    });
+
     // Start the interaction loop (keeps window interactive while running animation)
     renderWindow->Render();
     renderWindowInteractor->Start();
+
+
+
+
+
 
     // Join the simulation thread after animation ends (optional since it runs forever)
     simulationThread.join();

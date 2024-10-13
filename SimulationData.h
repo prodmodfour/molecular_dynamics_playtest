@@ -71,17 +71,21 @@ class SimulationData
         // Function to move forward
         bool move_forward() 
         {
+            std::lock_guard<std::mutex> lock(timeline_mutex); 
             if (current_index < timeline.size() - 1) 
             {
                 current_index++;
-                return true;  // Moved forward successfully
+
+                return true;  
             }
+
             return false; 
         }
 
         // Function to move backward
         bool move_backward() 
         {
+            std::lock_guard<std::mutex> lock(timeline_mutex); 
             if (current_index > 0) {
                 current_index--;
                 return true;  // Moved backward successfully
@@ -91,6 +95,7 @@ class SimulationData
 
         bool buffer_full()
         {
+            std::lock_guard<std::mutex> lock(timeline_mutex); 
             return timeline.size() > current_index + max_buffer_frames;
         }
 
@@ -104,7 +109,15 @@ class SimulationData
         Frame get_latest_frame()
         {
             std::lock_guard<std::mutex> lock(timeline_mutex); 
-            return timeline.back();
+            if (!timeline.empty())
+            {
+                return timeline.back();
+            }
+            else
+            {
+
+                return Frame();
+            }
         }
 
         void zero_forces(std::vector<Atom> &all_atoms)
