@@ -20,7 +20,7 @@
 #include <vtkTextProperty.h>
 #include "Settings.h"
 #include "Atom.h"
-#include "generate_atoms.h"
+#include "AtomGenerator.h"
 
 #include "simulation.h"
 #include "file_functions.h"
@@ -259,24 +259,20 @@ int main(int argc, char *argv[])
 
     std::cout << "Setting up atoms" << std::endl << std::endl;
     std::vector<Atom> all_atoms;
+    AtomGenerator atom_gen(settings);
 
     if (settings.get_atom_mode() == "generate")
     {
-        all_atoms = generate_fcc(settings);
-        write_atoms_to_file(all_atoms);
+        all_atoms = atom_gen.generate_fcc();
+
     }
-    else if (settings.get_atom_mode() == "from_file")
-    {
-        std::string filename = settings.get_atom_filename();
-        std::cout << "Atom filename: " << filename << std::endl << std::endl;;
-        all_atoms = read_atoms_from_file(filename);
-    }
+
 
     // We add an impact atom to the end of the vector
 
     if (settings.get_add_impact_on() == true  && settings.get_bombardment_on() == false)
     {
-        add_impact_atom(all_atoms, settings, settings.get_impact_surface());
+        atom_gen.add_impact_atom(all_atoms, settings.get_impact_surface());
     }
 
     std::cout << "Atoms initialized: " << all_atoms.size() << std::endl;
@@ -340,7 +336,7 @@ int main(int argc, char *argv[])
     renderer->ResetCameraClippingRange();
 
     // Start a separate thread for molecular dynamics simulation (infinite loop)
-    std::thread simulationThread([&simData, &settings]() 
+    std::thread simulationThread([&simData, &settings, &atom_gen]() 
     {
         int timesteps_per_frame = 5;
         double next_bombardment_time = settings.get_bombardment_interval();
@@ -360,15 +356,15 @@ int main(int argc, char *argv[])
                 {
                     if (settings.get_bombardment_mode() == "consistent")
                     {
-                        add_impact_atom(frame.all_atoms, settings, settings.get_impact_surface());
+                        atom_gen.add_impact_atom(frame.all_atoms,settings.get_impact_surface());
                     }
                     else if (settings.get_bombardment_mode() == "spread")
                     {
-                        add_random_impact_atom(frame.all_atoms, settings, settings.get_impact_surface());
+                        atom_gen.add_random_impact_atom(frame.all_atoms, settings.get_impact_surface());
                     }
                     else if (settings.get_bombardment_mode() == "3d_spread")
                     {
-                        add_impact_atom_random_surface(frame.all_atoms, settings);
+                        atom_gen.add_impact_atom_random_surface(frame.all_atoms);
                     }
 
 
