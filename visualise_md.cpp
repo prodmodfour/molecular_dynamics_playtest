@@ -29,6 +29,7 @@
 #include <mutex>
 #include <chrono>
 #include <algorithm>
+#include <cmath>
 
 bool pauseAnimation = false;  // Global pause flag for controlling animation
 int playback_speed = 1;
@@ -99,13 +100,27 @@ class TimerCallback : public vtkCommand
         vtkRenderWindow* renderWindow;
         std::vector<vtkSmartPointer<vtkActor>>* atomActors;
         vtkSmartPointer<vtkTextActor> reading_actor;
+            vtkRenderer* renderer;
+        double atom_radius; 
 
         // Function to update the scene (user-defined)
         void updateSceneWithFrame(const Frame& frame) 
         {
+            size_t numAtoms = frame.all_atoms.size();
+            size_t numActors = atomActors->size();
+
+            if (numAtoms > numActors)
+            {
+                for (size_t i = numActors; i < numAtoms; ++i)
+                {
+                    // Create a new actor for the new atom
+                    vtkSmartPointer<vtkActor> actor = create_atom_actor(frame.all_atoms[i]);
+                    renderer->AddActor(actor);
+                    atomActors->push_back(actor);
+                }
+            }
             for (size_t i = 0; i < frame.all_atoms.size(); i++) 
             {
-
                 Atom atom = frame.all_atoms[i];
                 vtkSmartPointer<vtkActor> actor = (*atomActors)[i]; 
                 actor->SetPosition(atom.x, atom.y, atom.z); 
@@ -140,6 +155,22 @@ class TimerCallback : public vtkCommand
 
             std::string reading = "Time: " + time_string + " ps " " TE: " + te_string + " eV " + " KE: " + ke_string + " eV "  + " PE: "  + pe_string + " eV" + " Average ke: " + ake_string + " eV";
             reading_actor->SetInput(reading.c_str());
+        }
+
+        vtkSmartPointer<vtkActor> create_atom_actor(const Atom& atom)
+        {
+            vtkNew<vtkSphereSource> sphereSource;
+            sphereSource->SetCenter(atom.x, atom.y, atom.z);
+            sphereSource->SetRadius(atom_radius); // You need to have access to atom_radius
+
+            vtkNew<vtkPolyDataMapper> mapper;
+            mapper->SetInputConnection(sphereSource->GetOutputPort());
+
+            vtkNew<vtkActor> actor;
+            actor->SetMapper(mapper);
+            set_particle_color(actor, atom);
+
+            return actor;
         }
 };
 
@@ -280,6 +311,8 @@ int main(int argc, char *argv[])
     timerCallback->renderWindow = renderWindow;
     timerCallback->atomActors = &atom_actors;
     timerCallback->reading_actor = reading_actor;
+    timerCallback->renderer = renderer;
+    timerCallback->atom_radius = settings.get_atom_radius();
     renderer->AddActor2D(reading_actor);
 
     
@@ -315,8 +348,22 @@ int main(int argc, char *argv[])
             if (simData.buffer_full())
             {
                 std::this_thread::sleep_for(std::chrono::milliseconds(100));
+                continue;
             }
             Frame frame = simData.get_latest_frame();
+
+            if (settings.get_bombardment_on())
+            {
+                double remainder = std::fmod(frame.time, settings.get_bombardment_interval());
+                double interval = settings.get_bombardment_interval();
+                double tolerance = 1e-6; // Tolerance for floating-point comparison
+
+                if ((remainder < tolerance || std::abs(remainder - interval) < tolerance) && frame.time > 0)
+                {
+                    add_impact_atom(frame.all_atoms, settings);
+                    std::cout << "Added impact atom at " << frame.time << std::endl;
+                }
+            }
             frame = create_next_frame(frame, settings, timesteps_per_frame);
             simData.add_frame(frame);
         }

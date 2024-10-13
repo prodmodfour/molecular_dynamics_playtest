@@ -143,7 +143,6 @@ class Settings
             // Add default parameters with their data types
             file << "atom_radius double 1.28\n";
             file << "atom_mass double 63.546\n";
-            file << "animation_step_duration int 1\n";
             file << "cubes_in_x int 8\n";
             file << "cubes_in_y int 4\n";
             file << "cubes_in_z int 4\n";
@@ -159,18 +158,16 @@ class Settings
             file << "sigma double 2.285\n";
             file << "rcutoff double 0\n";
             file << "velocity_scale double 0\n";
-            file << "simulation_history_interval int 50\n";
             file << "simulation_timestep_size double 0.001\n";
-            file << "simulation_total_timesteps int 1000\n";
             file << "atom_mode std::string generate\n"; // from_file or generate
             file << "atom_filename std::string config.txt\n"; // 
             file << "add_impact_on bool true\n";
             file << "parallel_projection_on bool false\n";
-            file << "animation_on bool true\n";
-            file << "simulation_on bool true\n";
             file << "impact_atom_x_energy_share double 0.0\n";
             file << "impact_atom_y_energy_share double 1.0\n";
             file << "impact_atom_z_energy_share double 0.0\n";
+            file << "bombardment_on bool false\n";
+            file << "bombardment_interval double 0.1\n";
 
 
 
@@ -231,6 +228,22 @@ class Settings
                     set_impact_atom_z_energy_share(std::stod(arguments[i + 3]));
                     continue;
 
+                }
+
+                if (name == "-bombardment")
+                {
+                    set_bombardment_on(true);
+                    if (i + 1 < arguments.size())
+                    {
+                        double interval = std::stod(arguments[i + 1]);
+                        set_bombardment_interval(interval);
+                        i += 1; // Move past the interval argument
+                    }
+                    else
+                    {
+                        throw std::runtime_error("Missing argument for -bombardment flag: interval value expected.");
+                    }
+                    continue;
                 }
 
 
@@ -571,6 +584,14 @@ class Settings
         // Getter and setter for impact_atom_z_energy_share
         double get_impact_atom_z_energy_share() const { return get_double("impact_atom_z_energy_share")[0]; }
         void set_impact_atom_z_energy_share(double value) { add_parameter("impact_atom_z_energy_share", parameter("impact_atom_z_energy_share", value)); }
+
+        // Getter and setter for bombardment_on
+        bool get_bombardment_on() const { return get_bool("bombardment_on"); }
+        void set_bombardment_on(bool value) { add_parameter("bombardment_on", parameter("bombardment_on", value)); }
+
+        // Getter and setter for bombardment_interval
+        double get_bombardment_interval() const { return get_double("bombardment_interval")[0]; }
+        void set_bombardment_interval(double value) { add_parameter("bombardment_interval", parameter("bombardment_interval", value)); }
 
         // Method to print all settings with dynamic values and proper format
         void print_all_settings() const
