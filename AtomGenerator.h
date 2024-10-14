@@ -42,7 +42,7 @@ private:
 
 // Constructor
 AtomGenerator::AtomGenerator(const Settings& settings)
-    : settings(settings), reference_ke(0.02)
+    : settings(settings), reference_ke(0.01)
 {
     // Initialize bounding box variables
     x_min = y_min = z_min = std::numeric_limits<double>::max();

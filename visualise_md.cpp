@@ -345,7 +345,7 @@ int main(int argc, char *argv[])
 
             if (simData.buffer_full())
             {
-                std::this_thread::sleep_for(std::chrono::milliseconds(100));
+                std::this_thread::sleep_for(std::chrono::milliseconds(10));
                 continue;
             }
             Frame frame = simData.get_latest_frame();
