@@ -1,0 +1,14 @@
+Goal 1: Animation (main) thread is slow. Make it so that the program can update the animation in a way that allows
+for many atoms (Hopefully > 100k)
+
+Goal 2: Create a GUI that allows the user to change any parameter on the fly. The simulation msut be changed to update the 
+simulation data in both forwards and backwards directions based on changes to parameters
+
+Goal 3: Add additonal features:
+Hide crystalline sections to show relevant parts of animation
+Multiple types of atoms
+Multiple species interactions
+Cluster impacts
+thermostat (control speed (and therefore kinetic energy) of structure to fit a specific temperature.)
+
+Goal 4: Create AI chatbot that guides the user to learning about molecular dynamics through conversation (interesting conversation ideally)
