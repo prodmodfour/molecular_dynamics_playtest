@@ -149,7 +149,7 @@ public:
     // Function to update the scene
     void updateSceneWithFrame(const Frame& frame) {
         vtkPoints* points = polyData->GetPoints();
-        vtkUnsignedCharArray* colors = vtkUnsignedCharArray::SafeDownCast(polyData->GetPointData()->GetScalars());
+        vtkUnsignedCharArray* colors = vtkUnsignedCharArray::SafeDownCast(polyData->GetPointData()->GetArray("Colors"));
 
         size_t numAtoms = frame.all_atoms.size();
 
@@ -218,7 +218,7 @@ void initialise_polydata(const std::vector<Atom>& all_atoms, vtkSmartPointer<vtk
     }
 
     polyData->SetPoints(points);
-    polyData->GetPointData()->SetScalars(colors);
+    polyData->GetPointData()->AddArray(colors);
 }
 
 // Function to handle keyboard events
@@ -293,7 +293,9 @@ int main(int argc, char* argv[]) {
 
     // Initialize polyData and glyph mapper
     vtkSmartPointer<vtkPolyData> polyData = vtkSmartPointer<vtkPolyData>::New();
+
     initialise_polydata(all_atoms, polyData);
+    
 
     // Create sphere source
     vtkSmartPointer<vtkSphereSource> sphereSource = vtkSmartPointer<vtkSphereSource>::New();
@@ -304,7 +306,9 @@ int main(int argc, char* argv[]) {
     glyphMapper->SetInputData(polyData);
     glyphMapper->SetSourceConnection(sphereSource->GetOutputPort());
     glyphMapper->ScalarVisibilityOn();
-    glyphMapper->SetColorModeToMapScalars(); // Use SetColorModeToMapScalars instead of SetColorModeToColorByScalar
+    glyphMapper->SetScalarModeToUsePointFieldData();
+    glyphMapper->SelectColorArray("Colors");
+    glyphMapper->SetColorModeToDirectScalars();
 
     // Create actor and add to renderer
     vtkSmartPointer<vtkActor> glyphActor = vtkSmartPointer<vtkActor>::New();
