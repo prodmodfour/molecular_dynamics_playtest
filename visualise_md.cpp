@@ -18,6 +18,10 @@
 #include <vtkVectorOperators.h>
 #include <vtkTextActor.h>
 #include <vtkTextProperty.h>
+#include <vtkGlyph3DMapper.h>
+#include <vtkFloatArray.h>
+#include <vtkPointData.h>
+#include <vtkUnsignedCharArray.h>
 #include "Settings.h"
 #include "Atom.h"
 #include "AtomGenerator.h"
@@ -30,12 +34,16 @@
 #include <chrono>
 #include <algorithm>
 #include <cmath>
+#include <iomanip>
+#include <iostream>
+#include <sstream>
+#include <map>
+#include <string>
 
 bool pauseAnimation = false;  // Global pause flag for controlling animation
 int playback_speed = 1;
 const int frame_rate = 30;
 int playback_direction = 1; // 1 for forwards, -1 for backward
-
 
 class PerformanceMonitor {
 private:
@@ -81,8 +89,8 @@ public:
 
 PerformanceMonitor performance_monitor;
 
-void set_particle_color(vtkSmartPointer<vtkActor> actor, const Atom& atom)
-{
+// Function to compute atom color based on kinetic energy
+void get_atom_color(const Atom& atom, unsigned char color[3]) {
     double ratio = atom.ke / atom.reference_ke;
     if (ratio > 1)
     {
@@ -93,157 +101,125 @@ void set_particle_color(vtkSmartPointer<vtkActor> actor, const Atom& atom)
         ratio = 0;
     }
 
-    double red = ratio;
-    double blue = 1.0 - ratio;
-    actor->GetProperty()->SetColor(red, 0.0, blue);
-    return;
+    double red = ratio * 255.0;
+    double blue = (1.0 - ratio) * 255.0;
 
+    color[0] = static_cast<unsigned char>(red);
+    color[1] = 0; // Green component
+    color[2] = static_cast<unsigned char>(blue);
 }
 
 // Timer callback for non-blocking animation
-class TimerCallback : public vtkCommand 
-{
-    public:
-        static TimerCallback* New() 
-        {
-            return new TimerCallback;
-        }
+class TimerCallback : public vtkCommand {
+public:
+    static TimerCallback* New() {
+        return new TimerCallback;
+    }
 
-        void Execute(vtkObject* caller, unsigned long eventId, void* callData) override 
-        {
-            if (!pauseAnimation) 
-            {  
-                for (int i = 0; i < playback_speed; i++)
-                {
-                    bool success;
-                    if (playback_direction > 0)
-                    {
-                        success = simData->move_forward();
-                        if (!success)
-                        {
-                            // Wait for new frames or pause if simulation has ended
-                            break;
-                        }
+    void Execute(vtkObject* caller, unsigned long eventId, void* callData) override {
+        if (!pauseAnimation) {
+            for (int i = 0; i < playback_speed; i++) {
+                bool success;
+                if (playback_direction > 0) {
+                    success = simData->move_forward();
+                    if (!success) {
+                        // Wait for new frames or pause if simulation has ended
+                        break;
                     }
-                    else
-                    {
-                        success = simData->move_backward();
-                        if (!success)
-                        {
-                            break;
-                        }
+                } else {
+                    success = simData->move_backward();
+                    if (!success) {
+                        break;
                     }
-                    Frame frame = simData->get_current_frame();
-                    performance_monitor.start_frame("Animation");
-                    updateSceneWithFrame(frame);
                 }
-                renderWindow->Render();
-
+                Frame frame = simData->get_current_frame();
+                performance_monitor.start_frame("Animation");
+                updateSceneWithFrame(frame);
             }
+            renderWindow->Render();
+        }
+    }
+
+    SimulationData* simData;
+    vtkRenderWindow* renderWindow;
+    vtkRenderer* renderer;
+    vtkSmartPointer<vtkPolyData> polyData;
+    vtkSmartPointer<vtkTextActor> reading_actor;
+
+    // Function to update the scene
+    void updateSceneWithFrame(const Frame& frame) {
+        vtkPoints* points = polyData->GetPoints();
+        vtkUnsignedCharArray* colors = vtkUnsignedCharArray::SafeDownCast(polyData->GetPointData()->GetScalars());
+
+        size_t numAtoms = frame.all_atoms.size();
+
+        // Resize points and colors if number of atoms has changed
+        if (points->GetNumberOfPoints() != numAtoms) {
+            points->SetNumberOfPoints(numAtoms);
+            colors->SetNumberOfTuples(numAtoms);
         }
 
-        SimulationData* simData;
-        vtkRenderWindow* renderWindow;
-        std::vector<vtkSmartPointer<vtkActor>>* atomActors;
-        vtkSmartPointer<vtkTextActor> reading_actor;
-            vtkRenderer* renderer;
-        double atom_radius; 
+        for (vtkIdType i = 0; i < numAtoms; ++i) {
+            const Atom& atom = frame.all_atoms[i];
+            points->SetPoint(i, atom.x, atom.y, atom.z);
 
-        // Function to update the scene (user-defined)
-        void updateSceneWithFrame(const Frame& frame) 
-        {
-            size_t numAtoms = frame.all_atoms.size();
-            size_t numActors = atomActors->size();
-
-            if (numAtoms > numActors)
-            {
-                for (size_t i = numActors; i < numAtoms; ++i)
-                {
-                    // Create a new actor for the new atom
-                    vtkSmartPointer<vtkActor> actor = create_atom_actor(frame.all_atoms[i]);
-                    renderer->AddActor(actor);
-                    atomActors->push_back(actor);
-                }
-            }
-            for (size_t i = 0; i < frame.all_atoms.size(); i++) 
-            {
-                Atom atom = frame.all_atoms[i];
-                vtkSmartPointer<vtkActor> actor = (*atomActors)[i]; 
-                actor->SetPosition(atom.x, atom.y, atom.z); 
-                set_particle_color(actor, atom);
-
-
-            }
-            std::ostringstream oss;
-            // Set time to 3 decimal place
-            oss << std::fixed << std::setprecision(3) << frame.time;
-            std::string time_string = oss.str();
-
-            std::ostringstream oss1;
-
-            // Set energies to 4 sig fig
-
-            oss1 << std::setprecision(4) << frame.te;
-            std::string te_string = oss1.str();
-            oss1.str("");
-            oss1.clear();
-            oss1 << std::setprecision(4) << frame.ke;
-            std::string ke_string = oss1.str();
-            oss1.str("");
-            oss1.clear();
-            oss1 << std::setprecision(4) << frame.pe;
-            std::string pe_string = oss1.str();
-            oss1.str("");
-            oss1.clear();
-            double average_ke = frame.ke / frame.all_atoms.size();
-            oss1 << std::setprecision(4) << (average_ke);
-            std::string ake_string = oss1.str();
-
-            std::string reading = "Time: " + time_string + " ps " " TE: " + te_string + " eV " + " KE: " + ke_string + " eV "  + " PE: "  + pe_string + " eV" + " Average ke: " + ake_string + " eV";
-            reading_actor->SetInput(reading.c_str());
+            unsigned char color[3];
+            get_atom_color(atom, color);
+            colors->SetTypedTuple(i, color); // Use SetTypedTuple instead of SetTupleValue
         }
 
-        vtkSmartPointer<vtkActor> create_atom_actor(const Atom& atom)
-        {
-            vtkNew<vtkSphereSource> sphereSource;
-            sphereSource->SetCenter(atom.x, atom.y, atom.z);
-            sphereSource->SetRadius(atom_radius); // You need to have access to atom_radius
+        points->Modified();
+        colors->Modified();
 
-            vtkNew<vtkPolyDataMapper> mapper;
-            mapper->SetInputConnection(sphereSource->GetOutputPort());
+        // Update text actor with simulation data
+        std::ostringstream oss;
+        oss << std::fixed << std::setprecision(3) << frame.time;
+        std::string time_string = oss.str();
 
-            vtkNew<vtkActor> actor;
-            actor->SetMapper(mapper);
-            set_particle_color(actor, atom);
+        std::ostringstream oss1;
+        oss1 << std::setprecision(4) << frame.te;
+        std::string te_string = oss1.str();
+        oss1.str("");
+        oss1.clear();
+        oss1 << std::setprecision(4) << frame.ke;
+        std::string ke_string = oss1.str();
+        oss1.str("");
+        oss1.clear();
+        oss1 << std::setprecision(4) << frame.pe;
+        std::string pe_string = oss1.str();
+        oss1.str("");
+        oss1.clear();
+        double average_ke = frame.ke / frame.all_atoms.size();
+        oss1 << std::setprecision(4) << average_ke;
+        std::string ake_string = oss1.str();
 
-            return actor;
-        }
+        std::string reading = "Time: " + time_string + " ps " +
+                              " TE: " + te_string + " eV " +
+                              " KE: " + ke_string + " eV " +
+                              " PE: " + pe_string + " eV" +
+                              " Average KE: " + ake_string + " eV";
+        reading_actor->SetInput(reading.c_str());
+    }
 };
 
-void initialise_atom_actors(const std::vector<Atom>& all_atoms, vtkRenderer* renderer, Settings settings, std::vector<vtkSmartPointer<vtkActor>>& atom_actors)
-{
-    double atom_radius = settings.get_atom_radius(); //Angstroms
-    for (int i = 0; i < all_atoms.size(); i++)
-    {
-        vtkNew<vtkSphereSource> sphereSource;
+// Function to initialize the polyData with atom positions and colors
+void initialise_polydata(const std::vector<Atom>& all_atoms, vtkSmartPointer<vtkPolyData>& polyData) {
+    vtkSmartPointer<vtkPoints> points = vtkSmartPointer<vtkPoints>::New();
+    vtkSmartPointer<vtkUnsignedCharArray> colors = vtkSmartPointer<vtkUnsignedCharArray>::New();
+    colors->SetNumberOfComponents(3); // RGB colors
+    colors->SetName("Colors");
 
-        sphereSource->SetCenter(all_atoms[i].x, all_atoms[i].y, all_atoms[i].z);
+    for (const Atom& atom : all_atoms) {
+        points->InsertNextPoint(atom.x, atom.y, atom.z);
 
-
-        sphereSource->SetRadius(atom_radius);
-
-        vtkNew<vtkPolyDataMapper> mapper;
-        mapper->SetInputConnection(sphereSource->GetOutputPort());
-
-        vtkNew<vtkActor> actor;
-        actor->SetMapper(mapper);
-        set_particle_color(actor, all_atoms[i]);
-        renderer->AddActor(actor);
-        atom_actors.push_back(actor);
+        unsigned char color[3];
+        get_atom_color(atom, color);
+        colors->InsertNextTypedTuple(color); // Use InsertNextTypedTuple instead of InsertNextTupleValue
     }
+
+    polyData->SetPoints(points);
+    polyData->GetPointData()->SetScalars(colors);
 }
-
-
 
 // Function to handle keyboard events
 class KeyPressCallback : public vtkCommand {
@@ -252,53 +228,37 @@ public:
         return new KeyPressCallback;
     }
 
-    virtual void Execute(vtkObject* caller, unsigned long eventId, void* callData) override 
-    {
+    virtual void Execute(vtkObject* caller, unsigned long eventId, void* callData) override {
         vtkRenderWindowInteractor* interactor = static_cast<vtkRenderWindowInteractor*>(caller);
         std::string key = interactor->GetKeySym();
 
-        if (key == "space") {  
+        if (key == "space") {
             pauseAnimation = !pauseAnimation;
-            if (pauseAnimation) 
-            {
+            if (pauseAnimation) {
                 std::cout << "Animation Paused" << std::endl;
-            } 
-            else 
-            {
+            } else {
                 std::cout << "Animation Resumed" << std::endl;
             }
-        }
-        else if (key == "plus" || key == "equal")
-        {
+        } else if (key == "plus" || key == "equal") {
             adjustplayback_speed(1); // Increase playback speed
-        }
-        else if (key == "minus" || key == "underscore")
-        {
+        } else if (key == "minus" || key == "underscore") {
             adjustplayback_speed(-1); // Decrease playback speed
-        }
-        else if (key == "r") 
-        {
+        } else if (key == "r") {
             playback_direction *= -1; // Reverse the playback direction
-            if (playback_direction > 0) 
-            {
+            if (playback_direction > 0) {
                 std::cout << "Playback direction: forward" << std::endl;
-            } 
-            else 
-            {
+            } else {
                 std::cout << "Playback direction: backward" << std::endl;
             }
         }
-
     }
-    
-    void adjustplayback_speed(int delta)
-    {
-        playback_speed = std::max(1, playback_speed + delta); 
+
+    void adjustplayback_speed(int delta) {
+        playback_speed = std::max(1, playback_speed + delta);
     }
 };
 
-int main(int argc, char *argv[])
-{
+int main(int argc, char* argv[]) {
     std::vector<std::string> arguments(argv, argv + argc);
     Settings settings(arguments);
     settings.print_all_settings();
@@ -307,17 +267,12 @@ int main(int argc, char *argv[])
     std::vector<Atom> all_atoms;
     AtomGenerator atom_gen(settings);
 
-    if (settings.get_atom_mode() == "generate")
-    {
+    if (settings.get_atom_mode() == "generate") {
         all_atoms = atom_gen.generate_fcc();
-
     }
 
-
-    // We add an impact atom to the end of the vector
-
-    if (settings.get_add_impact_on() == true  && settings.get_bombardment_on() == false)
-    {
+    // Add an impact atom if required
+    if (settings.get_add_impact_on() && !settings.get_bombardment_on()) {
         atom_gen.add_impact_atom(all_atoms, settings.get_impact_surface());
     }
 
@@ -331,88 +286,87 @@ int main(int argc, char *argv[])
     vtkNew<vtkRenderer> renderer;
     vtkNew<vtkRenderWindow> renderWindow;
     renderWindow->AddRenderer(renderer);
-    renderWindow->SetWindowName("Molecular Dynamics Playtest");
+    renderWindow->SetWindowName("Molecular Dynamics Simulation");
     renderWindow->SetSize(1280, 720);
     vtkNew<vtkRenderWindowInteractor> renderWindowInteractor;
     renderWindowInteractor->SetRenderWindow(renderWindow);
 
-    
-    // Initialise actors
-    std::vector<vtkSmartPointer<vtkActor>> atom_actors;
-    initialise_atom_actors(all_atoms, renderer, settings, atom_actors);
+    // Initialize polyData and glyph mapper
+    vtkSmartPointer<vtkPolyData> polyData = vtkSmartPointer<vtkPolyData>::New();
+    initialise_polydata(all_atoms, polyData);
 
+    // Create sphere source
+    vtkSmartPointer<vtkSphereSource> sphereSource = vtkSmartPointer<vtkSphereSource>::New();
+    sphereSource->SetRadius(settings.get_atom_radius());
+
+    // Set up glyph mapper
+    vtkSmartPointer<vtkGlyph3DMapper> glyphMapper = vtkSmartPointer<vtkGlyph3DMapper>::New();
+    glyphMapper->SetInputData(polyData);
+    glyphMapper->SetSourceConnection(sphereSource->GetOutputPort());
+    glyphMapper->ScalarVisibilityOn();
+    glyphMapper->SetColorModeToMapScalars(); // Use SetColorModeToMapScalars instead of SetColorModeToColorByScalar
+
+    // Create actor and add to renderer
+    vtkSmartPointer<vtkActor> glyphActor = vtkSmartPointer<vtkActor>::New();
+    glyphActor->SetMapper(glyphMapper);
+    renderer->AddActor(glyphActor);
+
+    // Create text actor for displaying simulation information
     vtkSmartPointer<vtkTextActor> reading_actor = vtkSmartPointer<vtkTextActor>::New();
     reading_actor->SetInput("Time: 0.000 s TE: 0.0 KE: 0.0 PE 0.0");
     reading_actor->GetTextProperty()->SetFontSize(24);
     reading_actor->GetTextProperty()->SetColor(1.0, 1.0, 1.0);
     reading_actor->SetPosition(10, 10);
+    renderer->AddActor2D(reading_actor);
 
     // Set up the timer-based callback for non-blocking animation
     vtkNew<TimerCallback> timerCallback;
     timerCallback->simData = &simData;
     timerCallback->renderWindow = renderWindow;
-    timerCallback->atomActors = &atom_actors;
-    timerCallback->reading_actor = reading_actor;
     timerCallback->renderer = renderer;
-    timerCallback->atom_radius = settings.get_atom_radius();
-    renderer->AddActor2D(reading_actor);
+    timerCallback->polyData = polyData;
+    timerCallback->reading_actor = reading_actor;
 
-    
     vtkNew<vtkInteractorStyleTrackballCamera> style;
     renderWindowInteractor->SetInteractorStyle(style);
-    
+
     renderWindowInteractor->Initialize();
 
     renderWindowInteractor->AddObserver(vtkCommand::TimerEvent, timerCallback);
     const int timer_interval = 1000 / frame_rate;
-    renderWindowInteractor->CreateRepeatingTimer(timer_interval);  
+    renderWindowInteractor->CreateRepeatingTimer(timer_interval);
 
-    // Set up the keypress callback for pausing
+    // Set up the keypress callback
     vtkNew<KeyPressCallback> keyPressCallback;
     renderWindowInteractor->AddObserver(vtkCommand::KeyPressEvent, keyPressCallback);
 
-
-    
-    if (settings.get_parallel_projection_on() == true)
-    {
+    if (settings.get_parallel_projection_on()) {
         renderer->GetActiveCamera()->ParallelProjectionOn();
     }
     renderer->ResetCamera();
-    renderer->GetActiveCamera()->Dolly(.5);
+    renderer->GetActiveCamera()->Dolly(0.5);
     renderer->ResetCameraClippingRange();
 
-    // Start a separate thread for molecular dynamics simulation (infinite loop)
-    std::thread simulationThread([&simData, &settings, &atom_gen]() 
-    {
+    // Start a separate thread for molecular dynamics simulation
+    std::thread simulationThread([&simData, &settings, &atom_gen]() {
         int timesteps_per_frame = 5;
         double next_bombardment_time = settings.get_bombardment_interval();
-        while (true) 
-        {   
-
-            if (simData.buffer_full())
-            {
+        while (true) {
+            if (simData.buffer_full()) {
                 std::this_thread::sleep_for(std::chrono::milliseconds(10));
                 continue;
             }
             Frame frame = simData.get_latest_frame();
 
-            if (settings.get_bombardment_on())
-            {
-                if (frame.time >= next_bombardment_time)
-                {
-                    if (settings.get_bombardment_mode() == "consistent")
-                    {
-                        atom_gen.add_impact_atom(frame.all_atoms,settings.get_impact_surface());
-                    }
-                    else if (settings.get_bombardment_mode() == "spread")
-                    {
+            if (settings.get_bombardment_on()) {
+                if (frame.time >= next_bombardment_time) {
+                    if (settings.get_bombardment_mode() == "consistent") {
+                        atom_gen.add_impact_atom(frame.all_atoms, settings.get_impact_surface());
+                    } else if (settings.get_bombardment_mode() == "spread") {
                         atom_gen.add_random_impact_atom(frame.all_atoms, settings.get_impact_surface());
-                    }
-                    else if (settings.get_bombardment_mode() == "3d_spread")
-                    {
+                    } else if (settings.get_bombardment_mode() == "3d_spread") {
                         atom_gen.add_impact_atom_random_surface(frame.all_atoms);
                     }
-
 
                     std::cout << "Added impact atom at " << frame.time << std::endl;
                     next_bombardment_time += settings.get_bombardment_interval();
@@ -424,16 +378,11 @@ int main(int argc, char *argv[])
         }
     });
 
-    // Start the interaction loop (keeps window interactive while running animation)
+    // Start the interaction loop
     renderWindow->Render();
     renderWindowInteractor->Start();
 
-
-
-
-
-
-    // Join the simulation thread after animation ends (optional since it runs forever)
+    // Join the simulation thread after animation ends
     simulationThread.join();
 
     return 0;

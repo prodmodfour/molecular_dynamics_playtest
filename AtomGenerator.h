@@ -9,6 +9,7 @@
 #include "Atom.h"
 #include "Settings.h"
 
+
 class AtomGenerator {
 public:
     // Constructor
