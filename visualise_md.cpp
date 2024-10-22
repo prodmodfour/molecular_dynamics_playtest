@@ -36,6 +36,51 @@ int playback_speed = 1;
 const int frame_rate = 30;
 int playback_direction = 1; // 1 for forwards, -1 for backward
 
+
+class PerformanceMonitor {
+private:
+    struct ThreadStats {
+        double avg_frame_time = 0.0;
+        int frame_count = 0;
+        std::chrono::high_resolution_clock::time_point last_report_time;
+    };
+    
+    std::map<std::string, ThreadStats> stats;
+    const double REPORT_INTERVAL = 5.0; // Report every 5 seconds
+    std::mutex print_mutex;
+
+public:
+    void start_frame(const std::string& thread_name) {
+        thread_local auto last_frame_start = std::chrono::high_resolution_clock::now();
+        auto now = std::chrono::high_resolution_clock::now();
+        
+        auto& thread_stats = stats[thread_name];
+        double frame_time = std::chrono::duration<double>(now - last_frame_start).count();
+        
+        // Update moving average
+        thread_stats.avg_frame_time = (thread_stats.avg_frame_time * thread_stats.frame_count + frame_time) 
+                                    / (thread_stats.frame_count + 1);
+        thread_stats.frame_count++;
+        
+        // Report if interval elapsed
+        if (std::chrono::duration<double>(now - thread_stats.last_report_time).count() > REPORT_INTERVAL) {
+            std::lock_guard<std::mutex> lock(print_mutex);
+            double fps = 1.0 / thread_stats.avg_frame_time;
+            std::cout << thread_name << " Performance: " 
+                     << "Avg Frame Time: " << thread_stats.avg_frame_time * 1000.0 << "ms, "
+                     << "FPS: " << fps << std::endl;
+            
+            thread_stats.last_report_time = now;
+            thread_stats.frame_count = 0;
+            thread_stats.avg_frame_time = 0;
+        }
+        
+        last_frame_start = now;
+    }
+};
+
+PerformanceMonitor performance_monitor;
+
 void set_particle_color(vtkSmartPointer<vtkActor> actor, const Atom& atom)
 {
     double ratio = atom.ke / atom.reference_ke;
@@ -89,6 +134,7 @@ class TimerCallback : public vtkCommand
                         }
                     }
                     Frame frame = simData->get_current_frame();
+                    performance_monitor.start_frame("Animation");
                     updateSceneWithFrame(frame);
                 }
                 renderWindow->Render();
@@ -372,6 +418,7 @@ int main(int argc, char *argv[])
                     next_bombardment_time += settings.get_bombardment_interval();
                 }
             }
+            performance_monitor.start_frame("Simulation");
             frame = create_next_frame(frame, settings, timesteps_per_frame);
             simData.add_frame(frame);
         }

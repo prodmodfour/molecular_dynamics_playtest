@@ -1,6 +1,8 @@
 Goal 1: Animation (main) thread is slow. Make it so that the program can update the animation in a way that allows
 for many atoms (Hopefully > 100k)
 
+Goal 1.5: Finish report
+
 Goal 2: Create a GUI that allows the user to change any parameter on the fly. The simulation msut be changed to update the 
 simulation data in both forwards and backwards directions based on changes to parameters
 

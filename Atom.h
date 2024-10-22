@@ -5,7 +5,6 @@
 
 
 typedef struct {
-   std::string element;
    double x, y, z;
    double vx, vy, vz;
    double fx, fy, fz;
@@ -13,6 +12,7 @@ typedef struct {
    double reference_ke;
    double m;
    bool hidden;
+   std::string element;
 } Atom;
 
 
