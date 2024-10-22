@@ -299,7 +299,10 @@ int main(int argc, char* argv[]) {
 
     // Create sphere source
     vtkSmartPointer<vtkSphereSource> sphereSource = vtkSmartPointer<vtkSphereSource>::New();
-    sphereSource->SetRadius(settings.get_atom_radius());
+    double atom_radius = settings.get_atom_radius();
+
+    std::cout << "Atom radius: " << atom_radius << std::endl;
+    sphereSource->SetRadius(atom_radius);
 
     // Set up glyph mapper
     vtkSmartPointer<vtkGlyph3DMapper> glyphMapper = vtkSmartPointer<vtkGlyph3DMapper>::New();
