@@ -105,7 +105,7 @@ void get_atom_color(const Atom& atom, unsigned char color[3]) {
     double blue = (1.0 - ratio) * 255.0;
 
     color[0] = static_cast<unsigned char>(red);
-    color[1] = 0; // Green component
+    color[1] = 0; 
     color[2] = static_cast<unsigned char>(blue);
 }
 
@@ -165,7 +165,7 @@ public:
 
             unsigned char color[3];
             get_atom_color(atom, color);
-            colors->SetTypedTuple(i, color); // Use SetTypedTuple instead of SetTupleValue
+            colors->SetTypedTuple(i, color); 
         }
 
         points->Modified();
@@ -214,7 +214,7 @@ void initialise_polydata(const std::vector<Atom>& all_atoms, vtkSmartPointer<vtk
 
         unsigned char color[3];
         get_atom_color(atom, color);
-        colors->InsertNextTypedTuple(color); // Use InsertNextTypedTuple instead of InsertNextTupleValue
+        colors->InsertNextTypedTuple(color); 
     }
 
     polyData->SetPoints(points);

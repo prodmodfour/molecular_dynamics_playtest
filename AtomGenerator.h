@@ -12,7 +12,6 @@
 
 class AtomGenerator {
 public:
-    // Constructor
     AtomGenerator(const Settings& settings);
 
     // Method to generate FCC lattice
