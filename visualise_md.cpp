@@ -107,6 +107,13 @@ void get_atom_color(const Atom& atom, unsigned char color[3]) {
     color[0] = static_cast<unsigned char>(red);
     color[1] = 0; 
     color[2] = static_cast<unsigned char>(blue);
+
+    // Calculate opacity based on redness
+    // Hotter atoms (redder) are more opaque
+    // Cooler atoms (bluer) are less opaque but have a minimum opacity
+    double min_opacity = 0.1;  // Minimum opacity (20% opaque)
+    double opacity_ratio = min_opacity + ratio * (1.0 - min_opacity);
+    color[3] = static_cast<unsigned char>(opacity_ratio * 255.0);  // Alpha component
 }
 
 // Timer callback for non-blocking animation
@@ -163,7 +170,7 @@ public:
             const Atom& atom = frame.all_atoms[i];
             points->SetPoint(i, atom.x, atom.y, atom.z);
 
-            unsigned char color[3];
+            unsigned char color[4];
             get_atom_color(atom, color);
             colors->SetTypedTuple(i, color); 
         }
@@ -206,13 +213,13 @@ public:
 void initialise_polydata(const std::vector<Atom>& all_atoms, vtkSmartPointer<vtkPolyData>& polyData) {
     vtkSmartPointer<vtkPoints> points = vtkSmartPointer<vtkPoints>::New();
     vtkSmartPointer<vtkUnsignedCharArray> colors = vtkSmartPointer<vtkUnsignedCharArray>::New();
-    colors->SetNumberOfComponents(3); // RGB colors
+    colors->SetNumberOfComponents(4);  // RGBA colors
     colors->SetName("Colors");
 
     for (const Atom& atom : all_atoms) {
         points->InsertNextPoint(atom.x, atom.y, atom.z);
 
-        unsigned char color[3];
+        unsigned char color[4];
         get_atom_color(atom, color);
         colors->InsertNextTypedTuple(color); 
     }
@@ -312,10 +319,13 @@ int main(int argc, char* argv[]) {
     glyphMapper->SetScalarModeToUsePointFieldData();
     glyphMapper->SelectColorArray("Colors");
     glyphMapper->SetColorModeToDirectScalars();
+    glyphMapper->SetUseLookupTableScalarRange(false);
 
     // Create actor and add to renderer
     vtkSmartPointer<vtkActor> glyphActor = vtkSmartPointer<vtkActor>::New();
     glyphActor->SetMapper(glyphMapper);
+    // Enable per-vertex opacity
+    glyphActor->GetProperty()->SetOpacity(1.0);
     renderer->AddActor(glyphActor);
 
     // Create text actor for displaying simulation information
@@ -353,6 +363,15 @@ int main(int argc, char* argv[]) {
     renderer->ResetCamera();
     renderer->GetActiveCamera()->Dolly(0.5);
     renderer->ResetCameraClippingRange();
+
+    // Enable alpha channel and disable multisampling
+    renderWindow->SetAlphaBitPlanes(1);
+    renderWindow->SetMultiSamples(0);
+
+    // Configure renderer for depth peeling
+    renderer->SetUseDepthPeeling(1);
+    renderer->SetMaximumNumberOfPeels(100);
+    renderer->SetOcclusionRatio(0.1);
 
     // Start a separate thread for molecular dynamics simulation
     std::thread simulationThread([&simData, &settings, &atom_gen]() {
