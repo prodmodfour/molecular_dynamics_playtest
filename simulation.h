@@ -21,7 +21,7 @@ void zero_forces(std::vector<Atom> &all_atoms);
 double evaluate_forces(std::vector<Atom> &all_atoms, Settings settings);
 double calculate_kinetic_energy(double sum_v_squared, Settings settings);
 
-Frame create_next_frame(Frame frame, Settings settings, int timesteps_per_frame)
+Snapshot create_next_frame(Snapshot frame, Settings settings, int timesteps_per_frame)
 {
 
     std::vector<Atom> all_atoms = frame.all_atoms;
@@ -105,7 +105,7 @@ Frame create_next_frame(Frame frame, Settings settings, int timesteps_per_frame)
     std::chrono::duration<float> duration = end - start;
     // std::cout << duration.count() << "s " << std::endl;
 
-    Frame new_frame(all_atoms, total_kinetic_energy, potential_energy, total_kinetic_energy + potential_energy, time);
+    Snapshot new_frame(all_atoms, total_kinetic_energy, potential_energy, total_kinetic_energy + potential_energy, time);
 
 
     return new_frame;

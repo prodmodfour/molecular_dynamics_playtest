@@ -11,7 +11,7 @@
 
 std::mutex timeline_mutex;
 
-class Frame
+class Snapshot
 {
     public:
         std::vector<Atom> all_atoms;
@@ -20,7 +20,7 @@ class Frame
         double te;
         double time;
 
-        Frame(std::vector<Atom> all_atoms, double ke, double pe, double te, double time)
+        Snapshot(std::vector<Atom> all_atoms, double ke, double pe, double te, double time)
         {
             this->all_atoms = all_atoms;
             this->ke = ke;
@@ -29,19 +29,27 @@ class Frame
             this->time = time;
         }
 
-        Frame()
+        Snapshot()
         {
 
         }
 };
 
+auto  = std::vector<double>vec(100);
+for (double x:  vec)
+{
+    std::cout << x << "\n";
+}
+
 
 class SimulationData
 {
-    public:
-        std::vector<Frame> timeline;
+    private:
+        std::vector<Snapshot> timeline;
         int current_index;
         int max_buffer_frames;
+
+    public:
 
 
         SimulationData(std::vector<Atom> all_atoms, Settings settings)
@@ -56,13 +64,13 @@ class SimulationData
             }
             double time = 0.0;
             
-            Frame frame(all_atoms, ke, pe, ke + pe, time);
+            Snapshot frame(all_atoms, ke, pe, ke + pe, time);
             add_frame(frame);
             max_buffer_frames = 10000;
 
         }
 
-        void add_frame(Frame frame)
+        void add_frame(Snapshot frame)
         {
             std::lock_guard<std::mutex> lock(timeline_mutex); 
             timeline.push_back(frame);
@@ -100,13 +108,13 @@ class SimulationData
         }
 
 
-        Frame get_current_frame() 
+        Snapshot get_current_frame() 
         {
             std::lock_guard<std::mutex> lock(timeline_mutex); 
             return timeline[current_index];
         }
 
-        Frame get_latest_frame()
+        Snapshot get_latest_frame()
         {
             std::lock_guard<std::mutex> lock(timeline_mutex); 
             if (!timeline.empty())
@@ -116,7 +124,7 @@ class SimulationData
             else
             {
 
-                return Frame();
+                return Snapshot();
             }
         }
 

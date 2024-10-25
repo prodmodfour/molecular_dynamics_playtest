@@ -75,7 +75,7 @@ public:
             std::lock_guard<std::mutex> lock(print_mutex);
             double fps = 1.0 / thread_stats.avg_frame_time;
             std::cout << thread_name << " Performance: " 
-                     << "Avg Frame Time: " << thread_stats.avg_frame_time * 1000.0 << "ms, "
+                     << "Avg Snapshot Time: " << thread_stats.avg_frame_time * 1000.0 << "ms, "
                      << "FPS: " << fps << std::endl;
             
             thread_stats.last_report_time = now;
@@ -111,7 +111,7 @@ void get_atom_color(const Atom& atom, unsigned char color[3]) {
     // Calculate opacity based on redness
     // Hotter atoms (redder) are more opaque
     // Cooler atoms (bluer) are less opaque but have a minimum opacity
-    double min_opacity = 0.1;  // Minimum opacity (20% opaque)
+    double min_opacity = 0.1;  // Minimum opacity 
     double opacity_ratio = min_opacity + ratio * (1.0 - min_opacity);
     color[3] = static_cast<unsigned char>(opacity_ratio * 255.0);  // Alpha component
 }
@@ -139,7 +139,7 @@ public:
                         break;
                     }
                 }
-                Frame frame = simData->get_current_frame();
+                Snapshot frame = simData->get_current_frame();
                 performance_monitor.start_frame("Animation");
                 updateSceneWithFrame(frame);
             }
@@ -154,7 +154,7 @@ public:
     vtkSmartPointer<vtkTextActor> reading_actor;
 
     // Function to update the scene
-    void updateSceneWithFrame(const Frame& frame) {
+    void updateSceneWithFrame(const Snapshot& frame) {
         vtkPoints* points = polyData->GetPoints();
         vtkUnsignedCharArray* colors = vtkUnsignedCharArray::SafeDownCast(polyData->GetPointData()->GetArray("Colors"));
 
@@ -382,7 +382,7 @@ int main(int argc, char* argv[]) {
                 std::this_thread::sleep_for(std::chrono::milliseconds(10));
                 continue;
             }
-            Frame frame = simData.get_latest_frame();
+            Snapshot frame = simData.get_latest_frame();
 
             if (settings.get_bombardment_on()) {
                 if (frame.time >= next_bombardment_time) {
