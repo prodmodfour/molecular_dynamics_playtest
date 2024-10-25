@@ -15,7 +15,7 @@
 
 #include "Settings.h"
 #include "Atom.h"
-#include "SimulationData.h"
+#include "SimulationHistory.h"
 
 void zero_forces(std::vector<Atom> &all_atoms);
 double evaluate_forces(std::vector<Atom> &all_atoms, Settings settings);

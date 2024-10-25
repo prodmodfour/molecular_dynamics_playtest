@@ -28,7 +28,7 @@
 
 #include "simulation.h"
 #include "file_functions.h"
-#include "SimulationData.h"
+#include "SimulationHistory.h"
 #include <thread>
 #include <mutex>
 #include <chrono>
@@ -147,7 +147,7 @@ public:
         }
     }
 
-    SimulationData* simData;
+    SimulationHistory* simData;
     vtkRenderWindow* renderWindow;
     vtkRenderer* renderer;
     vtkSmartPointer<vtkPolyData> polyData;
@@ -286,7 +286,7 @@ int main(int argc, char* argv[]) {
     std::cout << "Atoms initialized: " << all_atoms.size() << std::endl;
 
     // Create the simulation data
-    SimulationData simData(all_atoms, settings);
+    SimulationHistory simData(all_atoms, settings);
 
     // Create the VTK components for rendering
     vtkNew<vtkNamedColors> colors;
