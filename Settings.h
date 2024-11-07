@@ -10,6 +10,7 @@
 #include <sstream>
 #include <stdexcept>
 
+
 // Converts any value to a string representation
 template<typename T>
 std::string to_string(T value)

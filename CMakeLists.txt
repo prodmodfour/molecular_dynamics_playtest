@@ -1,31 +1,43 @@
 cmake_minimum_required(VERSION 3.12 FATAL_ERROR)
 
-project(visualise_md)
+project(molecular_dynamics_playtest VERSION 1.0)
 
-find_package(VTK COMPONENTS 
-  CommonColor
-  CommonCore
-  CommonDataModel
-  FiltersSources
-  InteractionStyle
-  RenderingContextOpenGL2
-  RenderingCore
-  RenderingFreeType
-  RenderingGL2PSOpenGL2
-  RenderingOpenGL2
+# Basic build settings
+set(CMAKE_CXX_STANDARD 17)
+set(CMAKE_CXX_STANDARD_REQUIRED ON)
+set(CMAKE_CXX_EXTENSIONS OFF)
+
+# Qt settings
+set(CMAKE_AUTOMOC ON)
+set(CMAKE_AUTORCC ON)
+set(CMAKE_AUTOUIC ON)
+
+# Find required packages via vcpkg
+find_package(VTK CONFIG REQUIRED)
+find_package(Qt6 COMPONENTS 
+    Core
+    Gui
+    Widgets
+    OpenGLWidgets
+    REQUIRED
 )
 
-if (NOT VTK_FOUND)
-  message(FATAL_ERROR "Sphere: Unable to find the VTK build folder.")
-endif()
-
-# Prevent a "command line is too long" failure in Windows.
-set(CMAKE_NINJA_FORCE_RESPONSE_FILE "ON" CACHE BOOL "Force Ninja to use response files.")
-add_executable(visualise_md MACOSX_BUNDLE visualise_md.cpp )
-  target_link_libraries(visualise_md PRIVATE ${VTK_LIBRARIES}
+# Define executable
+add_executable(visualise_md
+    visualise_md.cpp
 )
-# vtk_module_autoinit is needed
+
+# Link libraries
+target_link_libraries(visualise_md PRIVATE 
+    ${VTK_LIBRARIES}
+    Qt6::Core
+    Qt6::Gui
+    Qt6::Widgets
+    Qt6::OpenGLWidgets
+)
+
+# VTK module initialization
 vtk_module_autoinit(
-  TARGETS visualise_md
-  MODULES ${VTK_LIBRARIES}
+    TARGETS visualise_md
+    MODULES ${VTK_LIBRARIES}
 )

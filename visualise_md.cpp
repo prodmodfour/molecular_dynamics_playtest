@@ -39,6 +39,8 @@
 #include <sstream>
 #include <map>
 #include <string>
+#include "MDMainWindow.h"
+#include <QApplication>
 
 bool pauseAnimation = false;  // Global pause flag for controlling animation
 int playback_speed = 1;
@@ -247,25 +249,47 @@ public:
                 std::cout << "Animation Resumed" << std::endl;
             }
         } else if (key == "plus" || key == "equal") {
-            adjustplayback_speed(1); // Increase playback speed
+            adjustPlaybackSpeed(1);
         } else if (key == "minus" || key == "underscore") {
-            adjustplayback_speed(-1); // Decrease playback speed
+            adjustPlaybackSpeed(-1);
         } else if (key == "r") {
-            playback_direction *= -1; // Reverse the playback direction
-            if (playback_direction > 0) {
-                std::cout << "Playback direction: forward" << std::endl;
-            } else {
-                std::cout << "Playback direction: backward" << std::endl;
+            playback_direction *= -1;
+            std::cout << "Playback direction: " 
+                      << (playback_direction > 0 ? "forward" : "backward") << std::endl;
+        } else if (key == "b") {
+            // Create new branch with modified settings
+            Settings branch_settings = simData->get_current_settings();
+            branch_settings.set_energy_applied_to_impact_atom(
+                branch_settings.get_energy_applied_to_impact_atom() * 1.5
+            );
+            std::string new_branch_id = "branch_" + std::to_string(time(nullptr));
+            simData->create_branch(new_branch_id, branch_settings);
+            std::cout << "Created new branch: " << new_branch_id << std::endl;
+        } else if (key == "n") {
+            // Cycle through available branches
+            auto branches = simData->get_available_branches();
+            auto current = simData->get_active_branch_id();
+            auto it = std::find(branches.begin(), branches.end(), current);
+            if (it != branches.end() && ++it != branches.end()) {
+                simData->switch_branch(*it);
+                std::cout << "Switched to branch: " << *it << std::endl;
+            } else if (!branches.empty()) {
+                simData->switch_branch(branches.front());
+                std::cout << "Switched to branch: " << branches.front() << std::endl;
             }
         }
     }
 
-    void adjustplayback_speed(int delta) {
+    SimulationHistory* simData;
+private:
+    void adjustPlaybackSpeed(int delta) {
         playback_speed = std::max(1, playback_speed + delta);
+        std::cout << "Playback speed: " << playback_speed << "x" << std::endl;
     }
 };
 
 int main(int argc, char* argv[]) {
+    QApplication app(argc, argv);
     std::vector<std::string> arguments(argv, argv + argc);
     Settings settings(arguments);
     settings.print_all_settings();
@@ -288,6 +312,11 @@ int main(int argc, char* argv[]) {
     // Create the simulation data
     SimulationHistory simData(all_atoms, settings);
 
+        
+    // Start Main window
+    MDMainWindow window(&simData, &settings);
+    window.show();
+
     // Create the VTK components for rendering
     vtkNew<vtkNamedColors> colors;
     vtkNew<vtkRenderer> renderer;
@@ -297,6 +326,7 @@ int main(int argc, char* argv[]) {
     renderWindow->SetSize(1280, 720);
     vtkNew<vtkRenderWindowInteractor> renderWindowInteractor;
     renderWindowInteractor->SetRenderWindow(renderWindow);
+
 
     // Initialize polyData and glyph mapper
     vtkSmartPointer<vtkPolyData> polyData = vtkSmartPointer<vtkPolyData>::New();
@@ -355,6 +385,7 @@ int main(int argc, char* argv[]) {
 
     // Set up the keypress callback
     vtkNew<KeyPressCallback> keyPressCallback;
+    keyPressCallback->simData = &simData; 
     renderWindowInteractor->AddObserver(vtkCommand::KeyPressEvent, keyPressCallback);
 
     if (settings.get_parallel_projection_on()) {
@@ -376,30 +407,53 @@ int main(int argc, char* argv[]) {
     // Start a separate thread for molecular dynamics simulation
     std::thread simulationThread([&simData, &settings, &atom_gen]() {
         int timesteps_per_frame = 5;
-        double next_bombardment_time = settings.get_bombardment_interval();
+        double velocity_scale = settings.get_velocity_scale();
+        std::map<std::string, double> next_bombardment_times;
+
         while (true) {
             if (simData.buffer_full()) {
                 std::this_thread::sleep_for(std::chrono::milliseconds(10));
                 continue;
             }
+            
+            std::string current_branch_id = simData.get_active_branch_id();
+            Settings& branch_settings = simData.get_branch_settings(current_branch_id);
+            
             Snapshot frame = simData.get_latest_frame();
 
-            if (settings.get_bombardment_on()) {
+            // Initialize bombardment time for new branches
+            if (branch_settings.get_bombardment_on() && 
+                next_bombardment_times.find(current_branch_id) == next_bombardment_times.end()) {
+                next_bombardment_times[current_branch_id] = frame.time + branch_settings.get_bombardment_interval();
+            }
+
+            // Handle bombardment with branch-specific settings
+            if (branch_settings.get_bombardment_on()) {
+                double& next_bombardment_time = next_bombardment_times[current_branch_id];
+                
                 if (frame.time >= next_bombardment_time) {
-                    if (settings.get_bombardment_mode() == "consistent") {
-                        atom_gen.add_impact_atom(frame.all_atoms, settings.get_impact_surface());
-                    } else if (settings.get_bombardment_mode() == "spread") {
-                        atom_gen.add_random_impact_atom(frame.all_atoms, settings.get_impact_surface());
-                    } else if (settings.get_bombardment_mode() == "3d_spread") {
+                    if (branch_settings.get_bombardment_mode() == "consistent") {
+                        atom_gen.add_impact_atom(frame.all_atoms, branch_settings.get_impact_surface());
+                    } 
+                    else if (branch_settings.get_bombardment_mode() == "spread") {
+                        atom_gen.add_random_impact_atom(frame.all_atoms, branch_settings.get_impact_surface());
+                    } 
+                    else if (branch_settings.get_bombardment_mode() == "3d_spread") {
                         atom_gen.add_impact_atom_random_surface(frame.all_atoms);
                     }
 
-                    std::cout << "Added impact atom at " << frame.time << std::endl;
-                    next_bombardment_time += settings.get_bombardment_interval();
+                    std::cout << "Added impact atom at time " << frame.time 
+                            << " in branch " << current_branch_id << std::endl;
+                    next_bombardment_time = frame.time + branch_settings.get_bombardment_interval();
                 }
             }
+
             performance_monitor.start_frame("Simulation");
-            frame = create_next_frame(frame, settings, timesteps_per_frame);
+            
+            // Use branch-specific settings for simulation
+            frame = create_next_frame(frame, branch_settings, timesteps_per_frame);
+            frame.branch_id = current_branch_id;  // Ensure frame knows its branch
+            
             simData.add_frame(frame);
         }
     });
@@ -408,8 +462,10 @@ int main(int argc, char* argv[]) {
     renderWindow->Render();
     renderWindowInteractor->Start();
 
+    int result = app.exec();
+
     // Join the simulation thread after animation ends
     simulationThread.join();
 
-    return 0;
+    return result;
 }
