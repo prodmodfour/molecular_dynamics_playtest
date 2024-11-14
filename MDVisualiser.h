@@ -1,6 +1,202 @@
 #ifndef __MDVisualiser_h
 #define __MDVisualiser_h
 
+#include "SimulationConfig.h"
+#include "SimulationData.h"
+#include <vtkSmartPointer.h>
+#include <vtkPolyData.h>
+#include <vtkCommand.h>
+#include <vtkRenderer.h>
+#include <vtkRenderWindow.h>
+#include <vtkTextActor.h>
+
+// Forward declarations
+class MDVisualiser;
+class TimerCallback;
+class KeyPressCallback;
+void initialise_polydata(const std::vector<Atom>& all_atoms, vtkSmartPointer<vtkPolyData>& polyData);
+
+// Function to compute atom color based on kinetic energy
+void get_atom_color(const Atom& atom, unsigned char color[3]) {
+    double ratio = atom.ke / atom.reference_ke;
+    if (ratio > 1)
+    {
+        ratio = 1;
+    }
+    else if (ratio < 0)
+    {
+        ratio = 0;
+    }
+
+    double red = ratio * 255.0;
+    double blue = (1.0 - ratio) * 255.0;
+
+    color[0] = static_cast<unsigned char>(red);
+    color[1] = 0; 
+    color[2] = static_cast<unsigned char>(blue);
+
+    // Calculate opacity based on redness
+    // Hotter atoms (redder) are more opaque
+    // Cooler atoms (bluer) are less opaque but have a minimum opacity
+    double min_opacity = 0.1;  // Minimum opacity (20% opaque)
+    double opacity_ratio = min_opacity + ratio * (1.0 - min_opacity);
+    color[3] = static_cast<unsigned char>(opacity_ratio * 255.0);  // Alpha component
+}
+
+
+// Function to initialize the polyData with atom positions and colors
+void initialise_polydata(const std::vector<Atom>& all_atoms, vtkSmartPointer<vtkPolyData>& polyData) {
+    vtkSmartPointer<vtkPoints> points = vtkSmartPointer<vtkPoints>::New();
+    vtkSmartPointer<vtkUnsignedCharArray> colors = vtkSmartPointer<vtkUnsignedCharArray>::New();
+    colors->SetNumberOfComponents(4);  // RGBA colors
+    colors->SetName("Colors");
+
+    for (const Atom& atom : all_atoms) {
+        points->InsertNextPoint(atom.x, atom.y, atom.z);
+
+        unsigned char color[4];
+        get_atom_color(atom, color);
+        colors->InsertNextTypedTuple(color); 
+    }
+
+    polyData->SetPoints(points);
+    polyData->GetPointData()->AddArray(colors);
+}
+
+
+// Timer callback for non-blocking animation
+class TimerCallback : public vtkCommand {
+public:
+    static TimerCallback* New() {
+        return new TimerCallback;
+    }
+
+    void Execute(vtkObject* caller, unsigned long eventId, void* callData) override {
+        if (!visualiser->pauseAnimation) {
+            for (int i = 0; i < visualiser->playback_speed; i++) {
+                bool success;
+                if (visualiser->playback_direction > 0) {
+                    success = simData->move_forward();
+                    if (!success) {
+                        // Wait for new frames or pause if simulation has ended
+                        break;
+                    }
+                } else {
+                    success = simData->move_backward();
+                    if (!success) {
+                        break;
+                    }
+                }
+                Frame frame = simData->get_current_frame();
+                updateSceneWithFrame(frame);
+            }
+            renderWindow->Render();
+        }
+    }
+
+    SimulationData* simData;
+    vtkRenderWindow* renderWindow;
+    vtkRenderer* renderer;
+    vtkSmartPointer<vtkPolyData> polyData;
+    vtkSmartPointer<vtkTextActor> reading_actor;
+
+    MDVisualiser* visualiser;
+
+    // Function to update the scene
+    void updateSceneWithFrame(const Frame& frame) {
+        vtkPoints* points = polyData->GetPoints();
+        vtkUnsignedCharArray* colors = vtkUnsignedCharArray::SafeDownCast(polyData->GetPointData()->GetArray("Colors"));
+
+        size_t numAtoms = frame.all_atoms.size();
+
+        // Resize points and colors if number of atoms has changed
+        if (points->GetNumberOfPoints() != numAtoms) {
+            points->SetNumberOfPoints(numAtoms);
+            colors->SetNumberOfTuples(numAtoms);
+        }
+
+        for (vtkIdType i = 0; i < numAtoms; ++i) {
+            const Atom& atom = frame.all_atoms[i];
+            points->SetPoint(i, atom.x, atom.y, atom.z);
+
+            unsigned char color[4];
+            get_atom_color(atom, color);
+            colors->SetTypedTuple(i, color); 
+        }
+
+        points->Modified();
+        colors->Modified();
+
+        // Update text actor with simulation data
+        std::ostringstream oss;
+        oss << std::fixed << std::setprecision(3) << frame.time;
+        std::string time_string = oss.str();
+
+        std::ostringstream oss1;
+        oss1 << std::setprecision(4) << frame.te;
+        std::string te_string = oss1.str();
+        oss1.str("");
+        oss1.clear();
+        oss1 << std::setprecision(4) << frame.ke;
+        std::string ke_string = oss1.str();
+        oss1.str("");
+        oss1.clear();
+        oss1 << std::setprecision(4) << frame.pe;
+        std::string pe_string = oss1.str();
+        oss1.str("");
+        oss1.clear();
+        double average_ke = frame.ke / frame.all_atoms.size();
+        oss1 << std::setprecision(4) << average_ke;
+        std::string ake_string = oss1.str();
+
+        std::string reading = "Time: " + time_string + " ps " +
+                              " TE: " + te_string + " eV " +
+                              " KE: " + ke_string + " eV " +
+                              " PE: " + pe_string + " eV" +
+                              " Average KE: " + ake_string + " eV";
+        reading_actor->SetInput(reading.c_str());
+    }
+};
+
+// Function to handle keyboard events
+class KeyPressCallback : public vtkCommand {
+public:
+    static KeyPressCallback* New() {
+        return new KeyPressCallback;
+    }
+
+    virtual void Execute(vtkObject* caller, unsigned long eventId, void* callData) override {
+        vtkRenderWindowInteractor* interactor = static_cast<vtkRenderWindowInteractor*>(caller);
+        std::string key = interactor->GetKeySym();
+
+        if (key == "space") {
+            visualiser->pauseAnimation = !visualiser->pauseAnimation;
+            if (visualiser->pauseAnimation) {
+                std::cout << "Animation Paused" << std::endl;
+            } else {
+                std::cout << "Animation Resumed" << std::endl;
+            }
+        } else if (key == "plus" || key == "equal") {
+            adjustPlaybackSpeed(1);
+        } else if (key == "minus" || key == "underscore") {
+            adjustPlaybackSpeed(-1);
+        } else if (key == "r") {
+            visualiser->playback_direction *= -1;
+            if (visualiser->playback_direction > 0) {
+                std::cout << "Playback direction: forward" << std::endl;
+            } else {
+                std::cout << "Playback direction: backward" << std::endl;
+            }
+        }
+    }
+
+    void adjustPlaybackSpeed(int delta) {
+        visualiser->playback_speed = std::max(1, visualiser->playback_speed + delta);
+    }
+
+    MDVisualiser* visualiser;
+};
+
 class MDVisualiser
 {
     public:
@@ -75,228 +271,12 @@ class MDVisualiser
         friend class KeyPressCallback; // Allow KeyPressCallback to access private members
 };
 
-class PerformanceMonitor {
-private:
-    struct ThreadStats {
-        double avg_frame_time = 0.0;
-        int frame_count = 0;
-        std::chrono::high_resolution_clock::time_point last_report_time;
-    };
-    
-    std::map<std::string, ThreadStats> stats;
-    const double REPORT_INTERVAL = 5.0; // Report every 5 seconds
-    std::mutex print_mutex;
 
-public:
-    void start_frame(const std::string& thread_name) {
-        thread_local auto last_frame_start = std::chrono::high_resolution_clock::now();
-        auto now = std::chrono::high_resolution_clock::now();
-        
-        auto& thread_stats = stats[thread_name];
-        double frame_time = std::chrono::duration<double>(now - last_frame_start).count();
-        
-        // Update moving average
-        thread_stats.avg_frame_time = (thread_stats.avg_frame_time * thread_stats.frame_count + frame_time) 
-                                    / (thread_stats.frame_count + 1);
-        thread_stats.frame_count++;
-        
-        // Report if interval elapsed
-        if (std::chrono::duration<double>(now - thread_stats.last_report_time).count() > REPORT_INTERVAL) {
-            std::lock_guard<std::mutex> lock(print_mutex);
-            double fps = 1.0 / thread_stats.avg_frame_time;
-            std::cout << thread_name << " Performance: " 
-                     << "Avg Frame Time: " << thread_stats.avg_frame_time * 1000.0 << "ms, "
-                     << "FPS: " << fps << std::endl;
-            
-            thread_stats.last_report_time = now;
-            thread_stats.frame_count = 0;
-            thread_stats.avg_frame_time = 0;
-        }
-        
-        last_frame_start = now;
-    }
-};
 
-PerformanceMonitor performance_monitor;
 
-// Function to compute atom color based on kinetic energy
-void get_atom_color(const Atom& atom, unsigned char color[3]) {
-    double ratio = atom.ke / atom.reference_ke;
-    if (ratio > 1)
-    {
-        ratio = 1;
-    }
-    else if (ratio < 0)
-    {
-        ratio = 0;
-    }
 
-    double red = ratio * 255.0;
-    double blue = (1.0 - ratio) * 255.0;
 
-    color[0] = static_cast<unsigned char>(red);
-    color[1] = 0; 
-    color[2] = static_cast<unsigned char>(blue);
 
-    // Calculate opacity based on redness
-    // Hotter atoms (redder) are more opaque
-    // Cooler atoms (bluer) are less opaque but have a minimum opacity
-    double min_opacity = 0.1;  // Minimum opacity (20% opaque)
-    double opacity_ratio = min_opacity + ratio * (1.0 - min_opacity);
-    color[3] = static_cast<unsigned char>(opacity_ratio * 255.0);  // Alpha component
-}
 
-// Timer callback for non-blocking animation
-class TimerCallback : public vtkCommand {
-public:
-    static TimerCallback* New() {
-        return new TimerCallback;
-    }
-
-    void Execute(vtkObject* caller, unsigned long eventId, void* callData) override {
-        if (!visualiser->pauseAnimation) {
-            for (int i = 0; i < visualiser->playback_speed; i++) {
-                bool success;
-                if (visualiser->playback_direction > 0) {
-                    success = simData->move_forward();
-                    if (!success) {
-                        // Wait for new frames or pause if simulation has ended
-                        break;
-                    }
-                } else {
-                    success = simData->move_backward();
-                    if (!success) {
-                        break;
-                    }
-                }
-                Frame frame = simData->get_current_frame();
-                performance_monitor.start_frame("Animation");
-                updateSceneWithFrame(frame);
-            }
-            renderWindow->Render();
-        }
-    }
-
-    SimulationData* simData;
-    vtkRenderWindow* renderWindow;
-    vtkRenderer* renderer;
-    vtkSmartPointer<vtkPolyData> polyData;
-    vtkSmartPointer<vtkTextActor> reading_actor;
-
-    MDVisualiser* visualiser;
-
-    // Function to update the scene
-    void updateSceneWithFrame(const Frame& frame) {
-        vtkPoints* points = polyData->GetPoints();
-        vtkUnsignedCharArray* colors = vtkUnsignedCharArray::SafeDownCast(polyData->GetPointData()->GetArray("Colors"));
-
-        size_t numAtoms = frame.all_atoms.size();
-
-        // Resize points and colors if number of atoms has changed
-        if (points->GetNumberOfPoints() != numAtoms) {
-            points->SetNumberOfPoints(numAtoms);
-            colors->SetNumberOfTuples(numAtoms);
-        }
-
-        for (vtkIdType i = 0; i < numAtoms; ++i) {
-            const Atom& atom = frame.all_atoms[i];
-            points->SetPoint(i, atom.x, atom.y, atom.z);
-
-            unsigned char color[4];
-            get_atom_color(atom, color);
-            colors->SetTypedTuple(i, color); 
-        }
-
-        points->Modified();
-        colors->Modified();
-
-        // Update text actor with simulation data
-        std::ostringstream oss;
-        oss << std::fixed << std::setprecision(3) << frame.time;
-        std::string time_string = oss.str();
-
-        std::ostringstream oss1;
-        oss1 << std::setprecision(4) << frame.te;
-        std::string te_string = oss1.str();
-        oss1.str("");
-        oss1.clear();
-        oss1 << std::setprecision(4) << frame.ke;
-        std::string ke_string = oss1.str();
-        oss1.str("");
-        oss1.clear();
-        oss1 << std::setprecision(4) << frame.pe;
-        std::string pe_string = oss1.str();
-        oss1.str("");
-        oss1.clear();
-        double average_ke = frame.ke / frame.all_atoms.size();
-        oss1 << std::setprecision(4) << average_ke;
-        std::string ake_string = oss1.str();
-
-        std::string reading = "Time: " + time_string + " ps " +
-                              " TE: " + te_string + " eV " +
-                              " KE: " + ke_string + " eV " +
-                              " PE: " + pe_string + " eV" +
-                              " Average KE: " + ake_string + " eV";
-        reading_actor->SetInput(reading.c_str());
-    }
-};
-
-// Function to initialize the polyData with atom positions and colors
-void initialise_polydata(const std::vector<Atom>& all_atoms, vtkSmartPointer<vtkPolyData>& polyData) {
-    vtkSmartPointer<vtkPoints> points = vtkSmartPointer<vtkPoints>::New();
-    vtkSmartPointer<vtkUnsignedCharArray> colors = vtkSmartPointer<vtkUnsignedCharArray>::New();
-    colors->SetNumberOfComponents(4);  // RGBA colors
-    colors->SetName("Colors");
-
-    for (const Atom& atom : all_atoms) {
-        points->InsertNextPoint(atom.x, atom.y, atom.z);
-
-        unsigned char color[4];
-        get_atom_color(atom, color);
-        colors->InsertNextTypedTuple(color); 
-    }
-
-    polyData->SetPoints(points);
-    polyData->GetPointData()->AddArray(colors);
-}
-
-// Function to handle keyboard events
-class KeyPressCallback : public vtkCommand {
-public:
-    static KeyPressCallback* New() {
-        return new KeyPressCallback;
-    }
-
-    virtual void Execute(vtkObject* caller, unsigned long eventId, void* callData) override {
-        vtkRenderWindowInteractor* interactor = static_cast<vtkRenderWindowInteractor*>(caller);
-        std::string key = interactor->GetKeySym();
-
-        if (key == "space") {
-            visualiser->pauseAnimation = !visualiser->pauseAnimation;
-            if (visualiser->pauseAnimation) {
-                std::cout << "Animation Paused" << std::endl;
-            } else {
-                std::cout << "Animation Resumed" << std::endl;
-            }
-        } else if (key == "plus" || key == "equal") {
-            adjustPlaybackSpeed(1);
-        } else if (key == "minus" || key == "underscore") {
-            adjustPlaybackSpeed(-1);
-        } else if (key == "r") {
-            visualiser->playback_direction *= -1;
-            if (visualiser->playback_direction > 0) {
-                std::cout << "Playback direction: forward" << std::endl;
-            } else {
-                std::cout << "Playback direction: backward" << std::endl;
-            }
-        }
-    }
-
-    void adjustPlaybackSpeed(int delta) {
-        visualiser->playback_speed = std::max(1, visualiser->playback_speed + delta);
-    }
-
-    MDVisualiser* visualiser;
-};
 
 #endif

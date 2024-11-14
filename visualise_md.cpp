@@ -26,6 +26,7 @@
 #include "Atom.h"
 #include "AtomGenerator.h"
 #include "SimulationConfig.h"
+#include "MDVisualiser.h"
 
 #include "simulation.h"
 #include "file_functions.h"
@@ -42,31 +43,29 @@
 #include <string>
 
 int main() {
+    // Create simulation configuration with default values
     SimulationConfig config;
     
     std::cout << "Setting up atoms" << std::endl << std::endl;
     std::vector<Atom> all_atoms;
     AtomGenerator atom_gen(config);
-
-    if (settings.get_atom_mode() == "generate") {
-        all_atoms = atom_gen.generate_fcc();
-    }
+    all_atoms = atom_gen.generate_fcc();
 
     // Add an impact atom if required
-    if (settings.get_add_impact_on()) {
-        atom_gen.add_impact_atom(all_atoms, settings.get_impact_surface());
+    if (config.add_impact_on) {
+        atom_gen.add_impact_atom(all_atoms, "top");
     }
 
     std::cout << "Atoms initialized: " << all_atoms.size() << std::endl;
 
-    // Create the simulation data
-    SimulationData simData(all_atoms, settings);
+    // Create the simulation data (will need to modify SimulationData to accept config instead of settings)
+    SimulationData simData(all_atoms, config);
 
     // Create the visualizer
     MDVisualiser visualiser(simData);
     
     // Start a separate thread for molecular dynamics simulation
-    std::thread simulationThread([&simData, &settings, &atom_gen]() {
+    std::thread simulationThread([&simData, &config, &atom_gen]() {
         int timesteps_per_frame = 5;
         while (true) {
             if (simData.buffer_full()) {
@@ -76,7 +75,7 @@ int main() {
             Frame frame = simData.get_latest_frame();
 
             performance_monitor.start_frame("Simulation");
-            frame = create_next_frame(frame, settings, timesteps_per_frame);
+            frame = create_next_frame(frame, config, timesteps_per_frame);
             simData.add_frame(frame);
         }
     });

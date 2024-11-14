@@ -58,7 +58,7 @@ class SimulationConfig
 
         // Atom properties
         double atom_radius;
-        // atom_mass moved to private
+
         
         // Simulation grid configuration
         int cubes_in_x;
@@ -75,6 +75,10 @@ class SimulationConfig
         // Energy conversion factors
         const double ev_to_j_per_mole = 96400.0;
         const double j_per_mole_to_ev = 1.037e-5;
+
+        // Simulation values
+        double sigma;
+        double rcutoff;
         
         // Getters and setters for moved variables
         double getAtomMass() const { return atom_mass; }
@@ -91,6 +95,12 @@ class SimulationConfig
 
         double getEpsilon() const { return epsilon; }
         void setEpsilon(double value) { epsilon = value; }
+
+        double getSigma() const { return sigma; }
+        void setSigma(double value) { sigma = value; }
+
+        double getRcutoff() const { return rcutoff; }
+        void setRcutoff(double value) { rcutoff = value; }
 
         double getVelocityScale() const { return velocity_scale; }
         
