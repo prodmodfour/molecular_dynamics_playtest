@@ -74,7 +74,6 @@ int main() {
             }
             Frame frame = simData.get_latest_frame();
 
-            performance_monitor.start_frame("Simulation");
             frame = create_next_frame(frame, config, timesteps_per_frame);
             simData.add_frame(frame);
         }
@@ -88,3 +87,4 @@ int main() {
 
     return 0;
 }
+
