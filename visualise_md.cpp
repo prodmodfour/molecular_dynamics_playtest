@@ -22,11 +22,11 @@
 #include <vtkFloatArray.h>
 #include <vtkPointData.h>
 #include <vtkUnsignedCharArray.h>
-#include "Settings.h"
 #include "Atom.h"
 #include "AtomGenerator.h"
 #include "SimulationConfig.h"
 #include "MDVisualiser.h"
+
 
 #include "simulation.h"
 #include "file_functions.h"

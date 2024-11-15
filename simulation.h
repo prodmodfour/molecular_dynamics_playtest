@@ -18,8 +18,8 @@
 #include "SimulationConfig.h"
 
 void zero_forces(std::vector<Atom> &all_atoms);
-double evaluate_forces(std::vector<Atom> &all_atoms, SimulationConfig config);
-double calculate_kinetic_energy(double sum_v_squared, SimulationConfig config);
+double evaluate_forces(std::vector<Atom> &all_atoms, const SimulationConfig& config);
+double calculate_kinetic_energy(double sum_v_squared, const SimulationConfig& config);
 
 Frame create_next_frame(Frame frame, SimulationConfig config, int timesteps_per_frame)
 {
