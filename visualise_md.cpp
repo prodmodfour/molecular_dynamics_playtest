@@ -26,6 +26,8 @@
 #include "AtomGenerator.h"
 #include "SimulationConfig.h"
 #include "MDVisualiser.h"
+#include <QApplication>
+#include "Launcher.h"
 
 
 #include "simulation.h"
@@ -42,49 +44,13 @@
 #include <map>
 #include <string>
 
-int main() {
-    // Create simulation configuration with default values
-    SimulationConfig config;
-    
-    std::cout << "Setting up atoms" << std::endl << std::endl;
-    std::vector<Atom> all_atoms;
-    AtomGenerator atom_gen(config);
-    all_atoms = atom_gen.generate_fcc();
+int main(int argc, char* argv[) {
+    QApplication app(argc, argv);
 
-    // Add an impact atom if required
-    if (config.add_impact_on) {
-        atom_gen.add_impact_atom(all_atoms, "top");
-    }
+    MainWindow mainWindow;
+    mainWindow.setWindowTitle("Simulation Configurator");
+    mainWindow.show();
 
-    std::cout << "Atoms initialized: " << all_atoms.size() << std::endl;
-
-    // Create the simulation data (will need to modify SimulationData to accept config instead of settings)
-    SimulationData simData(all_atoms, config);
-
-    // Create the visualizer
-    MDVisualiser visualiser(simData);
-    
-    // Start a separate thread for molecular dynamics simulation
-    std::thread simulationThread([&simData, &config, &atom_gen]() {
-        int timesteps_per_frame = 5;
-        while (true) {
-            if (simData.buffer_full()) {
-                std::this_thread::sleep_for(std::chrono::milliseconds(10));
-                continue;
-            }
-            Frame frame = simData.get_latest_frame();
-
-            frame = create_next_frame(frame, config, timesteps_per_frame);
-            simData.add_frame(frame);
-        }
-    });
-
-    // Launch the visualization
-    visualiser.launch();
-
-    // Join the simulation thread after visualization ends
-    simulationThread.join();
-
-    return 0;
+    return app.exec();
 }
 
