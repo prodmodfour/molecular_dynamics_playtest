@@ -257,6 +257,15 @@ void MDVisualiser::launch(SimulationData& simData) {
     renderer->GetActiveCamera()->Dolly(0.5);
     renderer->ResetCameraClippingRange();
 
+    // Enable alpha channel and disable multisampling
+    renderWindow->SetAlphaBitPlanes(1);
+    renderWindow->SetMultiSamples(0);
+
+    // Configure renderer for depth peeling
+    renderer->SetUseDepthPeeling(1);
+    renderer->SetMaximumNumberOfPeels(100);
+    renderer->SetOcclusionRatio(0.1);
+
     // Set up timer callback
     vtkSmartPointer<TimerCallback> timerCallback = vtkSmartPointer<TimerCallback>::New();
     timerCallback->visualiser = this;
