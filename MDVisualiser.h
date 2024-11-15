@@ -61,4 +61,6 @@ private:
     friend class KeyPressCallback;
 };
 
+extern std::mutex timeline_mutex;
+
 #endif

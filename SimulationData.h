@@ -6,8 +6,6 @@
 #include "SimulationConfig.h"
 #include <mutex>
 
-std::mutex timeline_mutex;
-
 class Frame
 {
     public:
