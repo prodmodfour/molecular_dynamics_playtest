@@ -204,39 +204,22 @@ void KeyPressCallback::adjustPlaybackSpeed(int delta) {
     visualiser->playback_speed = std::max(1, visualiser->playback_speed + delta);
 }
 
-MDVisualiser::MDVisualiser(SimulationData& sim_data) 
-    : simData(sim_data), 
-      all_atoms(sim_data.timeline[0].all_atoms),
-      pauseAnimation(false), 
-      playback_speed(1), 
-      playback_direction(1),
-      frame_rate(24) {
-    std::cout << "Initializing visualizer with " << all_atoms.size() << " atoms" << std::endl;
-    
-    // Print first atom position for verification
-    if (!all_atoms.empty()) {
-        std::cout << "First atom position: (" 
-                  << all_atoms[0].x << ", "
-                  << all_atoms[0].y << ", " 
-                  << all_atoms[0].z << ")" << std::endl;
-    }
-    
+MDVisualiser::MDVisualiser(SimulationData& sim_data, QWidget* parent)
+    : QMainWindow(parent), simData(sim_data), all_atoms(sim_data.timeline[0].all_atoms),
+      pauseAnimation(false), playback_speed(1), playback_direction(1), frame_rate(24) {
+
+    // Initialize VTK PolyData
     polyData = vtkSmartPointer<vtkPolyData>::New();
     initialise_polydata(all_atoms, polyData);
+
+
 }
 
 int MDVisualiser::launch() {
 
-     // Initialize Qt
-    int argc = 1;
-    char arg0[] = "MDVisualiserApp";
-    char* argv[] = { arg0, nullptr };
-    QApplication app(argc, argv);
-    QMainWindow mainWindow;
-    
-    // Create central widget (VTK widget)
-    QVTKOpenGLNativeWidget* vtkWidget = new QVTKOpenGLNativeWidget();
-    mainWindow.setCentralWidget(vtkWidget);
+    // Central widget
+    vtkWidget = new QVTKOpenGLNativeWidget(this);
+    setCentralWidget(vtkWidget);
 
     // Create the VTK components for rendering
     vtkNew<vtkNamedColors> colors;
@@ -283,7 +266,7 @@ int MDVisualiser::launch() {
         directionAction->setText(playback_direction > 0 ? "Direction: Forward" : "Direction: Backward");
     });
 
- // Create sphere source
+     // Create sphere source
     vtkSmartPointer<vtkSphereSource> sphereSource = vtkSmartPointer<vtkSphereSource>::New();
     double atom_radius = simData.config.atom_radius;
 
@@ -358,12 +341,6 @@ int MDVisualiser::launch() {
     // renderWindow->Render();
     // interactor->Start();
     
-    // Show the main window
-    mainWindow.resize(1280, 720);
-    mainWindow.show();
 
-    // Start the Qt event loop instead of VTK's
-    return app.exec();
-
-
+    show();
 } 

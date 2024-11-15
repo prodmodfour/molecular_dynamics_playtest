@@ -21,7 +21,7 @@ class KeyPressCallback;
 void get_atom_color(const Atom& atom, unsigned char color[4]);
 void initialise_polydata(const std::vector<Atom>& all_atoms, vtkSmartPointer<vtkPolyData>& polyData);
 
-// Timer callback class - keep the declaration but move implementation
+// Timer callback class 
 class TimerCallback : public vtkCommand {
 public:
     static TimerCallback* New();
@@ -36,7 +36,7 @@ public:
     MDVisualiser* visualiser;
 };
 
-// KeyPressCallback class - keep the declaration but move implementation
+// KeyPressCallback class 
 class KeyPressCallback : public vtkCommand {
 public:
     static KeyPressCallback* New();
@@ -45,12 +45,18 @@ public:
     MDVisualiser* visualiser;
 };
 
-class MDVisualiser {
+class MDVisualiser : public QMainWindow {
+    Q_OBJECT
+
 public:
-    MDVisualiser(SimulationData& sim_data);
-    int launch();
+    MDVisualiser(SimulationData& sim_data, QWidget* parent = nullptr);
+    void launch();
+
+
 
 private:
+
+    // Member variables
     SimulationData& simData;
     std::vector<Atom>& all_atoms;
     vtkSmartPointer<vtkPolyData> polyData;
@@ -58,6 +64,13 @@ private:
     int playback_speed;
     int playback_direction;
     int frame_rate;
+
+    // UI components
+    vtkRenderWindowInteractor* interactor;
+    vtkSmartPointer<vtkRenderer> renderer;
+    vtkSmartPointer<vtkPolyData> polyData;
+    vtkSmartPointer<vtkTextActor> reading_actor;
+    QVTKOpenGLNativeWidget* vtkWidget;
 
     friend class TimerCallback;
     friend class KeyPressCallback;
