@@ -253,6 +253,9 @@ void MDVisualiser::launch(SimulationData& simData) {
     // Set up interactor style
     vtkNew<vtkInteractorStyleTrackballCamera> style;
     interactor->SetInteractorStyle(style);
+    renderer->ResetCamera();
+    renderer->GetActiveCamera()->Dolly(0.5);
+    renderer->ResetCameraClippingRange();
 
     // Set up timer callback
     vtkSmartPointer<TimerCallback> timerCallback = vtkSmartPointer<TimerCallback>::New();
