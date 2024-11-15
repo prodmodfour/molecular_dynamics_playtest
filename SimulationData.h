@@ -1,6 +1,7 @@
 #ifndef __SimulationData_h
 #define __SimulationData_h
 #include <vector>
+#include <cmath>
 #include "Atom.h"
 #include "SimulationConfig.h"
 #include <mutex>

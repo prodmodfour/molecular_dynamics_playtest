@@ -9,6 +9,8 @@
 #include <vtkRenderer.h>
 #include <vtkRenderWindow.h>
 #include <vtkTextActor.h>
+#include <vtkTextProperty.h>
+
 
 // Forward declarations
 class MDVisualiser;
