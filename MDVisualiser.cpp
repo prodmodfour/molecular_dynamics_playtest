@@ -250,6 +250,10 @@ void MDVisualiser::launch(SimulationData& simData) {
     reading_actor->GetTextProperty()->SetColor(1.0, 1.0, 1.0);
     renderer->AddActor(reading_actor);
 
+    // Set up interactor style
+    vtkNew<vtkInteractorStyleTrackballCamera> style;
+    interactor->SetInteractorStyle(style);
+
     // Set up timer callback
     vtkSmartPointer<TimerCallback> timerCallback = vtkSmartPointer<TimerCallback>::New();
     timerCallback->visualiser = this;
