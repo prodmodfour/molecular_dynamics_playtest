@@ -5,6 +5,7 @@
 #include "Atom.h"
 #include "SimulationConfig.h"
 #include <mutex>
+#include "MDVisualiser.h"
 
 class Frame
 {
