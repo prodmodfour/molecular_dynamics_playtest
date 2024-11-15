@@ -12,9 +12,8 @@
 #include <vtkTextProperty.h>
 #include <mutex>
 #include <QMainWindow>
-#include <QVTKOpenGLNativeWidget>
 #include <vtkRenderWindowInteractor.h>
-
+#include <QVTKOpenGLNativeWidget.h>
 
 extern std::mutex timeline_mutex;
 
@@ -72,7 +71,6 @@ private:
     // UI components
     vtkRenderWindowInteractor* interactor;
     vtkSmartPointer<vtkRenderer> renderer;
-    vtkSmartPointer<vtkPolyData> polyData;
     vtkSmartPointer<vtkTextActor> reading_actor;
     QVTKOpenGLNativeWidget* vtkWidget;
 
