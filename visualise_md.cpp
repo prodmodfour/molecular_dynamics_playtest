@@ -62,7 +62,7 @@ int main() {
     SimulationData simData(all_atoms, config);
 
     // Create the visualizer
-    MDVisualiser visualiser();
+    MDVisualiser visualiser(simData);
     
     // Start a separate thread for molecular dynamics simulation
     std::thread simulationThread([&simData, &config, &atom_gen]() {
@@ -80,7 +80,7 @@ int main() {
     });
 
     // Launch the visualization
-    visualiser.launch(simData);
+    visualiser.launch();
 
     // Join the simulation thread after visualization ends
     simulationThread.join();
