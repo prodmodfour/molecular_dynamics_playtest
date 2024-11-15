@@ -6,6 +6,29 @@
 #include <vtkUnsignedCharArray.h>
 #include <iomanip>
 #include <sstream>
+#include <vtkAnimationCue.h>
+#include <vtkAnimationScene.h>
+#include <vtkCamera.h>
+#include <vtkCommand.h>
+#include <vtkLogger.h>
+#include <vtkActor.h>
+#include <vtkInteractorStyleTrackballCamera.h>
+#include <vtkNamedColors.h>
+#include <vtkNew.h>
+#include <vtkPolyDataMapper.h>
+#include <vtkProperty.h>
+#include <vtkRenderWindow.h>
+#include <vtkRenderWindowInteractor.h>
+#include <vtkRenderer.h>
+#include <vtkSmartPointer.h>
+#include <vtkSphereSource.h>
+#include <vtkVectorOperators.h>
+#include <vtkTextActor.h>
+#include <vtkTextProperty.h>
+#include <vtkGlyph3DMapper.h>
+#include <vtkFloatArray.h>
+#include <vtkPointData.h>
+#include <vtkUnsignedCharArray.h>
 
 std::mutex timeline_mutex;
 
