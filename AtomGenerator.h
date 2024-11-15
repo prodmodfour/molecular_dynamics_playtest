@@ -7,7 +7,7 @@
 #include <limits>
 #include <cmath>
 #include "Atom.h"
-#include "Settings.h"
+#include "SimulationConfig.h"
 
 class AtomGenerator {
 public:
