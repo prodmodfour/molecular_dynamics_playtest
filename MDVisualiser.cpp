@@ -191,15 +191,34 @@ void MDVisualiser::launch(SimulationData& simData) {
     vtkSmartPointer<vtkRenderer> renderer = vtkSmartPointer<vtkRenderer>::New();
     vtkSmartPointer<vtkRenderWindow> renderWindow = vtkSmartPointer<vtkRenderWindow>::New();
     renderWindow->AddRenderer(renderer);
+    renderWindow->SetWindowName("Molecular Dynamics Simulation");
+    renderWindow->SetSize(1280, 720);
     vtkSmartPointer<vtkRenderWindowInteractor> interactor = vtkSmartPointer<vtkRenderWindowInteractor>::New();
     interactor->SetRenderWindow(renderWindow);
 
-    // Create mapper and actor for atoms
-    vtkSmartPointer<vtkPolyDataMapper> mapper = vtkSmartPointer<vtkPolyDataMapper>::New();
-    mapper->SetInputData(polyData);
-    vtkSmartPointer<vtkActor> actor = vtkSmartPointer<vtkActor>::New();
-    actor->SetMapper(mapper);
-    renderer->AddActor(actor);
+ // Create sphere source
+    vtkSmartPointer<vtkSphereSource> sphereSource = vtkSmartPointer<vtkSphereSource>::New();
+    double atom_radius = settings.get_atom_radius();
+
+    std::cout << "Atom radius: " << atom_radius << std::endl;
+    sphereSource->SetRadius(atom_radius);
+
+    // Set up glyph mapper
+    vtkSmartPointer<vtkGlyph3DMapper> glyphMapper = vtkSmartPointer<vtkGlyph3DMapper>::New();
+    glyphMapper->SetInputData(polyData);
+    glyphMapper->SetSourceConnection(sphereSource->GetOutputPort());
+    glyphMapper->ScalarVisibilityOn();
+    glyphMapper->SetScalarModeToUsePointFieldData();
+    glyphMapper->SelectColorArray("Colors");
+    glyphMapper->SetColorModeToDirectScalars();
+    glyphMapper->SetUseLookupTableScalarRange(false);
+
+    // Create actor and add to renderer
+    vtkSmartPointer<vtkActor> glyphActor = vtkSmartPointer<vtkActor>::New();
+    glyphActor->SetMapper(glyphMapper);
+    // Enable per-vertex opacity
+    glyphActor->GetProperty()->SetOpacity(1.0);
+    renderer->AddActor(glyphActor);
 
     // Create and position text actor for readings
     vtkSmartPointer<vtkTextActor> reading_actor = vtkSmartPointer<vtkTextActor>::New();
@@ -227,12 +246,14 @@ void MDVisualiser::launch(SimulationData& simData) {
     int frame_interval = static_cast<int>(1000.0 / frame_rate);  // Convert fps to milliseconds
     int timerId = interactor->CreateRepeatingTimer(frame_interval);
     interactor->AddObserver(vtkCommand::TimerEvent, timerCallback);
+    
+    // Add this debug output
+    std::cout << "Number of actors in renderer: " << renderer->GetActors()->GetNumberOfItems() << std::endl;
 
     // Set background color and start the interaction
     renderer->SetBackground(0.0, 0.0, 0.0);
     renderWindow->Render();
     interactor->Start();
-    
-    // Add this debug output
-    std::cout << "Number of actors in renderer: " << renderer->GetActors()->GetNumberOfItems() << std::endl;
+
+
 } 
