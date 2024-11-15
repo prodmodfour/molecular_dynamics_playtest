@@ -257,7 +257,6 @@ int MDVisualiser::launch() {
 
     // Add play/pause button (declare before start button)
     QAction* playPauseAction = toolbar->addAction("Pause");
-    playPauseAction->setEnabled(false);
     QObject::connect(playPauseAction, &QAction::triggered, [this, playPauseAction]() {
         pauseAnimation = !pauseAnimation;
         playPauseAction->setText(pauseAnimation ? "Play" : "Pause");
