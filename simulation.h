@@ -35,8 +35,8 @@ Frame create_next_frame(Frame frame, SimulationConfig config, int timesteps_per_
     double fxi, fyi, fzi;
     double delta_vxi, delta_vyi, delta_vzi;
     int total_timesteps = timesteps_per_frame;
-    double velocity_scale = config.velocity_scale;
-    double timestep_size = config.simulation_timestep_size;
+    double velocity_scale = config.getVelocityScale();
+    double timestep_size = config.getSimulationTimestepSize();
 
     // Leapfrog Verlet Algorithm
     for (int timestep = 0; timestep < total_timesteps; timestep++)
@@ -126,7 +126,7 @@ double evaluate_forces(std::vector<Atom> &all_atoms, const SimulationConfig& con
 
  potential_energy = 0;
 
- double epsilon = config.epsilon;
+ double epsilon = config.getEpsilon();
  double sigma = config.sigma;
  // We will only ever have to deal with Cu-Cu interactions
  epsilon4 = 4 * epsilon;
@@ -221,7 +221,7 @@ double evaluate_forces(std::vector<Atom> &all_atoms, const SimulationConfig& con
 double calculate_kinetic_energy(double sum_v_squared, SimulationConfig config)
 {
     double kinetic_energy;
-    double atom_mass = config.atom_mass;
+    double atom_mass = config.getAtomMass();
     kinetic_energy = 0.5*atom_mass*sum_v_squared;
     
     // Convert to eV
