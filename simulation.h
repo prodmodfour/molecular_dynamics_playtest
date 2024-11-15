@@ -211,7 +211,7 @@ double evaluate_forces(std::vector<Atom> &all_atoms, const SimulationConfig& con
     potential_energy *= epsilon4;
 
     // Convert to eV
-    double j_per_mole_to_ev = settings.get_j_per_mole_to_ev();
+    double j_per_mole_to_ev = config.j_per_mole_to_ev;
     potential_energy *= j_per_mole_to_ev;
 
     return potential_energy;
