@@ -30,6 +30,22 @@
 #include <vtkPointData.h>
 #include <vtkUnsignedCharArray.h>
 
+#include <QApplication>
+#include <QMainWindow>
+#include <QVTKOpenGLNativeWidget.h>
+#include <QToolBar>
+#include <QAction>
+#include <QSlider>
+#include <QLabel>
+#include <vtkGenericOpenGLRenderWindow.h>
+#include <QDockWidget>
+#include <QGroupBox>
+#include <QVBoxLayout>
+#include <QHBoxLayout>
+#include <QDoubleSpinBox>
+#include <QCheckBox>
+#include <QComboBox>
+
 std::mutex timeline_mutex;
 
 void get_atom_color(const Atom& atom, unsigned char color[3]) {
@@ -210,14 +226,62 @@ MDVisualiser::MDVisualiser(SimulationData& sim_data)
 }
 
 void MDVisualiser::launch(SimulationData& simData) {
-    // Create the renderer, render window, and interactor
+
+     // Initialize Qt
+    int argc = 0;
+    char **argv = nullptr;
+    QApplication app(argc, argv);
+    QMainWindow mainWindow;
+    
+    // Create central widget (VTK widget)
+    QVTKOpenGLNativeWidget* vtkWidget = new QVTKOpenGLNativeWidget();
+    mainWindow.setCentralWidget(vtkWidget);
+
+    // Create the VTK components for rendering
+    vtkNew<vtkNamedColors> colors;
+    vtkNew<vtkGenericOpenGLRenderWindow> renderWindow;
+    vtkWidget->setRenderWindow(renderWindow);  // Connect the VTK window to the Qt widget
+
+    vtkRenderWindowInteractor* renderWindowInteractor = vtkWidget->interactor();
+
+    // Create the renderer, render window
     vtkSmartPointer<vtkRenderer> renderer = vtkSmartPointer<vtkRenderer>::New();
-    vtkSmartPointer<vtkRenderWindow> renderWindow = vtkSmartPointer<vtkRenderWindow>::New();
     renderWindow->AddRenderer(renderer);
     renderWindow->SetWindowName("Molecular Dynamics Simulation");
     renderWindow->SetSize(1280, 720);
-    vtkSmartPointer<vtkRenderWindowInteractor> interactor = vtkSmartPointer<vtkRenderWindowInteractor>::New();
-    interactor->SetRenderWindow(renderWindow);
+
+     // Create toolbar
+    QToolBar* toolbar = new QToolBar();
+    mainWindow.addToolBar(toolbar);
+
+    // Add play/pause button (declare before start button)
+    QAction* playPauseAction = toolbar->addAction("Pause");
+    playPauseAction->setEnabled(false);
+    QObject::connect(playPauseAction, &QAction::triggered, [playPauseAction]() {
+        pauseAnimation = !pauseAnimation;
+        playPauseAction->setText(pauseAnimation ? "Play" : "Pause");
+        std::cout << (pauseAnimation ? "Animation Paused" : "Animation Resumed") << std::endl;
+    });
+
+    // Add speed control slider
+    QSlider* speedSlider = new QSlider(Qt::Horizontal);
+    speedSlider->setMinimum(1);
+    speedSlider->setMaximum(10);
+    speedSlider->setValue(playback_speed);
+    QLabel* speedLabel = new QLabel("Speed: 1x");
+    toolbar->addWidget(speedLabel);
+    toolbar->addWidget(speedSlider);
+    QObject::connect(speedSlider, &QSlider::valueChanged, [speedLabel](int value) {
+        playback_speed = value;
+        speedLabel->setText(QString("Speed: %1x").arg(value));
+    });
+
+    // Direction toggle button
+    QAction* directionAction = toolbar->addAction("Direction: Forward");
+    QObject::connect(directionAction, &QAction::triggered, [&directionAction]() {
+        playback_direction *= -1;
+        directionAction->setText(playback_direction > 0 ? "Direction: Forward" : "Direction: Backward");
+    });
 
  // Create sphere source
     vtkSmartPointer<vtkSphereSource> sphereSource = vtkSmartPointer<vtkSphereSource>::New();
@@ -291,8 +355,15 @@ void MDVisualiser::launch(SimulationData& simData) {
 
     // Set background color and start the interaction
     renderer->SetBackground(0.0, 0.0, 0.0);
-    renderWindow->Render();
-    interactor->Start();
+    // renderWindow->Render();
+    // interactor->Start();
+    
+    // Show the main window
+    mainWindow.resize(1280, 720);
+    mainWindow.show();
+
+    // Start the Qt event loop instead of VTK's
+    return app.exec();
 
 
 } 
