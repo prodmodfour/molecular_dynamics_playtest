@@ -229,7 +229,8 @@ int MDVisualiser::launch() {
 
      // Initialize Qt
     int argc = 1;
-    char* argv[] = { "MDVisualiserApp", nullptr };
+    char arg0[] = "MDVisualiserApp";
+    char* argv[] = { arg0, nullptr };
     QApplication app(argc, argv);
     QMainWindow mainWindow;
     
