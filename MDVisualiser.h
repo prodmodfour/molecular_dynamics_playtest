@@ -18,7 +18,7 @@ extern std::mutex timeline_mutex;
 class MDVisualiser;
 class TimerCallback;
 class KeyPressCallback;
-void get_atom_color(const Atom& atom, unsigned char color[3]);
+void get_atom_color(const Atom& atom, unsigned char color[4]);
 void initialise_polydata(const std::vector<Atom>& all_atoms, vtkSmartPointer<vtkPolyData>& polyData);
 
 // Timer callback class - keep the declaration but move implementation
@@ -48,7 +48,7 @@ public:
 class MDVisualiser {
 public:
     MDVisualiser(SimulationData& sim_data);
-    void launch(SimulationData& simData);
+    int launch();
 
 private:
     SimulationData& simData;

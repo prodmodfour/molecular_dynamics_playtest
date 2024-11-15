@@ -48,7 +48,7 @@
 
 std::mutex timeline_mutex;
 
-void get_atom_color(const Atom& atom, unsigned char color[3]) {
+void get_atom_color(const Atom& atom, unsigned char color[4]){
     double ratio = atom.ke / atom.reference_ke;
     if (ratio > 1) {
         ratio = 1;
@@ -225,11 +225,11 @@ MDVisualiser::MDVisualiser(SimulationData& sim_data)
     initialise_polydata(all_atoms, polyData);
 }
 
-void MDVisualiser::launch(SimulationData& simData) {
+int MDVisualiser::launch() {
 
      // Initialize Qt
-    int argc = 0;
-    char **argv = nullptr;
+    int argc = 1;
+    char* argv[] = { "MDVisualiserApp", nullptr };
     QApplication app(argc, argv);
     QMainWindow mainWindow;
     
@@ -242,7 +242,7 @@ void MDVisualiser::launch(SimulationData& simData) {
     vtkNew<vtkGenericOpenGLRenderWindow> renderWindow;
     vtkWidget->setRenderWindow(renderWindow);  // Connect the VTK window to the Qt widget
 
-    vtkRenderWindowInteractor* renderWindowInteractor = vtkWidget->interactor();
+    vtkRenderWindowInteractor* interactor = vtkWidget->interactor();
 
     // Create the renderer, render window
     vtkSmartPointer<vtkRenderer> renderer = vtkSmartPointer<vtkRenderer>::New();
@@ -257,7 +257,7 @@ void MDVisualiser::launch(SimulationData& simData) {
     // Add play/pause button (declare before start button)
     QAction* playPauseAction = toolbar->addAction("Pause");
     playPauseAction->setEnabled(false);
-    QObject::connect(playPauseAction, &QAction::triggered, [playPauseAction]() {
+    QObject::connect(playPauseAction, &QAction::triggered, [this, playPauseAction]() {
         pauseAnimation = !pauseAnimation;
         playPauseAction->setText(pauseAnimation ? "Play" : "Pause");
         std::cout << (pauseAnimation ? "Animation Paused" : "Animation Resumed") << std::endl;
@@ -271,14 +271,14 @@ void MDVisualiser::launch(SimulationData& simData) {
     QLabel* speedLabel = new QLabel("Speed: 1x");
     toolbar->addWidget(speedLabel);
     toolbar->addWidget(speedSlider);
-    QObject::connect(speedSlider, &QSlider::valueChanged, [speedLabel](int value) {
+    QObject::connect(speedSlider, &QSlider::valueChanged, [this, speedLabel](int value) {
         playback_speed = value;
         speedLabel->setText(QString("Speed: %1x").arg(value));
     });
 
     // Direction toggle button
     QAction* directionAction = toolbar->addAction("Direction: Forward");
-    QObject::connect(directionAction, &QAction::triggered, [&directionAction]() {
+    QObject::connect(directionAction, &QAction::triggered, [this, directionAction]() {
         playback_direction *= -1;
         directionAction->setText(playback_direction > 0 ? "Direction: Forward" : "Direction: Backward");
     });
