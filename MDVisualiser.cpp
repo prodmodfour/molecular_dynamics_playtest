@@ -232,12 +232,6 @@ void MDVisualiser::launch(SimulationData& simData) {
     renderer->SetBackground(0.0, 0.0, 0.0);
     renderWindow->Render();
     interactor->Start();
-
-     // Add camera positioning
-    vtkCamera* camera = renderer->GetActiveCamera();
-    camera->SetPosition(0, 0, 100);  // Adjust these values based on your scene size
-    camera->SetFocalPoint(0, 0, 0);
-    camera->SetViewUp(0, 1, 0);
     
     // Add this debug output
     std::cout << "Number of actors in renderer: " << renderer->GetActors()->GetNumberOfItems() << std::endl;
