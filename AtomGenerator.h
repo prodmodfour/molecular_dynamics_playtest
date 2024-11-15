@@ -173,7 +173,7 @@ void AtomGenerator::add_impact_atom(std::vector<Atom>& atom_block, const std::st
 
     // Calculate velocities based on energy shares
     double ev_to_j_per_mole = config.ev_to_j_per_mole;
-    double atom_mass = config.atom_mass;
+    double atom_mass = config.getAtomMass();
     double applied_energy = config.energy_applied_to_impact_atom * ev_to_j_per_mole;
 
     double x_energy_share = config.impact_atom_x_energy_share;
@@ -366,7 +366,7 @@ void AtomGenerator::add_random_impact_atom(std::vector<Atom>& atom_block, const 
 
     // Compute the velocity magnitude based on the applied energy
     double ev_to_j_per_mole = 96400.0; // EV_TO_J_PER_MOLE constant
-    double atom_mass = config.atom_mass;
+    double atom_mass = config.getAtomMass();
     double applied_energy = config.energy_applied_to_impact_atom * ev_to_j_per_mole;
 
     double velocity_magnitude = std::sqrt((2.0 * applied_energy) / atom_mass);
