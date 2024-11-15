@@ -39,6 +39,7 @@ class SimulationData
         std::vector<Frame> timeline;
         int current_index;
         int max_buffer_frames;
+        SimulationConfig config;
 
 
         SimulationData(std::vector<Atom> all_atoms, SimulationConfig& config)
@@ -56,7 +57,7 @@ class SimulationData
             Frame frame(all_atoms, ke, pe, ke + pe, time);
             add_frame(frame);
             max_buffer_frames = 10000;
-
+            this->config = config;
         }
 
         void add_frame(Frame frame)

@@ -221,7 +221,7 @@ void MDVisualiser::launch(SimulationData& simData) {
 
  // Create sphere source
     vtkSmartPointer<vtkSphereSource> sphereSource = vtkSmartPointer<vtkSphereSource>::New();
-    double atom_radius = config.atom_radius;
+    double atom_radius = simData.config.atom_radius;
 
     std::cout << "Atom radius: " << atom_radius << std::endl;
     sphereSource->SetRadius(atom_radius);
