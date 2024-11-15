@@ -172,6 +172,16 @@ MDVisualiser::MDVisualiser(SimulationData& sim_data)
       playback_speed(1), 
       playback_direction(1),
       frame_rate(24) {
+    std::cout << "Initializing visualizer with " << all_atoms.size() << " atoms" << std::endl;
+    
+    // Print first atom position for verification
+    if (!all_atoms.empty()) {
+        std::cout << "First atom position: (" 
+                  << all_atoms[0].x << ", "
+                  << all_atoms[0].y << ", " 
+                  << all_atoms[0].z << ")" << std::endl;
+    }
+    
     polyData = vtkSmartPointer<vtkPolyData>::New();
     initialise_polydata(all_atoms, polyData);
 }
@@ -222,4 +232,13 @@ void MDVisualiser::launch(SimulationData& simData) {
     renderer->SetBackground(0.0, 0.0, 0.0);
     renderWindow->Render();
     interactor->Start();
+
+     // Add camera positioning
+    vtkCamera* camera = renderer->GetActiveCamera();
+    camera->SetPosition(0, 0, 100);  // Adjust these values based on your scene size
+    camera->SetFocalPoint(0, 0, 0);
+    camera->SetViewUp(0, 1, 0);
+    
+    // Add this debug output
+    std::cout << "Number of actors in renderer: " << renderer->GetActors()->GetNumberOfItems() << std::endl;
 } 
