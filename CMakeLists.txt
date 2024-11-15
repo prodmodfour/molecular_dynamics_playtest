@@ -24,7 +24,7 @@ find_package(Qt6 COMPONENTS
 
 # Define executable
 add_executable(visualise_md
-    visualise_md.cpp
+    main.cpp
     MDVisualiser.cpp
     Launcher.cpp
 )
