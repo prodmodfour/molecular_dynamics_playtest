@@ -77,8 +77,8 @@ class SimulationConfig
         double impact_atom_z_offset;
         
         // Energy conversion factors
-        const double ev_to_j_per_mole = 96400.0;
-        const double j_per_mole_to_ev = 1.037e-5;
+        double ev_to_j_per_mole = 96400.0;
+        double j_per_mole_to_ev = 1.037e-5;
 
         // Simulation values
         double sigma;
