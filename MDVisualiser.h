@@ -11,6 +11,12 @@
 #include <vtkTextActor.h>
 #include <vtkTextProperty.h>
 #include <mutex>
+#include <QApplication>
+#include <QMainWindow>
+#include <QToolBar>
+#include <QAction>
+#include <QTimer>
+#include <QVTKOpenGLNativeWidget.h>
 
 extern std::mutex timeline_mutex;
 

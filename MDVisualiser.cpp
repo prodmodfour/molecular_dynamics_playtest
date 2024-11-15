@@ -30,6 +30,22 @@
 #include <vtkPointData.h>
 #include <vtkUnsignedCharArray.h>
 
+#include <QApplication>
+#include <QMainWindow>
+#include <QVTKOpenGLNativeWidget.h>
+#include <QToolBar>
+#include <QAction>
+#include <QSlider>
+#include <QLabel>
+#include <vtkGenericOpenGLRenderWindow.h>
+#include <QDockWidget>
+#include <QGroupBox>
+#include <QVBoxLayout>
+#include <QHBoxLayout>
+#include <QDoubleSpinBox>
+#include <QCheckBox>
+#include <QComboBox>
+
 std::mutex timeline_mutex;
 
 void get_atom_color(const Atom& atom, unsigned char color[3]) {
@@ -210,20 +226,31 @@ MDVisualiser::MDVisualiser(SimulationData& sim_data)
 }
 
 void MDVisualiser::launch(SimulationData& simData) {
-    // Create the renderer, render window, and interactor
-    vtkSmartPointer<vtkRenderer> renderer = vtkSmartPointer<vtkRenderer>::New();
-    vtkSmartPointer<vtkRenderWindow> renderWindow = vtkSmartPointer<vtkRenderWindow>::New();
-    renderWindow->AddRenderer(renderer);
-    renderWindow->SetWindowName("Molecular Dynamics Simulation");
-    renderWindow->SetSize(1280, 720);
-    vtkSmartPointer<vtkRenderWindowInteractor> interactor = vtkSmartPointer<vtkRenderWindowInteractor>::New();
-    interactor->SetRenderWindow(renderWindow);
+    // Create the Qt Application
+    int argc = 0;
+    char *argv[] = {};
+    QApplication app(argc, argv);
 
- // Create sphere source
+    // Create the main window
+    QMainWindow mainWindow;
+    mainWindow.setWindowTitle("Molecular Dynamics Simulation");
+
+    // Create a QVTKOpenGLNativeWidget
+    QVTKOpenGLNativeWidget *vtkWidget = new QVTKOpenGLNativeWidget(&mainWindow);
+
+    // Set up the VTK renderer and render window
+    vtkSmartPointer<vtkRenderer> renderer = vtkSmartPointer<vtkRenderer>::New();
+    vtkSmartPointer<vtkGenericOpenGLRenderWindow> renderWindow =
+        vtkSmartPointer<vtkGenericOpenGLRenderWindow>::New();
+    renderWindow->AddRenderer(renderer);
+
+    // Set the render window to the VTK widget
+    vtkWidget->setRenderWindow(renderWindow);
+
+    // Set up the rest of your VTK pipeline as before
+    // Create sphere source
     vtkSmartPointer<vtkSphereSource> sphereSource = vtkSmartPointer<vtkSphereSource>::New();
     double atom_radius = simData.config.atom_radius;
-
-    std::cout << "Atom radius: " << atom_radius << std::endl;
     sphereSource->SetRadius(atom_radius);
 
     // Set up glyph mapper
@@ -239,7 +266,6 @@ void MDVisualiser::launch(SimulationData& simData) {
     // Create actor and add to renderer
     vtkSmartPointer<vtkActor> glyphActor = vtkSmartPointer<vtkActor>::New();
     glyphActor->SetMapper(glyphMapper);
-    // Enable per-vertex opacity
     glyphActor->GetProperty()->SetOpacity(1.0);
     renderer->AddActor(glyphActor);
 
@@ -251,8 +277,9 @@ void MDVisualiser::launch(SimulationData& simData) {
     renderer->AddActor(reading_actor);
 
     // Set up interactor style
-    vtkNew<vtkInteractorStyleTrackballCamera> style;
-    interactor->SetInteractorStyle(style);
+    vtkSmartPointer<vtkInteractorStyleTrackballCamera> style =
+        vtkSmartPointer<vtkInteractorStyleTrackballCamera>::New();
+    vtkWidget->interactor()->SetInteractorStyle(style);
     renderer->ResetCamera();
     renderer->GetActiveCamera()->Dolly(0.5);
     renderer->ResetCameraClippingRange();
@@ -266,7 +293,10 @@ void MDVisualiser::launch(SimulationData& simData) {
     renderer->SetMaximumNumberOfPeels(100);
     renderer->SetOcclusionRatio(0.1);
 
-    // Set up timer callback
+    // Set background color
+    renderer->SetBackground(0.0, 0.0, 0.0);
+
+    // Create a timer callback
     vtkSmartPointer<TimerCallback> timerCallback = vtkSmartPointer<TimerCallback>::New();
     timerCallback->visualiser = this;
     timerCallback->simData = &simData;
@@ -275,24 +305,58 @@ void MDVisualiser::launch(SimulationData& simData) {
     timerCallback->polyData = polyData;
     timerCallback->reading_actor = reading_actor;
 
-    // Set up keyboard callback
-    vtkSmartPointer<KeyPressCallback> keyCallback = vtkSmartPointer<KeyPressCallback>::New();
-    keyCallback->visualiser = this;
-    interactor->AddObserver(vtkCommand::KeyPressEvent, keyCallback);
-
-    // Set up the animation timer
-    interactor->Initialize();
+    // Set up the animation timer using QTimer
     int frame_interval = static_cast<int>(1000.0 / frame_rate);  // Convert fps to milliseconds
-    int timerId = interactor->CreateRepeatingTimer(frame_interval);
-    interactor->AddObserver(vtkCommand::TimerEvent, timerCallback);
-    
-    // Add this debug output
-    std::cout << "Number of actors in renderer: " << renderer->GetActors()->GetNumberOfItems() << std::endl;
+    QTimer *timer = new QTimer(this);
+    connect(timer, &QTimer::timeout, [=]() {
+        timerCallback->Execute(nullptr, vtkCommand::TimerEvent, nullptr);
+    });
+    timer->start(frame_interval);
 
-    // Set background color and start the interaction
-    renderer->SetBackground(0.0, 0.0, 0.0);
-    renderWindow->Render();
-    interactor->Start();
+    // Create a toolbar and add actions
+    QToolBar *toolBar = new QToolBar(&mainWindow);
 
+    QAction *pauseAction = new QAction("Pause", &mainWindow);
+    toolBar->addAction(pauseAction);
+    connect(pauseAction, &QAction::triggered, [=]() {
+        pauseAnimation = !pauseAnimation;
+        if (pauseAnimation) {
+            pauseAction->setText("Resume");
+        } else {
+            pauseAction->setText("Pause");
+        }
+    });
 
+    QAction *speedUpAction = new QAction("Speed Up", &mainWindow);
+    toolBar->addAction(speedUpAction);
+    connect(speedUpAction, &QAction::triggered, [=]() {
+        playback_speed++;
+        std::cout << "Playback speed: " << playback_speed << std::endl;
+    });
+
+    QAction *slowDownAction = new QAction("Slow Down", &mainWindow);
+    toolBar->addAction(slowDownAction);
+    connect(slowDownAction, &QAction::triggered, [=]() {
+        playback_speed = std::max(1, playback_speed - 1);
+        std::cout << "Playback speed: " << playback_speed << std::endl;
+    });
+
+    QAction *reverseAction = new QAction("Reverse", &mainWindow);
+    toolBar->addAction(reverseAction);
+    connect(reverseAction, &QAction::triggered, [=]() {
+        playback_direction *= -1;
+        if (playback_direction > 0) {
+            std::cout << "Playback direction: forward" << std::endl;
+        } else {
+            std::cout << "Playback direction: backward" << std::endl;
+        }
+    });
+
+    // Add the toolbar and VTK widget to the main window
+    mainWindow.addToolBar(toolBar);
+    mainWindow.setCentralWidget(vtkWidget);
+    mainWindow.show();
+
+    // Start the Qt event loop
+    app.exec();
 } 
