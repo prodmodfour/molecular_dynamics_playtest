@@ -7,6 +7,8 @@
 #include <iomanip>
 #include <sstream>
 
+std::mutex timeline_mutex;
+
 void get_atom_color(const Atom& atom, unsigned char color[3]) {
     double ratio = atom.ke / atom.reference_ke;
     if (ratio > 1) {

@@ -218,7 +218,7 @@ double evaluate_forces(std::vector<Atom> &all_atoms, const SimulationConfig& con
 
 }
 
-double calculate_kinetic_energy(double sum_v_squared, SimulationConfig& config)
+double calculate_kinetic_energy(double sum_v_squared, const SimulationConfig& config)
 {
     double kinetic_energy;
     double atom_mass = config.getAtomMass();
