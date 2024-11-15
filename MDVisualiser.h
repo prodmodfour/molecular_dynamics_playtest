@@ -10,7 +10,9 @@
 #include <vtkRenderWindow.h>
 #include <vtkTextActor.h>
 #include <vtkTextProperty.h>
+#include <mutex>
 
+extern std::mutex timeline_mutex;
 
 // Forward declarations
 class MDVisualiser;
@@ -61,6 +63,6 @@ private:
     friend class KeyPressCallback;
 };
 
-extern std::mutex timeline_mutex;
+
 
 #endif

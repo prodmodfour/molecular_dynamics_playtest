@@ -7,6 +7,7 @@
 #include <mutex>
 #include "MDVisualiser.h"
 
+extern std::mutex timeline_mutex;
 class Frame
 {
     public:
