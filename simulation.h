@@ -10,20 +10,19 @@
 #include <chrono>
 #include <thread>
 #include <cstdlib>
-// #include <vtkTextActor.h>
-// #include <vtkTextProperty.h>
+
 
 #include "Settings.h"
 #include "Atom.h"
 #include "SimulationData.h"
+#include "SimulationConfig.h"
 
 void zero_forces(std::vector<Atom> &all_atoms);
-double evaluate_forces(std::vector<Atom> &all_atoms, Settings settings);
-double calculate_kinetic_energy(double sum_v_squared, Settings settings);
+double evaluate_forces(std::vector<Atom> &all_atoms, SimulationConfig config);
+double calculate_kinetic_energy(double sum_v_squared, SimulationConfig config);
 
-Frame create_next_frame(Frame frame, Settings settings, int timesteps_per_frame)
+Frame create_next_frame(Frame frame, SimulationConfig config, int timesteps_per_frame)
 {
-
     std::vector<Atom> all_atoms = frame.all_atoms;
     double time = frame.time;
 
@@ -36,8 +35,8 @@ Frame create_next_frame(Frame frame, Settings settings, int timesteps_per_frame)
     double fxi, fyi, fzi;
     double delta_vxi, delta_vyi, delta_vzi;
     int total_timesteps = timesteps_per_frame;
-    double velocity_scale = settings.get_velocity_scale();
-    double timestep_size = settings.get_simulation_timestep_size();
+    double velocity_scale = config.velocity_scale;
+    double timestep_size = config.simulation_timestep_size;
 
     // Leapfrog Verlet Algorithm
     for (int timestep = 0; timestep < total_timesteps; timestep++)
@@ -47,8 +46,7 @@ Frame create_next_frame(Frame frame, Settings settings, int timesteps_per_frame)
 
         total_kinetic_energy = 0.0;
 
-
-        potential_energy = evaluate_forces(all_atoms, settings);
+        potential_energy = evaluate_forces(all_atoms, config);
 
         // Simulate Atom Trajectory
         for (int i = 0; i < all_atoms.size(); i++)
@@ -81,23 +79,16 @@ Frame create_next_frame(Frame frame, Settings settings, int timesteps_per_frame)
             vyi3 = (vyi + vyi2) / 2;
             vzi3 = (vzi + vzi2) / 2;
             v_squared = vxi3*vxi3 + vyi3*vyi3 + vzi3*vzi3;
-            all_atoms[i].ke = calculate_kinetic_energy(v_squared, settings);
+            all_atoms[i].ke = calculate_kinetic_energy(v_squared, config);
             total_kinetic_energy += all_atoms[i].ke;
-
-
 
             // Update velocities
             all_atoms[i].vx = vxi2;
             all_atoms[i].vy = vyi2;
             all_atoms[i].vz = vzi2;
-
-            
-    }
+        }
         average_ke = total_kinetic_energy / all_atoms.size();
         time += timestep_size;
-
-
-        
     }
 
     auto end = std::chrono::high_resolution_clock::now();
@@ -106,7 +97,6 @@ Frame create_next_frame(Frame frame, Settings settings, int timesteps_per_frame)
     // std::cout << duration.count() << "s " << std::endl;
 
     Frame new_frame(all_atoms, total_kinetic_energy, potential_energy, total_kinetic_energy + potential_energy, time);
-
 
     return new_frame;
 }
@@ -123,7 +113,7 @@ void zero_forces(std::vector<Atom> &all_atoms)
     }
 }
 
-double evaluate_forces(std::vector<Atom> &all_atoms, Settings settings)
+double evaluate_forces(std::vector<Atom> &all_atoms, const SimulationConfig& config)
 {
  double xi, yi, zi;
  double xj, yj, zj;
@@ -136,20 +126,18 @@ double evaluate_forces(std::vector<Atom> &all_atoms, Settings settings)
 
  potential_energy = 0;
 
-
- double epsilon = settings.get_epsilon();
- double sigma = settings.get_sigma();
+ double epsilon = config.epsilon;
+ double sigma = config.sigma;
  // We will only ever have to deal with Cu-Cu interactions
  epsilon4 = 4 * epsilon;
  epsilon24 = 24 * epsilon;
  sigma_squared = sigma * sigma;
 
-double r_cutoff = settings.get_rcutoff();
-double r_cutoff_squared = r_cutoff * r_cutoff;
+ double r_cutoff = config.rcutoff;
+ double r_cutoff_squared = r_cutoff * r_cutoff;
  // Find forces from every unique pair interaction
  for (int i = 0; i < all_atoms.size(); i++)
  {
-
     xi = all_atoms[i].x;
     yi = all_atoms[i].y;
     zi = all_atoms[i].z;
@@ -212,11 +200,6 @@ double r_cutoff_squared = r_cutoff * r_cutoff;
         all_atoms[j].fy -= fyij;
         all_atoms[j].fz -= fzij;          
     }
-
-
-    
-    
-
  }
     for (int i = 0; i < all_atoms.size(); i++)
     {
@@ -235,14 +218,14 @@ double r_cutoff_squared = r_cutoff * r_cutoff;
 
 }
 
-double calculate_kinetic_energy(double sum_v_squared, Settings settings)
+double calculate_kinetic_energy(double sum_v_squared, SimulationConfig config)
 {
     double kinetic_energy;
-    double atom_mass = settings.get_atom_mass();
+    double atom_mass = config.atom_mass;
     kinetic_energy = 0.5*atom_mass*sum_v_squared;
     
     // Convert to eV
-    double j_per_mole_to_ev = settings.get_j_per_mole_to_ev();
+    double j_per_mole_to_ev = 1.0/96400.0; // Convert from J/mol to eV
     kinetic_energy *= j_per_mole_to_ev;
     return kinetic_energy;
 }

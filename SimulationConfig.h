@@ -1,6 +1,8 @@
 #ifndef __SimulationConfig_h
 #define __SimulationConfig_h
 
+#include <string>
+
 class SimulationConfig
 {
     public:
@@ -26,7 +28,8 @@ class SimulationConfig
             bool parallel_projection_on_ = false,
             double impact_atom_x_energy_share_ = 0.0,
             double impact_atom_y_energy_share_ = 1.0,
-            double impact_atom_z_energy_share_ = 0.0
+            double impact_atom_z_energy_share_ = 0.0,
+            const std::string& surface_ = "top"
         ) : 
             atom_radius(atom_radius_),
             atom_mass(atom_mass_),
@@ -48,7 +51,8 @@ class SimulationConfig
             parallel_projection_on(parallel_projection_on_),
             impact_atom_x_energy_share(impact_atom_x_energy_share_),
             impact_atom_y_energy_share(impact_atom_y_energy_share_),
-            impact_atom_z_energy_share(impact_atom_z_energy_share_)
+            impact_atom_z_energy_share(impact_atom_z_energy_share_),
+            surface(surface_)
         {
             // Calculate derived variables
             epsilon = 0.4802 * ev_to_j_per_mole;
@@ -117,6 +121,10 @@ class SimulationConfig
         double impact_atom_y_energy_share;
         double impact_atom_z_energy_share;
 
+        // Getter and setter for surface
+        const std::string& getSurface() const { return surface; }
+        void setSurface(const std::string& value) { surface = value; }
+
     private:
         // Moved from public to private
         double atom_mass;
@@ -124,6 +132,7 @@ class SimulationConfig
         double epsilon;
         double velocity_scale;
         double simulation_timestep_size;
+        std::string surface;
 
         // Helper method to update velocity_scale when dependencies change
         void updateVelocityScale() {

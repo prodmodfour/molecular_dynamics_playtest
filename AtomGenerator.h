@@ -9,10 +9,9 @@
 #include "Atom.h"
 #include "Settings.h"
 
-
 class AtomGenerator {
 public:
-    AtomGenerator(const Settings& settings);
+    AtomGenerator(const SimulationConfig& config);
 
     // Method to generate FCC lattice
     std::vector<Atom> generate_fcc();
@@ -28,7 +27,7 @@ private:
     void calculate_bounding_box_center();
 
     // Member variables
-    Settings settings;
+    SimulationConfig config;
     double reference_ke;
 
     // Bounding box variables
@@ -41,8 +40,8 @@ private:
 //// Implementation
 
 // Constructor
-AtomGenerator::AtomGenerator(const Settings& settings)
-    : settings(settings), reference_ke(0.01)
+AtomGenerator::AtomGenerator(const SimulationConfig& config)
+    : config(config), reference_ke(0.01)
 {
     // Initialize bounding box variables
     x_min = y_min = z_min = std::numeric_limits<double>::max();
@@ -74,10 +73,10 @@ std::vector<Atom> AtomGenerator::generate_fcc()
 {
     std::vector<Atom> crystal;
 
-    int x_cubes = settings.get_cubes_in_x();
-    int y_cubes = settings.get_cubes_in_y();
-    int z_cubes = settings.get_cubes_in_z();
-    double atom_spacing = settings.get_atom_spacing();
+    int x_cubes = config.cubes_in_x;
+    int y_cubes = config.cubes_in_y;
+    int z_cubes = config.cubes_in_z;
+    double atom_spacing = config.atom_spacing;
 
     // FCC basis vectors
     std::vector<std::vector<double>> basis = {
@@ -123,9 +122,9 @@ void AtomGenerator::add_impact_atom(std::vector<Atom>& atom_block, const std::st
 {
     Atom impact_atom;
 
-    double x_offset = settings.get_impact_atom_x_offset();
-    double y_offset = settings.get_impact_atom_y_offset();
-    double z_offset = settings.get_impact_atom_z_offset();
+    double x_offset = config.impact_atom_x_offset;
+    double y_offset = config.impact_atom_y_offset;
+    double z_offset = config.impact_atom_z_offset;
 
     // Set the starting position of the impact atom based on the specified surface
     if (surface == "top")
@@ -173,13 +172,13 @@ void AtomGenerator::add_impact_atom(std::vector<Atom>& atom_block, const std::st
     }
 
     // Calculate velocities based on energy shares
-    double ev_to_j_per_mole = settings.get_ev_to_j_per_mole();
-    double atom_mass = settings.get_atom_mass();
-    double applied_energy = settings.get_energy_applied_to_impact_atom() * ev_to_j_per_mole;
+    double ev_to_j_per_mole = config.ev_to_j_per_mole;
+    double atom_mass = config.atom_mass;
+    double applied_energy = config.energy_applied_to_impact_atom * ev_to_j_per_mole;
 
-    double x_energy_share = settings.get_impact_atom_x_energy_share();
-    double y_energy_share = settings.get_impact_atom_y_energy_share();
-    double z_energy_share = settings.get_impact_atom_z_energy_share();
+    double x_energy_share = config.impact_atom_x_energy_share;
+    double y_energy_share = config.impact_atom_y_energy_share;
+    double z_energy_share = config.impact_atom_z_energy_share;
 
     double x_applied_energy = applied_energy * x_energy_share;
     double y_applied_energy = applied_energy * y_energy_share;
@@ -306,9 +305,9 @@ void AtomGenerator::add_random_impact_atom(std::vector<Atom>& atom_block, const 
     }
 
     // Set the starting position of the impact atom outside the block
-    double x_offset = settings.get_impact_atom_x_offset();
-    double y_offset = settings.get_impact_atom_y_offset();
-    double z_offset = settings.get_impact_atom_z_offset();
+    double x_offset = config.impact_atom_x_offset;
+    double y_offset = config.impact_atom_y_offset;
+    double z_offset = config.impact_atom_z_offset;
 
     if (surface == "top")
     {
@@ -366,9 +365,9 @@ void AtomGenerator::add_random_impact_atom(std::vector<Atom>& atom_block, const 
     dir_z /= dir_length;
 
     // Compute the velocity magnitude based on the applied energy
-    double ev_to_j_per_mole = settings.get_ev_to_j_per_mole();
-    double atom_mass = settings.get_atom_mass();
-    double applied_energy = settings.get_energy_applied_to_impact_atom() * ev_to_j_per_mole;
+    double ev_to_j_per_mole = 96400.0; // EV_TO_J_PER_MOLE constant
+    double atom_mass = config.atom_mass;
+    double applied_energy = config.energy_applied_to_impact_atom * ev_to_j_per_mole;
 
     double velocity_magnitude = std::sqrt((2.0 * applied_energy) / atom_mass);
 
