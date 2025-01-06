@@ -1,6 +1,9 @@
 #pragma once
 #include <vector>
 #include "Atom.h"
+#include <tuple>
+#include <vector>
+
 
 class AtomPairer
 {
@@ -12,7 +15,7 @@ class AtomPairer
 
         std::vector<Atom> atoms;
 
-        virtual void pair_atoms() = 0;
+        virtual std::vector<std::tuple<int, int>> pair_atoms() = 0;
 };
 
 class DomainDecompositionAtomPairer : public AtomPairer
@@ -23,7 +26,7 @@ class DomainDecompositionAtomPairer : public AtomPairer
 
         }
 
-        void pair_atoms()
+        std::vector<std::tuple<int, int>> pair_atoms()
         {
 
         }
