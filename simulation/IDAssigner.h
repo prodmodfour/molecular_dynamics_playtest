@@ -5,7 +5,7 @@ class IDAssigner
     public:
         IDAssigner()
         {
-        };
+        }
 
         int highest_id = 0;
 
