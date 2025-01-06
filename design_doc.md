@@ -53,14 +53,25 @@ I'm going to use these principles to design a number of systems that work togeth
 ## Systems
 
 ### System 1: Visualisation System
+Uses VTK framework.
+Language: C++
 
 ### System 2: Interface System
+Language: C++
 
 ### System 3: Simulation System
+Language: C++
 
 ### System 4: Data System
+Language: C++
 
 ### System 5: Contextualisation System
+Language: Python
 
 ### System 6: Chatbot System
+Language: Python
+
+### System 7: Data Branch Visualisation System
+Language: Python
+    Map plot lib
 
