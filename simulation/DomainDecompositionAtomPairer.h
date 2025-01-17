@@ -15,7 +15,7 @@ class AtomPairer
 
         std::vector<Atom> atoms;
 
-        virtual std::vector<std::tuple<int, int>> pair_atoms() = 0;
+        virtual std::vector<std::tuple<int, int, double>> pair_atoms() = 0;
 };
 
 class DomainDecompositionAtomPairer : public AtomPairer
@@ -26,8 +26,9 @@ class DomainDecompositionAtomPairer : public AtomPairer
 
         }
 
-        std::vector<std::tuple<int, int>> pair_atoms()
+        std::vector<std::tuple<int, int, double>> pair_atoms()
         {
+            std::vector<std::tuple<int, int, double>> atom_pairs;
 
         }
 };
