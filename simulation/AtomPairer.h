@@ -38,15 +38,17 @@ class DomainDecompositionAtomPairer : public AtomPairer
 class AlltoAllAtomPairer : public AtomPairer
 {
     public:
-        AlltoAllAtomPairer(std::vector<Atom> &atoms, Config &config) : AtomPairer(atoms)
+        AlltoAllAtomPairer(std::vector<Atom> &atoms) : AtomPairer(atoms)
         {
-            this->config = config;
+
         }
 
         std::vector<std::tuple<int, int, double>> pair_atoms(Config config)
         {
             std::vector<std::tuple<int, int, double>> atom_pairs;
 
+            double r_cutoff = config.r_cutoff;
+            double r_cutoff_squared = r_cutoff * r_cutoff;
             for (int i = 0; i < atoms.size(); i++)
             {
                 for (int j = 0; j < atoms.size(); j++)
@@ -57,7 +59,5 @@ class AlltoAllAtomPairer : public AtomPairer
 
             return atom_pairs;
         }
-
-        Config config;
 };
 
