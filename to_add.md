@@ -11,8 +11,6 @@ To add:
 
             K13: Principles of data analysis for digital and technology solutions.
 
-
-
             K57: Approaches to data processing and storage, database systems, data warehousing, and online analytical processing.
 
             S4: Initiate, design, code, test, and debug a software component for a digital and technology solution.
@@ -29,7 +27,7 @@ To add:
         - Atoms will be assigned to cells based on their position
         - Domains will send boundary atoms to neighbouring domains
         - We don't have a periodic boundary condition, so this is much simpler than the mpi version that I did last year
-        - This will massively increase the number of atoms that we can simulate \
+        - This will massively increase the number of atoms that we can simulate 
 
         Relevant KSBs:
 
