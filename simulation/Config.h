@@ -7,5 +7,5 @@ class Config
         Config();
 
         double r_cutoff;
-        double time_step_size;
+        double timestep_size;
 };
