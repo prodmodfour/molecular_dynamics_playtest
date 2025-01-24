@@ -1,11 +1,9 @@
 #pragma once
 #include <string>
-#include "IDAssigner.h"
 
 class Atom
 {
     public:
-        int id;
         double x, y, z;
         double fx, fy, fz;
         double vx, vy, vz;
@@ -16,7 +14,7 @@ class Atom
         std::string name;
 
         // Default Constructor
-        Atom(std::string type, double mass, double radius, IDAssigner &id_assigner)
+        Atom(std::string type, double mass, double radius)
         {
             x = 0;
             y = 0;
@@ -31,7 +29,6 @@ class Atom
             this->radius = radius;
             kinetic_energy = 0;
             this->type = type;
-            id = id_assigner.get_new_id();
             name = "atom";
         }
 };

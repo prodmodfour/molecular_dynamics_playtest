@@ -4,8 +4,8 @@
 class TotalEnergy
 {
     public:
-        double kinetic_energy;
-        double potential_energy;
+        double kinetic;
+        double potential;
 };
 
 class EnergyTracker

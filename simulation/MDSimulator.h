@@ -48,7 +48,7 @@ class MDSimulator
                 total_kinetic_energy += atom.kinetic_energy;
             }
 
-            total_energy.kinetic_energy = total_kinetic_energy;
+            total_energy.kinetic = total_kinetic_energy;
             energy_tracker.add_total_energy_to_history(total_energy);
 
             time += config.timestep_size;
