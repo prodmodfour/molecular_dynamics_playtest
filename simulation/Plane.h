@@ -6,19 +6,35 @@ class Plane
     public:
         Plane(Vector corner_1, Vector corner_2, Vector corner_3, Vector corner_4)
         {
-            this->corner_1 = corner_1;
-            this->corner_2 = corner_2;
-            this->corner_3 = corner_3;
-            this->corner_4 = corner_4;
-            x_midpoint = corner_2.x - corner_1.x;
-            y_midpoint = corner_3.y - corner_1.y;
-            this->center = Vector{x_midpoint, y_midpoint, corner_1.z};
+            this->corners.push_back(corner_1);
+            this->corners.push_back(corner_2);
+            this->corners.push_back(corner_3);
+            this->corners.push_back(corner_4);
+            double highest_x, highest_y, highest_z, lowest_x, lowest_y, lowest_z;
+            highest_x = 0;
+            highest_y = 0;
+            highest_z = 0;
+            lowest_x = 0;
+            lowest_y = 0;
+            lowest_z = 0;
+
+            for (auto corner : this->corners)
+            {
+                if (corner.x > highest_x) highest_x = corner.x;
+                if (corner.y > highest_y) highest_y = corner.y;
+                if (corner.z > highest_z) highest_z = corner.z;
+                if (corner.x < lowest_x) lowest_x = corner.x;
+                if (corner.y < lowest_y) lowest_y = corner.y;
+                if (corner.z < lowest_z) lowest_z = corner.z;
+            }
+            
+            double x_midpoint = (highest_x + lowest_x) / 2;
+            double y_midpoint = (highest_y + lowest_y) / 2;
+            double z_midpoint = (highest_z + lowest_z) / 2;
+            this->center = Vector{x_midpoint, y_midpoint, z_midpoint};
         };
         Vector normal;
-        Vector corner_1;
-        Vector corner_2;
-        Vector corner_3;
-        Vector corner_4;
+        std::vector<Vector> corners;
         Vector center;
 };
 
