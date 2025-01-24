@@ -13,11 +13,11 @@ typedef struct Box
     Vector corner_7;
     Vector corner_8;
     Vector center;
-    Plane top;
-    Plane bottom;
-    Plane left;
-    Plane right;
-    Plane front;
-    Plane back;
+    Plane top_plane;
+    Plane bottom_plane;
+    Plane left_plane;
+    Plane right_plane;
+    Plane front_plane;
+    Plane back_plane;
 
 } Box;
