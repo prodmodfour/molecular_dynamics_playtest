@@ -1,8 +1,8 @@
 #pragma once
 
-typedef struct UnitVector
+typedef struct Vector
 {
     float x;
     float y;
     float z;
-} UnitVector;
+} Vector;
