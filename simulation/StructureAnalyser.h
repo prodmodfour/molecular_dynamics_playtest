@@ -44,7 +44,12 @@ class StructureAnalyser
             }
 
             return box_corner_atoms;
+        }
 
+        Plane find_plane_from_box(BoxCornerAtoms box_corner_atoms, std::string plane_name)
+        {
 
         }
+
+        Vector calculate_center
 };
