@@ -71,7 +71,7 @@ public:
         // Setup timer to update animation
         mTimer = new QTimer(this);
         connect(mTimer, &QTimer::timeout, this, &MainWindow::onTimerTimeout);
-        mTimer->start(50); // update every 50 ms
+        mTimer->start(42); // update every 42 ms, roughly 24 fps
 
         // Initialize with the first timestep (if available)
         if (!mTimesteps.empty())
