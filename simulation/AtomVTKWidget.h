@@ -35,7 +35,7 @@ public:
 
         // Create a sphere source to use as glyph
         vtkSmartPointer<vtkSphereSource> sphereSource = vtkSmartPointer<vtkSphereSource>::New();
-        sphereSource->SetRadius(0.3); // adjust radius as needed
+        sphereSource->SetRadius(1.28); // adjust radius as needed
 
         // Create glyph mapper
         mGlyphMapper = vtkSmartPointer<vtkGlyph3DMapper>::New();
