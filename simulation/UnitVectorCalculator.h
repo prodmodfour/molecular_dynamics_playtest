@@ -1,6 +1,7 @@
 #pragma once
 #include <tuple>
 #include "Vector.h"
+#include <cmath>
 
 class UnitVectorCalculator
 {
