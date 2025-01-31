@@ -11,6 +11,7 @@
 #include "Timestep.h"
 #include <thread>
 #include <iostream>
+#include <mutex>
 
 
 int main(int argc, char *argv[])
@@ -43,7 +44,7 @@ int main(int argc, char *argv[])
 
     // Apply kinetic energy to impact atom
     UnitVectorCalculator unit_vector_calculator = UnitVectorCalculator();
-    Vector unit_vector = unit_vector_calculator.calculate_unit_vector_between_two_points(box.center, impact_atom_position);
+    Vector unit_vector = unit_vector_calculator.calculate_unit_vector_between_two_points(box.top_plane.center, impact_atom_position);
     KineticEnergyApplier kinetic_energy_applier = KineticEnergyApplier();
     kinetic_energy_applier.apply_kinetic_energy(impact_atom, initial_config.impact_energy, unit_vector);
 
@@ -60,16 +61,25 @@ int main(int argc, char *argv[])
     AtomPairLibrary atom_pair_library = AtomPairLibrary();
 
     // Launch simulator in its own thread
+    std::cout << "Launching simulator thread" << std::endl;
+    std::mutex simulation_data_mutex;
+    // Terminates the program when the simulator thread is finished
     std::thread simulator_thread([&]() {
         MDSimulator simulator = MDSimulator(atom_pair_library, time);
-        for (int i = 0; i < 10000; i++)
+        for (int i = 0; i < 100000; i++)
         {
+            std::lock_guard<std::mutex> lock(simulation_data_mutex);
             Timestep timestep = simulator.simulate_timestep(initial_config.config, simulation_data.back().atoms);
             simulation_data.push_back(timestep);
         }
         std::cout << "Simulation complete" << std::endl;
         std::terminate();
     });
+
+    
+
+
+    
 }
 
 
@@ -82,6 +92,6 @@ int main(int argc, char *argv[])
 
 // Launch simulator in its own thread
 
-// Launch visualiser in its own thread
+
 
 

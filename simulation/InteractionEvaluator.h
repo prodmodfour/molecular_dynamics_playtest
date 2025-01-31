@@ -10,7 +10,7 @@
 class InteractionEvaluator
 {
     public:
-        InteractionEvaluator(AtomPairLibrary &atom_pair_library, std::vector<Atom> &atoms)
+        InteractionEvaluator(AtomPairLibrary &atom_pair_library)
         {
             this->atom_pair_library = atom_pair_library;
             this->atoms = atoms;
@@ -18,11 +18,11 @@ class InteractionEvaluator
         }
 
         AtomPairLibrary atom_pair_library;
-        std::vector<Atom> atoms;
 
 
 
-        void evaluate_interactions(Config config, TotalEnergy &total_energy)
+
+        void evaluate_interactions(Config config, TotalEnergy &total_energy, std::vector<Atom> &atoms)
         {
             zero_forces();
 

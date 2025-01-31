@@ -29,7 +29,7 @@ class MDSimulator
         Timestep simulate_timestep(Config config, std::vector<Atom> atoms)
         {
             TotalEnergy total_energy;   
-            interaction_evaluator.evaluate_interactions(config, total_energy);
+            interaction_evaluator.evaluate_interactions(config, total_energy, atoms);
 
             for (Atom &atom : atoms)
             {
