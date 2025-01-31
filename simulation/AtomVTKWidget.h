@@ -28,14 +28,19 @@ public:
         mRenderer = vtkSmartPointer<vtkRenderer>::New();
         mRenderWindow->AddRenderer(mRenderer);
 
+
         // Setup pipeline objects
         mPoints = vtkSmartPointer<vtkPoints>::New();
         mPolyData = vtkSmartPointer<vtkPolyData>::New();
         mPolyData->SetPoints(mPoints);
+        mRenderWindow->SetWindowName("Molecular Dynamics Playtest");
+        mRenderWindow->SetSize(1280, 720);
+        vtkNew<vtkRenderWindowInteractor> renderWindowInteractor;
+        renderWindowInteractor->SetRenderWindow(mRenderWindow);
 
         // Create a sphere source to use as glyph
         vtkSmartPointer<vtkSphereSource> sphereSource = vtkSmartPointer<vtkSphereSource>::New();
-        sphereSource->SetRadius(1.28); // adjust radius as needed
+        sphereSource->SetRadius(1.28); 
 
         // Create glyph mapper
         mGlyphMapper = vtkSmartPointer<vtkGlyph3DMapper>::New();
