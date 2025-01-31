@@ -1,6 +1,6 @@
 #pragma once
 #include "Atom.h"
-#include "UnitVector.h"
+#include "Vector.h"
 
 class KineticEnergyApplier
 {
@@ -10,7 +10,7 @@ class KineticEnergyApplier
 
         }
 
-        void apply_kinetic_energy(Atom &atom, double kinetic_energy, UnitVector direction)
+        void apply_kinetic_energy(Atom &atom, double kinetic_energy, Vector direction)
         {
             // Convert eV to J_per_moule
             kinetic_energy = kinetic_energy * 1.602176634e-19 * 6.02214076e23;

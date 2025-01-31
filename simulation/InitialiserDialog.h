@@ -44,6 +44,18 @@ public:
         cubesZSpin->setRange(1, 100);
         cubesZSpin->setValue(4); // example default
 
+        impactAtomXOffsetSpin = new QDoubleSpinBox(this);
+        impactAtomXOffsetSpin->setRange(0.0, 100);
+        impactAtomXOffsetSpin->setValue(0.0); // example default
+
+        impactAtomYOffsetSpin = new QDoubleSpinBox(this);
+        impactAtomYOffsetSpin->setRange(0.0, 100);
+        impactAtomYOffsetSpin->setValue(0.0); // example default
+
+        impactAtomZOffsetSpin = new QDoubleSpinBox(this);
+        impactAtomZOffsetSpin->setRange(0.0, 100);
+        impactAtomZOffsetSpin->setValue(0.0); // example default
+
         // Layout for form
         QFormLayout *formLayout = new QFormLayout;
         formLayout->addRow("Impact Energy:", impactEnergySpin);
@@ -52,6 +64,10 @@ public:
         formLayout->addRow("Cubes in X:", cubesXSpin);
         formLayout->addRow("Cubes in Y:", cubesYSpin);
         formLayout->addRow("Cubes in Z:", cubesZSpin);
+        formLayout->addRow("Impact Atom X Offset:", impactAtomXOffsetSpin);
+        formLayout->addRow("Impact Atom Y Offset:", impactAtomYOffsetSpin);
+        formLayout->addRow("Impact Atom Z Offset:", impactAtomZOffsetSpin);
+
 
         // OK/Cancel buttons
         QDialogButtonBox *buttonBox = new QDialogButtonBox(
@@ -78,7 +94,10 @@ public:
             timestepSpin->value(),
             cubesXSpin->value(),
             cubesYSpin->value(),
-            cubesZSpin->value()
+            cubesZSpin->value(),
+            impactAtomXOffsetSpin->value(),
+            impactAtomYOffsetSpin->value(),
+            impactAtomZOffsetSpin->value()
         );
     }
 
@@ -89,4 +108,7 @@ private:
     QSpinBox *cubesXSpin;
     QSpinBox *cubesYSpin;
     QSpinBox *cubesZSpin;
+    QDoubleSpinBox *impactAtomXOffsetSpin;
+    QDoubleSpinBox *impactAtomYOffsetSpin;
+    QDoubleSpinBox *impactAtomZOffsetSpin;
 };
