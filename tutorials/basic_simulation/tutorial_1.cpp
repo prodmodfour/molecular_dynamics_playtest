@@ -1,9 +1,10 @@
-#include "../simulation/Atom.h"
-#include "../simulation/MDSimulator.h"
-#include "../simulation/Config.h"
-#include "../simulation/Timestep.h"
+#include "../../simulation/Atom.h"
+#include "../../simulation/MDSimulator.h"
+#include "../../simulation/Config.h"
+#include "../../simulation/Timestep.h"
 #include <vector>
 #include <iostream>
+
 
 
 
