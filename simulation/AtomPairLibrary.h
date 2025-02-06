@@ -10,7 +10,8 @@ class AtomPairLibrary
     public:
         AtomPairLibrary()
         {
-
+            atom_pair_data = std::vector<AtomPairData>();
+            atom_pair_data.push_back(AtomPairData("Cu", "Cu", 1.0, 1.0));
         }
         std::vector<AtomPairData> atom_pair_data;
 
@@ -31,5 +32,10 @@ class AtomPairLibrary
                     throw std::runtime_error("Atom pair data not found");
                 }
             }
+        }
+
+        void add_atom_pair_data(AtomPairData atom_pair_data)
+        {
+            this->atom_pair_data.push_back(atom_pair_data);
         }
 };

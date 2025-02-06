@@ -3,6 +3,7 @@
 #include "Atom.h"
 #include <vector>
 #include "AtomPairLibrary.h"
+#include "AtomPairData.h"
 #include "InteractionEvaluator.h"
 #include "MotionCalculator.h"
 #include "Timestep.h"
@@ -15,8 +16,26 @@ class MDSimulator
         MDSimulator(AtomPairLibrary &atom_pair_library, double &time)
         {
             this->atom_pair_library = atom_pair_library;
-            this->interaction_evaluator = InteractionEvaluator(atom_pair_library, atoms);
-            this->motion_calculator = MotionCalculator(atoms);
+            this->interaction_evaluator = InteractionEvaluator(atom_pair_library);
+            this->motion_calculator = MotionCalculator();
+            this->time = time;
+        }
+
+        MDSimulator()
+        {
+            this->atom_pair_library = AtomPairLibrary();
+
+            this->interaction_evaluator = InteractionEvaluator(atom_pair_library);
+            this->motion_calculator = MotionCalculator();
+            this->time = 0;
+        }
+
+        MDSimulator(double &time)
+        {
+            this->atom_pair_library = AtomPairLibrary();
+
+            this->interaction_evaluator = InteractionEvaluator(atom_pair_library);
+            this->motion_calculator = MotionCalculator();
             this->time = time;
         }
 
@@ -26,14 +45,15 @@ class MDSimulator
 
         double time;
 
+
         Timestep simulate_timestep(Config config, std::vector<Atom> atoms)
         {
-            TotalEnergy total_energy;   
+            TotalEnergy total_energy(0, 0);   
             interaction_evaluator.evaluate_interactions(config, total_energy, atoms);
 
             for (Atom &atom : atoms)
             {
-                motion_calculator.calculate_motion(config, atom);
+                motion_calculator.calculate_motion(config.timestep_size, atom);
             }
 
             double total_kinetic_energy = 0;
@@ -45,6 +65,6 @@ class MDSimulator
             total_energy.kinetic = total_kinetic_energy;
             time += config.timestep_size;
 
-            return Timestep(config, atoms, total_energy);
+            return Timestep(config, atoms, total_energy, time);
         }
 };
