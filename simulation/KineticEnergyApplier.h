@@ -4,9 +4,6 @@
 #include <cmath>
 #include <vector>
 
-
-
-
 void apply_kinetic_energy(Atom &atom, double kinetic_energy, Vector direction)
 {
     // Convert eV to J_per_moule

@@ -22,11 +22,11 @@ int main(int argc, char *argv[])
     double atom_spacing = 1.28;
 
     // Create a FCC crystal lattice
-    FCCGenerator fcc_generator;
     std::string atom_type = "Cu";
     double mass = 63.546;
     double radius = 1.28;
-    std::vector<Atom> atoms = fcc_generator.generate_fcc(cubes_in_x, cubes_in_y, cubes_in_z, atom_spacing, atom_type, mass, radius);
+
+    std::vector<Atom> atoms = generate_fcc(cubes_in_x, cubes_in_y, cubes_in_z, atom_spacing, atom_type, mass, radius);
 
     // Get dimensions of the box that contains the atoms
     Box box(atoms);

@@ -2,33 +2,42 @@
 #include "Vector.h"
 #include "Plane.h"
 #include "Atom.h"
+#include <vector>
 
 
-typedef struct
+std::vector<Vector> determine_cuboid_corners(std::vector<Atom> atoms)
 {
-    Vector corner_1;
-    Vector corner_2;
-    Vector corner_3;
-    Vector corner_4;
-    Vector corner_5;
-    Vector corner_6;
-    Vector corner_7;
-    Vector corner_8;
-    Vector center;
-    Plane top_plane;
-    Plane bottom_plane;
-    Plane left_plane;
-    Plane right_plane;
-    Plane front_plane;
-    Plane back_plane;
+    std::vector<Vector> corners(8, Vector{0, 0, 0});
 
-} Box;
+    for (auto atom : atoms)
+    {
+        if (atom.x < corners[0].x)
+            corners[0] = atom.position;
+        if (atom.x > corners[1].x)
+            corners[1] = atom.position;
+        if (atom.y < corners[2].y)
+            corners[2] = atom.position;
+        if (atom.y > corners[3].y)
+            corners[3] = atom.position;
+        if (atom.z < corners[4].z)
+            corners[4] = atom.position;
+        if (atom.z > corners[5].z)
+            corners[5] = atom.position;
+        if (atom.z < corners[6].z)
+            corners[6] = atom.position;
+        if (atom.z > corners[7].z)
+            corners[7] = atom.position;
+    }
+
+    return corners;
+}
 
 
-class Box
+class Cuboid
 {
     public:
-        Box(std::vector<Atom> atoms)
+        Cuboid(std::vector<Atom> atoms)
+
         {
 
             this->corner_1 = Vector{0, 0, 0};
