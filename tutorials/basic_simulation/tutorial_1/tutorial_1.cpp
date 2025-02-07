@@ -1,15 +1,17 @@
-#include "../../simulation/Atom.h"
-#include "../../simulation/MDSimulator.h"
-#include "../../simulation/Config.h"
-#include "../../simulation/Timestep.h"
+#include "../../../simulation/Atom.h"
+#include "../../../simulation/MDSimulator.h"
+#include "../../../simulation/Config.h"
+#include "../../../simulation/Timestep.h"
+#include "../../../ui/MainWindow.h"
 #include <vector>
 #include <iostream>
+#include <QApplication>
 
 
 
 
 
-int main()
+int main(int argc, char *argv[])
 {   
     // Test 1: Create a singe atom with no initial velocity. Watch it not move for 100 timesteps.
 
@@ -48,6 +50,12 @@ int main()
     {
         std::cout << "Timestep: " << timestep.time << " " << "Atom position: " << timestep.atoms[0].x << ", " << timestep.atoms[0].y << ", " << timestep.atoms[0].z << std::endl;
     }
+
+    // Launch the visualiser
+    QApplication app(argc, argv);
+    MainWindow main_window(simulation_data);
+    main_window.show();
+    app.exec();
 
 
 

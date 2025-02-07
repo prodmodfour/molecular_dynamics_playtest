@@ -13,6 +13,8 @@
 #include <vtkProperty.h>
 #include <vtkPoints.h>
 #include <vtkPolyDataMapper.h>
+#include <QObject>
+
 
 class AtomVTKWidget : public QVTKOpenGLNativeWidget
 {

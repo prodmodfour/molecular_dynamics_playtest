@@ -7,20 +7,22 @@
 #include <QHBoxLayout>
 #include <QVBoxLayout>
 #include <QWidget>
+#include <QApplication>
+#include <QObject>
 
 #include "AtomVTKWidget.h"
 #include "PlaybackManager.h"
-#include "Timestep.h"
+#include "../simulation/Timestep.h"
 
 class MainWindow : public QMainWindow
 {
     Q_OBJECT
 
 public:
-    MainWindow(const std::vector<Timestep>& timesteps, QWidget* parent = nullptr)
+    MainWindow(const std::vector<Timestep>& simulation_data, QWidget* parent = nullptr)
         : QMainWindow(parent)
-        , mTimesteps(timesteps)
-        , mPlaybackManager(timesteps.size())
+        , mSimulationData(simulation_data)
+        , mPlaybackManager(simulation_data.size())
     {
         // Central widget and layout
         QWidget* central = new QWidget(this);
@@ -47,7 +49,7 @@ public:
         mReverseButton = new QPushButton("Reverse", central);
         controlsLayout->addWidget(mReverseButton);
 
-        mRestartButton = new QPushButton("Restart", this);
+        mRestartButton = new QPushButton("Restart", central);
         controlsLayout->addWidget(mRestartButton);
 
         connect(mRestartButton, &QPushButton::clicked,
@@ -74,8 +76,8 @@ public:
         mTimer->start(42); // update every 42 ms, roughly 24 fps
 
         // Initialize with the first timestep (if available)
-        if (!mTimesteps.empty())
-            mVTKWidget->updateAtoms(mTimesteps[mPlaybackManager.current_timestep].atoms);
+        if (!mSimulationData.empty())
+            mVTKWidget->updateAtoms(mSimulationData[mPlaybackManager.current_timestep].atoms);
     }
 
 private slots:
@@ -86,9 +88,9 @@ private slots:
 
         // Render the new timestep
         int current = mPlaybackManager.current_timestep;
-        if (current >= 0 && current < (int)mTimesteps.size())
+        if (current >= 0 && current < (int)mSimulationData.size())
         {
-            mVTKWidget->updateAtoms(mTimesteps[current].atoms);
+            mVTKWidget->updateAtoms(mSimulationData[current].atoms);
         }
     }
 
@@ -118,8 +120,9 @@ private:
     QSlider* mSpeedSlider;
     QPushButton* mStartPauseButton;
     QPushButton* mReverseButton;
+    QPushButton* mRestartButton;
     QTimer* mTimer;
 
-    std::vector<Timestep> mTimesteps;
+    std::vector<Timestep> mSimulationData;
     PlaybackManager mPlaybackManager;
 };
