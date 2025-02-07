@@ -6,19 +6,23 @@
 
 #include "../simulation/Atom.h"
 
+#include <vtkSmartPointer.h>
+#include <vtkRenderer.h>
+#include <vtkGenericOpenGLRenderWindow.h>
+#include <vtkPolyData.h>
+#include <vtkGlyph3DMapper.h>
+#include <vtkSphereSource.h>
+#include <vtkActor.h>
+#include <vtkNamedColors.h>
+#include <vtkRenderWindow.h>
+#include <vtkProperty.h>
+#include <vtkPoints.h>
+#include <vtkPolyDataMapper.h>
+#include <vtkRenderWindowInteractor.h>
 
 
 
-namespace vtk
-{
-    // Forward declarations to avoid including all VTK headers here
-    class GenericOpenGLRenderWindow;
-    class Renderer;
-    class Points;
-    class PolyData;
-    class Glyph3DMapper;
-    class Actor;
-}
+
 
 class AtomVTKWidget : public QVTKOpenGLNativeWidget
 {
