@@ -12,7 +12,7 @@
 
 
 
-// Test 2: Create a single atom with an initial velocity. Watch it move in a straight line at a constant velocity.\
+// Test 2: Create a single atom with an initial velocity. Watch it move in a straight line at a constant velocity.
 
 // Test 3: Create a two atoms. Fire one at the other. 
 
