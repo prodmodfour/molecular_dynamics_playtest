@@ -7,7 +7,10 @@
 #include <cmath>
 #include "AtomPairData.h"
 
+namespace physics
+{
 void evaluate_interactions(Config config, TotalEnergy &total_energy, std::vector<Atom> &atoms, AtomPairLibrary atom_pair_library)
+
 {
     zero_forces(atoms);
 
@@ -253,3 +256,4 @@ void apply_kinetic_energy_to_atoms(std::vector<Atom> &atoms, double kinetic_ener
             
         }
 
+}

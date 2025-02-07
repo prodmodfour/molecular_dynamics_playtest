@@ -4,6 +4,8 @@
 #include "Atom.h"
 #include <vector>
 
+namespace geometry
+{
 
 std::vector<Vector> determine_cuboid_corners(std::vector<Atom> atoms)
 {
@@ -99,3 +101,4 @@ class Cuboid
 };
 
 
+}
