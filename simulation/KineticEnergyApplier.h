@@ -1,6 +1,9 @@
 #pragma once
 #include "Atom.h"
 #include "Vector.h"
+#include <cmath>
+#include <vector>
+
 
 
 
@@ -16,4 +19,12 @@ void apply_kinetic_energy(Atom &atom, double kinetic_energy, Vector direction)
     atom.vx = speed * direction.x;
     atom.vy = speed * direction.y;
     atom.vz = speed * direction.z;
+}
+
+void apply_kinetic_energy_to_atoms(std::vector<Atom> &atoms, double kinetic_energy, Vector direction)
+{
+    for (Atom &atom : atoms)
+    {
+        apply_kinetic_energy(atom, kinetic_energy, direction);
+    }
 }
