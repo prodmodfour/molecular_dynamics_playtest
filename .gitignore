@@ -3,4 +3,5 @@
 /build
 /.vscode
 /vtk_extra
+**/build/
 
