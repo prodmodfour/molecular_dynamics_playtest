@@ -10,6 +10,12 @@ class TotalEnergy
             this->potential = potential;
         }
 
+        TotalEnergy()
+        {
+            this->kinetic = 0;
+            this->potential = 0;
+        }
+
         double kinetic;
         double potential;
 };

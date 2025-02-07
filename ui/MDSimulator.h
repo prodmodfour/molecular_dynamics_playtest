@@ -12,39 +12,35 @@
 
 class MDSimulator
 {
-    public:
-        MDSimulator(AtomPairLibrary &atom_pair_library, double &time)
-        {
-            this->atom_pair_library = atom_pair_library;
-            this->interaction_evaluator = InteractionEvaluator(atom_pair_library);
-            this->motion_calculator = MotionCalculator();
-            this->time = time;
-        }
-
-        MDSimulator()
-        {
-            this->atom_pair_library = AtomPairLibrary();
-
-            this->interaction_evaluator = InteractionEvaluator(atom_pair_library);
-            this->motion_calculator = MotionCalculator();
-            this->time = 0;
-        }
-
-        MDSimulator(double &time)
-        {
-            this->atom_pair_library = AtomPairLibrary();
-
-            this->interaction_evaluator = InteractionEvaluator(atom_pair_library);
-            this->motion_calculator = MotionCalculator();
-            this->time = time;
-        }
-
+    public:       
         AtomPairLibrary atom_pair_library;
         InteractionEvaluator interaction_evaluator;
         MotionCalculator motion_calculator;
-
         double time;
 
+        MDSimulator(AtomPairLibrary &atom_pair_library, double &time)
+            : atom_pair_library(atom_pair_library),
+              interaction_evaluator(atom_pair_library),
+              motion_calculator(),
+              time(time)
+        {
+        }
+
+        MDSimulator()
+            : atom_pair_library(),
+              interaction_evaluator(atom_pair_library),
+              motion_calculator(),
+              time(0)
+        {
+        }
+
+        MDSimulator(double &time)
+            : atom_pair_library(),
+              interaction_evaluator(atom_pair_library),
+              motion_calculator(),
+              time(time)
+        {
+        }
 
         Timestep simulate_timestep(Config config, std::vector<Atom> atoms)
         {

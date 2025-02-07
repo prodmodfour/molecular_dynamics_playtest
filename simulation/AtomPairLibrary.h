@@ -27,11 +27,8 @@ class AtomPairLibrary
                 {
                     return atom_pair_data;
                 }
-                else
-                {
-                    throw std::runtime_error("Atom pair data not found");
-                }
             }
+            throw std::runtime_error("Atom pair data not found");
         }
 
         void add_atom_pair_data(AtomPairData atom_pair_data)

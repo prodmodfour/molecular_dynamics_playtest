@@ -13,8 +13,6 @@ class InteractionEvaluator
         InteractionEvaluator(AtomPairLibrary &atom_pair_library)
         {
             this->atom_pair_library = atom_pair_library;
-            this->atoms = atoms;
-
         }
 
         AtomPairLibrary atom_pair_library;
@@ -24,7 +22,7 @@ class InteractionEvaluator
 
         void evaluate_interactions(Config config, TotalEnergy &total_energy, std::vector<Atom> &atoms)
         {
-            zero_forces();
+            zero_forces(atoms);
 
             double xi, yi, zi;
             double xj, yj, zj;
@@ -123,7 +121,7 @@ class InteractionEvaluator
             }
         }
 
-        void zero_forces()
+        void zero_forces(std::vector<Atom> &atoms)
         {
             for (Atom &atom : atoms)
             {
@@ -132,5 +130,5 @@ class InteractionEvaluator
                 atom.fz = 0.0;
             }
         }
-}
+};
 
