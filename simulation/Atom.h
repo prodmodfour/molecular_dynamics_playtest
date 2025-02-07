@@ -1,5 +1,6 @@
 #pragma once
 #include <string>
+#include "Vector.h"
 
 class Atom
 {
@@ -30,5 +31,10 @@ class Atom
             kinetic_energy = 0;
             this->type = type;
             name = "atom";
+        }
+
+        Vector get_position()
+        {
+            return Vector(x, y, z);
         }
 };
