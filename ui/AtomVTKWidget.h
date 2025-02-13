@@ -20,8 +20,7 @@
 #include <vtkPolyDataMapper.h>
 #include <vtkRenderWindowInteractor.h>
 
-
-
+namespace ui {
 
 
 class AtomVTKWidget : public QVTKOpenGLNativeWidget
@@ -40,3 +39,5 @@ private:
     vtkSmartPointer<vtkGlyph3DMapper>             mGlyphMapper;
     vtkSmartPointer<vtkActor>                     mGlyphActor;
 };
+
+}

@@ -1,5 +1,6 @@
 #pragma once
 
+namespace geometry {
 typedef struct Vector
 {
     double x;
@@ -7,3 +8,4 @@ typedef struct Vector
     double z;
 } Vector;
 
+}

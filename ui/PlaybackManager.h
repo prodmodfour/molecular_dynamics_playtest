@@ -3,6 +3,8 @@
 #include "../simulation/Timestep.h"
 #include <vector>
 
+namespace ui {
+
 class PlaybackManager
 {
     public:
@@ -53,3 +55,5 @@ class PlaybackManager
             pause = !pause;
         }
 };
+
+}

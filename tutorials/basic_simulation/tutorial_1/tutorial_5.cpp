@@ -1,11 +1,11 @@
 
-#include "../../../simulation/Atom.h"
+#include "../../../physics/Atom.h"
 #include "../../../simulation/MDSimulator.h"
 #include "../../../simulation/Config.h"
 #include "../../../simulation/Timestep.h"
 #include "../../../ui/MainWindow.h"
-#include "../../../simulation/FCCGenerator.h"
-#include "../../../simulation/Box.h"
+#include "../../../geometry/FCCGenerator.h"
+#include "../../../geometry/Box.h"
 #include <vector>
 #include <iostream>
 #include <QApplication>

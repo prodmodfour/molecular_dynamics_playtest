@@ -1,6 +1,8 @@
 #pragma once
 #include <vector>
 
+namespace physics {
+
 class TotalEnergy
 {
     public:
@@ -20,3 +22,4 @@ class TotalEnergy
         double potential;
 };
 
+}

@@ -1,7 +1,7 @@
 #pragma once
 #include <string>
 
-
+namespace atoms {
 class AtomPairData
 {
     public:
@@ -19,3 +19,5 @@ class AtomPairData
         double epsilon;
         double sigma;
 };
+
+}

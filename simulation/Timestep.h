@@ -5,6 +5,8 @@
 #include "TotalEnergy.h"
 #include <vector>
 
+namespace simulation {
+
 class Timestep
 {
     public:
@@ -23,3 +25,5 @@ class Timestep
 
 
 };
+
+}

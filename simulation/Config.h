@@ -1,6 +1,8 @@
 #pragma once
 #include <string>
 
+namespace simulation {
+
 class Config
 {
     public:
@@ -19,3 +21,5 @@ class Config
         double r_cutoff;
         double timestep_size;
 };
+
+}

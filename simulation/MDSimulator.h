@@ -9,7 +9,7 @@
 #include "Timestep.h"
 #include "TotalEnergy.h"
 
-
+namespace simulation {
 class MDSimulator
 {
     public:       
@@ -64,3 +64,5 @@ class MDSimulator
             return Timestep(config, atoms, total_energy, time);
         }
 };
+
+}

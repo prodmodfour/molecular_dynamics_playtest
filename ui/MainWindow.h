@@ -7,6 +7,7 @@
 #include "PlaybackManager.h"
 #include "../simulation/Timestep.h"
 
+namespace ui {
 class QTimer;
 class QSlider;
 class QPushButton;
@@ -37,3 +38,5 @@ private:
     std::vector<Timestep>     mSimulationData;
     PlaybackManager           mPlaybackManager;
 };
+
+}

@@ -8,6 +8,7 @@
 #include <QVBoxLayout>
 #include "InitialConfig.h"
 
+namespace ui {
 class InitialiserDialog : public QDialog
 {
     Q_OBJECT
@@ -112,3 +113,5 @@ private:
     QDoubleSpinBox *impactAtomYOffsetSpin;
     QDoubleSpinBox *impactAtomZOffsetSpin;
 };
+
+}

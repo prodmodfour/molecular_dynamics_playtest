@@ -2,6 +2,8 @@
 #include <string>
 #include "Vector.h"
 
+namespace atoms {
+
 class Atom
 {
     public:
@@ -38,3 +40,5 @@ class Atom
             return Vector(x, y, z);
         }
 };
+
+}

@@ -4,6 +4,8 @@
 #include "AtomPairData.h"
 #include <stdexcept>
 
+namespace atoms {
+
 
 class AtomPairLibrary
 {
@@ -36,3 +38,5 @@ class AtomPairLibrary
             this->atom_pair_data.push_back(atom_pair_data);
         }
 };
+
+}   

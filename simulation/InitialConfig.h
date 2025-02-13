@@ -2,6 +2,8 @@
 
 #include "Config.h"
 
+namespace simulation {
+
 class InitialConfig
 {
     public:
@@ -24,3 +26,4 @@ class InitialConfig
 
 };
 
+}

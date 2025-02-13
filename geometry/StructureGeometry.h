@@ -6,10 +6,12 @@
 #include <map>
 #include "Plane.h"
 
-class Structure
+namespace geometry {
+
+class StructureGeometry
 {
     public:
-        Structure(std::vector<Atom> atoms, std::string shape, std::vector<Vector> corners, std::map<std::string, Plane> planes, Vector center)
+        StructureGeometry(std::vector<Atom> atoms, std::string shape, std::vector<Vector> corners, std::map<std::string, Plane> planes, Vector center)
         {
             this->atoms = atoms;
             this->shape = shape;
@@ -55,7 +57,7 @@ class Structure
 
 };
 
-
+}
 
 
 

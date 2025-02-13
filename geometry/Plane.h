@@ -2,6 +2,7 @@
 #include "Vector.h"
 #include <vector>
 
+namespace geometry {
 class Plane
 {
     public:
@@ -39,3 +40,4 @@ class Plane
         Vector center;
 };
 
+}
