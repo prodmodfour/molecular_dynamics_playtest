@@ -90,7 +90,7 @@ InitialParameters InitialiserDialog::getInitialParameters() const
         cubesZSpin->value(),
         impactAtomXOffsetSpin->value(),
         impactAtomYOffsetSpin->value(),
-        impactAtomZOffsetSpin
+        impactAtomZOffsetSpin->value(),
     );
 }
 
