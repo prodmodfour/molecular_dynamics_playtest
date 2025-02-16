@@ -133,6 +133,9 @@ void apply_kinetic_energy(Atom &atom, double kinetic_energy, Vector direction)
     atom.vx = speed * direction.x;
     atom.vy = speed * direction.y;
     atom.vz = speed * direction.z;
+
+    // Set the kinetic energy
+    atom.kinetic_energy += kinetic_energy;
 }
 
 void apply_kinetic_energy_to_atoms(std::vector<Atom> &atoms, double kinetic_energy, Vector direction)
