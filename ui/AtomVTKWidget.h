@@ -1,10 +1,10 @@
 #pragma once
 
-#include <QVTKOpenGLNativeWidget.h>
+#include <QVTKOpenGLWidget.h>
 #include <QObject>
 #include <vector>
 
-#include "../simulation/Atom.h"
+#include "../atoms/Atom.h"
 
 #include <vtkSmartPointer.h>
 #include <vtkRenderer.h>
@@ -23,13 +23,13 @@
 namespace ui {
 
 
-class AtomVTKWidget : public QVTKOpenGLNativeWidget
+class AtomVTKWidget : public QVTKOpenGLWidget
 {
     Q_OBJECT
 public:
     explicit AtomVTKWidget(QWidget* parent = nullptr);
 
-    void updateAtoms(const std::vector<Atom>& atoms);
+    void updateAtoms(const std::vector<atoms::Atom>& atoms);
 
 private:
     vtkSmartPointer<vtkGenericOpenGLRenderWindow> mRenderWindow;

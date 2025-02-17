@@ -1,6 +1,6 @@
 #pragma once
 #include <string>
-#include "Vector.h"
+#include "../geometry/Vector.h"
 
 namespace atoms {
 
@@ -35,9 +35,9 @@ class Atom
             name = "atom";
         }
 
-        Vector get_position()
+        geometry::Vector get_position()
         {
-            return Vector(x, y, z);
+            return geometry::Vector(x, y, z);
         }
 };
 

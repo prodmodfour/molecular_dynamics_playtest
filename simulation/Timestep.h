@@ -1,8 +1,8 @@
 #pragma once
 
-#include "Atom.h"
+#include "../atoms/Atom.h"
 #include "Config.h"
-#include "TotalEnergy.h"
+#include "../physics/TotalEnergy.h"
 #include <vector>
 
 namespace simulation {
@@ -10,12 +10,12 @@ namespace simulation {
 class Timestep
 {
     public:
-        Config config;
-        std::vector<Atom> atoms;
-        TotalEnergy total_energy;
+        simulation::Config config;
+        std::vector<atoms::Atom> atoms;
+        physics::TotalEnergy total_energy;
         double time;
 
-        Timestep(Config config, std::vector<Atom> atoms, TotalEnergy total_energy, double time)
+        Timestep(simulation::Config config, std::vector<atoms::Atom> atoms, physics::TotalEnergy total_energy, double time)
         {
             this->config = config;
             this->atoms = atoms;

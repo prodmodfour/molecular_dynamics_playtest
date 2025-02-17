@@ -5,9 +5,9 @@
 #include <QFormLayout>
 #include <QVBoxLayout>
 
-namespace ui {
 
-InitialiserDialog::InitialiserDialog(QWidget *parent)
+
+ui::InitialiserDialog::InitialiserDialog(QWidget *parent)
     : QDialog(parent)
 {
     setWindowTitle("Initial Configuration Setup");
@@ -94,4 +94,4 @@ InitialParameters InitialiserDialog::getInitialParameters() const
     );
 }
 
-} // namespace ui
+

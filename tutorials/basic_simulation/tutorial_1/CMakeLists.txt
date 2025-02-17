@@ -14,18 +14,19 @@ set(CMAKE_AUTORCC ON)
 find_package(Qt5 COMPONENTS Widgets REQUIRED)
 
 # Find VTK; you may specify a minimum version if needed, e.g. find_package(VTK 9.0 REQUIRED)
-find_package(VTK 9 REQUIRED COMPONENTS
+find_package(VTK REQUIRED COMPONENTS
   CommonCore
+  CommonColor
   CommonDataModel
   RenderingCore
   RenderingOpenGL2
+  GUISupportQt   
 )
-include(${VTK_USE_FILE})
 
 # Add your source files here. If you have other .cpp files, list them as well:
 add_executable(Tutorial_1
     tutorial_1.cpp
-    ../../../ui/MainWindow.cpp
+    ../../../ui/MDVisualiser.cpp
     ../../../ui/AtomVTKWidget.cpp
 )
 
@@ -39,6 +40,7 @@ target_include_directories(Tutorial_1
         ${CMAKE_CURRENT_SOURCE_DIR}/../../../geometry
 
 )
+
 
 # Link against Qt5 and VTK libraries
 target_link_libraries(Tutorial_1

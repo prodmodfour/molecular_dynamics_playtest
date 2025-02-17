@@ -1,5 +1,6 @@
-#include "../../../physics/Atom.h"
-#include "../../../simulation/MDSimulator.h"
+#include "../../../atoms/Atom.h"
+#include "../../../atoms/AtomPairLibrary.h"
+#include "../../../simulation/simulation_functions.h"
 #include "../../../simulation/Config.h"
 #include "../../../simulation/Timestep.h"
 #include "../../../ui/MDVisualiser.h"
@@ -32,7 +33,8 @@ int main(int argc, char *argv[])
     simulation::Config config(r_cutoff, timestep_size);
 
 
-
+    // Set up Atom Pair Library
+    atoms::AtomPairLibrary atom_pair_library;
 
     // Run the simulation
     std::vector<simulation::Timestep> simulation_data;
@@ -40,7 +42,7 @@ int main(int argc, char *argv[])
     double time = 0;
     for (int i = 0; i < total_timesteps; i++) 
     {
-        simulation::Timestep timestep = simulation::simulate_timestep(config, atoms, time);
+        simulation::Timestep timestep = simulation::simulate_timestep(config, atoms, time, atom_pair_library);
         simulation_data.push_back(timestep);
     }
 

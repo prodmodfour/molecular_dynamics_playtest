@@ -13,8 +13,10 @@
 #include <vtkPolyDataMapper.h>
 #include <vtkRenderWindowInteractor.h>
 
-AtomVTKWidget::AtomVTKWidget(QWidget* parent)
-    : QVTKOpenGLNativeWidget(parent)
+
+
+ui::AtomVTKWidget::AtomVTKWidget(QWidget* parent)
+    : QVTKOpenGLWidget(parent)
 {
     // Create a VTK render window and associate it with this widget
     mRenderWindow = vtkSmartPointer<vtkGenericOpenGLRenderWindow>::New();
@@ -58,7 +60,7 @@ AtomVTKWidget::AtomVTKWidget(QWidget* parent)
     mRenderer->SetBackground(colors->GetColor3d("SlateGray").GetData());
 }
 
-void AtomVTKWidget::updateAtoms(const std::vector<Atom>& atoms)
+void ui::AtomVTKWidget::updateAtoms(const std::vector<atoms::Atom>& atoms)
 {
     // Clear current points
     mPoints->Reset();
@@ -77,3 +79,5 @@ void AtomVTKWidget::updateAtoms(const std::vector<Atom>& atoms)
     // Request a render to update the view
     this->renderWindow()->Render();
 }
+
+

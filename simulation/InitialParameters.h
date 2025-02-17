@@ -1,6 +1,7 @@
 #pragma once
 
 #include "Config.h"
+#include "../geometry/Vector.h"
 
 namespace simulation {
 
@@ -18,8 +19,8 @@ class InitialParameters
         }
 
         double impact_energy;
-        Vector impact_atom_offset;
-        Config config;
+        geometry::Vector impact_atom_offset;
+        simulation::Config config;
         int cubes_in_x;
         int cubes_in_y;
         int cubes_in_z;

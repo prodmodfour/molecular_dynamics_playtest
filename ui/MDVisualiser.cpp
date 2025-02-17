@@ -1,4 +1,5 @@
 #include "MDVisualiser.h"
+#include "../simulation/Timestep.h"
 
 // Qt includes
 #include <QTimer>
@@ -10,7 +11,9 @@
 #include <QApplication>
 #include <QObject>
 
-MDVisualiser::MDVisualiser(const std::vector<Timestep>& simulation_data,
+
+
+ui::MDVisualiser::MDVisualiser(const std::vector<simulation::Timestep>& simulation_data,
                        QWidget* parent)
     : QMainWindow(parent)
     , mSimulationData(simulation_data)
@@ -46,27 +49,27 @@ MDVisualiser::MDVisualiser(const std::vector<Timestep>& simulation_data,
     controlsLayout->addWidget(mRestartButton);
 
     connect(mRestartButton, &QPushButton::clicked,
-            this, &MainWindow::onRestartClicked);
+            this, &ui::MDVisualiser::onRestartClicked);
 
     mainLayout->addLayout(controlsLayout);
     setCentralWidget(central);
 
     // Connect slider to playback manager
     connect(mSpeedSlider, &QSlider::valueChanged,
-            this, &MainWindow::onSpeedChanged);
+            this, &ui::MDVisualiser::onSpeedChanged);
 
     // Connect start/pause button
     connect(mStartPauseButton, &QPushButton::clicked,
-            this, &MainWindow::onStartPauseClicked);
+            this, &ui::MDVisualiser::onStartPauseClicked);
 
     // Connect reverse button
     connect(mReverseButton, &QPushButton::clicked,
-            this, &MainWindow::onReverseClicked);
+            this, &ui::MDVisualiser::onReverseClicked);
 
     // Setup timer to update animation
     mTimer = new QTimer(this);
     connect(mTimer, &QTimer::timeout,
-            this, &MainWindow::onTimerTimeout);
+            this, &ui::MDVisualiser::onTimerTimeout);
     mTimer->start(42); // update every 42 ms (approx. 24 FPS)
 
     // Initialize with the first timestep (if available)
@@ -76,7 +79,7 @@ MDVisualiser::MDVisualiser(const std::vector<Timestep>& simulation_data,
     }
 }
 
-void MDVisualiser::onTimerTimeout()
+void ui::MDVisualiser::onTimerTimeout()
 {
     // Update the current timestep in the playback manager
     mPlaybackManager.update_timestep();
@@ -89,23 +92,25 @@ void MDVisualiser::onTimerTimeout()
     }
 }
 
-void MDVisualiser::onSpeedChanged(int value)
+void ui::MDVisualiser::onSpeedChanged(int value)
 {
     mPlaybackManager.change_speed(value);
 }
 
-void MDVisualiser::onStartPauseClicked()
+void ui::MDVisualiser::onStartPauseClicked()
 {
     mPlaybackManager.toggle_pause();
 }
 
-void MDVisualiser::onReverseClicked()
+void ui::MDVisualiser::onReverseClicked()
 {
     mPlaybackManager.change_direction();
 }
 
-void MDVisualiser::onRestartClicked()
+void ui::MDVisualiser::onRestartClicked()
 {
     // Signal the application event loop to exit with code 1:
     qApp->exit(1);
 }
+
+
