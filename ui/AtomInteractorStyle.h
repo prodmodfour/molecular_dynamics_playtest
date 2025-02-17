@@ -53,7 +53,7 @@ public:
                 if (pointId >= 0)
                 {
                     std::cout << "Picked point id = " << pointId << std::endl;
-                    // TODO: do something with the point ID (like highlight or show details)
+                    // We could couple point ids to the atom itself, and then use that to highlight the atom
                 }
             }
         }
