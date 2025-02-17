@@ -23,14 +23,14 @@ find_package(VTK 9 REQUIRED COMPONENTS
 include(${VTK_USE_FILE})
 
 # Add your source files here. If you have other .cpp files, list them as well:
-add_executable(MDVisualizer
+add_executable(Tutorial_1
     tutorial_1.cpp
     ../../../ui/MainWindow.cpp
     ../../../ui/AtomVTKWidget.cpp
 )
 
 # If your headers are in non-standard locations, add them to the include path:
-target_include_directories(MDVisualizer
+target_include_directories(Tutorial_1
     PRIVATE
         ${CMAKE_CURRENT_SOURCE_DIR}/../../../physics
         ${CMAKE_CURRENT_SOURCE_DIR}/../../../simulation
@@ -41,7 +41,7 @@ target_include_directories(MDVisualizer
 )
 
 # Link against Qt5 and VTK libraries
-target_link_libraries(MDVisualizer
+target_link_libraries(Tutorial_1
     PRIVATE
         Qt5::Widgets
         ${VTK_LIBRARIES}

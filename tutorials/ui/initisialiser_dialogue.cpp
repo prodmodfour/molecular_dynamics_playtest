@@ -5,7 +5,7 @@
 #include "../../../simulation/InitialParameters.h"
 #include "../../../simulation/Config.h"
 #include "../../../simulation/Timestep.h"
-#include "../../../ui/MainWindow.h"
+#include "../../../ui/MDVisualiser.h"
 #include "../../../geometry/FCCGenerator.h"
 #include "../../../geometry/Box.h"
 #include "../../../geometry/geometry.h"
@@ -70,8 +70,8 @@ int main(int argc, char *argv[])
 
     // Launch the visualiser
 
-    MainWindow main_window(simulation_data);
-    main_window.show();
+    ui::MDVisualiser visualiser(simulation_data);
+    visualiser.show();
     app.exec();
 
 

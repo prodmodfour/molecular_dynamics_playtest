@@ -12,12 +12,12 @@ class QTimer;
 class QSlider;
 class QPushButton;
 
-class MainWindow : public QMainWindow
+class MDVisualiser : public QMainWindow
 {
     Q_OBJECT
 
 public:
-    explicit MainWindow(const std::vector<Timestep>& simulation_data,
+    explicit MDVisualiser(const std::vector<Timestep>& simulation_data,
                         QWidget* parent = nullptr);
 
 private slots:
