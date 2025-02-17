@@ -12,11 +12,12 @@ namespace simulation
         simulation::Timestep current_timestep;
         std::vector<simulation::Timestep> future_timesteps;
 
-        SimulationTimeline()
+        SimulationTimeline(std::vector<simulation::Timestep> simulation_data)
         {
             past_timesteps = std::vector<simulation::Timestep>();
-            current_timestep = simulation::Timestep();
-            future_timesteps = std::vector<simulation::Timestep>();
+            future_timesteps = simulation_data;
+            current_timestep = future_timesteps.front();
+            future_timesteps.erase(future_timesteps.begin());
         }
 
         void add_timestep(const simulation::Timestep& timestep)
@@ -44,9 +45,5 @@ namespace simulation
             future_timesteps.erase(future_timesteps.begin());
         }
         
-        
-
-        
-
     };
 }
