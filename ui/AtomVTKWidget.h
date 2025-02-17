@@ -1,6 +1,6 @@
 #pragma once
 
-#include <QVTKOpenGLWidget.h>
+#include <QVTKOpenGLNativeWidget.h>
 #include <QObject>
 #include <vector>
 
@@ -23,7 +23,7 @@
 namespace ui {
 
 
-class AtomVTKWidget : public QVTKOpenGLWidget
+class AtomVTKWidget : public QVTKOpenGLNativeWidget
 {
     Q_OBJECT
 public:

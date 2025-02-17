@@ -10,6 +10,7 @@
 #include <QWidget>
 #include <QApplication>
 #include <QObject>
+#include <QSurfaceFormat>
 
 
 
@@ -19,6 +20,8 @@ ui::MDVisualiser::MDVisualiser(const std::vector<simulation::Timestep>& simulati
     , mSimulationData(simulation_data)
     , mPlaybackManager(simulation_data.size())
 {
+
+    QSurfaceFormat::setDefaultFormat(QVTKOpenGLNativeWidget::defaultFormat());
     // Create a central widget and main layout
     QWidget* central = new QWidget(this);
     QVBoxLayout* mainLayout = new QVBoxLayout(central);

@@ -8,12 +8,27 @@
 #include <iostream>
 #include <QApplication>
 
+#include <vtkSmartPointer.h>
+#include <vtkRenderer.h>
+#include <vtkGenericOpenGLRenderWindow.h>
+#include <vtkPolyData.h>
+#include <vtkGlyph3DMapper.h>
+#include <vtkSphereSource.h>
+#include <vtkActor.h>
+#include <vtkNamedColors.h>
+#include <vtkRenderWindow.h>
+#include <vtkProperty.h>
+#include <vtkPoints.h>
+#include <vtkPolyDataMapper.h>
+#include <vtkRenderWindowInteractor.h>
+
 
 
 
 
 int main(int argc, char *argv[])
 {   
+    // QApplication app(argc, argv);
     // Test 1: Create a singe atom with no initial velocity. Watch it not move for 100 timesteps.
 
 
@@ -52,11 +67,53 @@ int main(int argc, char *argv[])
         std::cout << "Timestep: " << timestep.time << " " << "Atom position: " << timestep.atoms[0].x << ", " << timestep.atoms[0].y << ", " << timestep.atoms[0].z << std::endl;
     }
 
+
+    vtkSmartPointer<vtkGenericOpenGLRenderWindow> mRenderWindow = vtkSmartPointer<vtkGenericOpenGLRenderWindow>::New();
+    // Create a renderer and add it to the render window
+    vtkSmartPointer<vtkRenderer> mRenderer = vtkSmartPointer<vtkRenderer>::New();
+    mRenderWindow->AddRenderer(mRenderer);
+
+    // Create points and poly data for atoms
+    vtkSmartPointer<vtkPoints>  mPoints = vtkSmartPointer<vtkPoints>::New();
+    vtkSmartPointer<vtkPolyData>  mPolyData = vtkSmartPointer<vtkPolyData>::New();
+    mPolyData->SetPoints(mPoints);
+
+    // Configure the render window
+    mRenderWindow->SetWindowName("Molecular Dynamics Playtest");
+    mRenderWindow->SetSize(1280, 720);
+
+    // Interactor (required for responding to mouse/keyboard, if needed)
+    vtkNew<vtkRenderWindowInteractor> renderWindowInteractor;
+    renderWindowInteractor->SetRenderWindow(mRenderWindow);
+
+    // Create a sphere source to use as a glyph
+    vtkSmartPointer<vtkSphereSource> sphereSource = vtkSmartPointer<vtkSphereSource>::New();
+    sphereSource->SetRadius(1.28);
+
+    // Create glyph mapper
+    vtkSmartPointer<vtkGlyph3DMapper> mGlyphMapper = vtkSmartPointer<vtkGlyph3DMapper>::New();
+    mGlyphMapper->SetInputData(mPolyData);
+    mGlyphMapper->SetSourceConnection(sphereSource->GetOutputPort());
+
+    // Create an actor and set its mapper
+    vtkSmartPointer<vtkActor> mGlyphActor = vtkSmartPointer<vtkActor>::New();
+    mGlyphActor->SetMapper(mGlyphMapper);
+
+    // Add the actor to the renderer
+    mRenderer->AddActor(mGlyphActor);
+
+    // Set a background color
+    vtkSmartPointer<vtkNamedColors> colors = vtkSmartPointer<vtkNamedColors>::New();
+    mRenderer->SetBackground(colors->GetColor3d("Blue").GetData());
+
+    mRenderWindow->Render();
+    renderWindowInteractor->Subunttart();
+
     // Launch the visualiser
-    QApplication app(argc, argv);
-    ui::MDVisualiser visualiser(simulation_data);
-    visualiser.show();
-    app.exec();
+
+    // ui::MDVisualiser visualiser(simulation_data);
+    // visualiser.show();
+    // app.exec();
 
 
 

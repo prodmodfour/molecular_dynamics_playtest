@@ -16,7 +16,7 @@
 
 
 ui::AtomVTKWidget::AtomVTKWidget(QWidget* parent)
-    : QVTKOpenGLWidget(parent)
+    : QVTKOpenGLNativeWidget(parent)
 {
     // Create a VTK render window and associate it with this widget
     mRenderWindow = vtkSmartPointer<vtkGenericOpenGLRenderWindow>::New();
@@ -57,7 +57,7 @@ ui::AtomVTKWidget::AtomVTKWidget(QWidget* parent)
 
     // Set a background color
     vtkSmartPointer<vtkNamedColors> colors = vtkSmartPointer<vtkNamedColors>::New();
-    mRenderer->SetBackground(colors->GetColor3d("SlateGray").GetData());
+    mRenderer->SetBackground(colors->GetColor3d("Blue").GetData());
 }
 
 void ui::AtomVTKWidget::updateAtoms(const std::vector<atoms::Atom>& atoms)
