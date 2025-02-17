@@ -50,6 +50,10 @@ ui::InitialiserDialog::InitialiserDialog(QWidget *parent)
     impactAtomZOffsetSpin->setRange(0.0, 100);
     impactAtomZOffsetSpin->setValue(0.0); // example default
 
+    numberOfTimestepsSpin = new QSpinBox(this);
+    numberOfTimestepsSpin->setRange(1, 1000000);
+    numberOfTimestepsSpin->setValue(1000); // example default
+
     // Layout for form
     QFormLayout *formLayout = new QFormLayout;
     formLayout->addRow("Impact Energy:", impactEnergySpin);
@@ -91,6 +95,7 @@ InitialParameters InitialiserDialog::getInitialParameters() const
         impactAtomXOffsetSpin->value(),
         impactAtomYOffsetSpin->value(),
         impactAtomZOffsetSpin->value(),
+        numberOfTimestepsSpin->value()
     );
 }
 

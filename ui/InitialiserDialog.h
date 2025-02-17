@@ -29,6 +29,7 @@ private:
     QDoubleSpinBox *impactAtomXOffsetSpin;
     QDoubleSpinBox *impactAtomYOffsetSpin;
     QDoubleSpinBox *impactAtomZOffsetSpin;
+    QSpinBox       *numberOfTimestepsSpin;
 };
 
 } // namespace ui
