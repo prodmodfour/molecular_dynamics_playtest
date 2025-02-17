@@ -22,7 +22,7 @@ To add:
 
 
     - Domain Decomposition (2 weeks)
-        - The system, at each timstep, will be split into domains (domain number and balancing will be handled automatically by open mp, much simpler than mpi)
+        - The system, at each timestep, will be split into domains (domain number and balancing will be handled automatically by open mp, much simpler than mpi)
         - Atoms will be assigned to domains based on their position
         - Atoms will be assigned to cells based on their position
         - Domains will send boundary atoms to neighbouring domains

@@ -16,7 +16,7 @@ public:
     InitialParameters getInitialParameters() const;
 
 private:
-    // Forward-declare Qt widgets or include headers. For brevity, you can just do:
+
     class QDoubleSpinBox;
     class QSpinBox;
 
