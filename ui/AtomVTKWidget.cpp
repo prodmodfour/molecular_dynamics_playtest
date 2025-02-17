@@ -12,7 +12,7 @@
 #include <vtkPoints.h>
 #include <vtkPolyDataMapper.h>
 #include <vtkRenderWindowInteractor.h>
-
+#include "AtomInteractorStyle.h"
 
 
 ui::AtomVTKWidget::AtomVTKWidget(QWidget* parent)
@@ -38,6 +38,13 @@ ui::AtomVTKWidget::AtomVTKWidget(QWidget* parent)
     mPoints = vtkSmartPointer<vtkPoints>::New();
     mPolyData = vtkSmartPointer<vtkPolyData>::New();
     mPolyData->SetPoints(mPoints);
+
+    // Initialise color array
+    mColors = vtkSmartPointer<vtkUnsignedCharArray>::New();
+    mColors->SetNumberOfComponents(4);
+    mColors->SetNumberOfTuples(0);
+    mPolyData->GetPointData()->AddArray(mColors);
+
 
     // Configure the render window
     mRenderWindow->SetWindowName("Molecular Dynamics Playtest");
@@ -78,11 +85,14 @@ void ui::AtomVTKWidget::updateAtoms(const std::vector<atoms::Atom>& atoms)
     for (size_t i = 0; i < atoms.size(); ++i)
     {
         mPoints->SetPoint(i, atoms[i].x, atoms[i].y, atoms[i].z);
+        Color color = determine_colour_based_on_kinetic_energy(atoms[i].kinetic_energy, 0.01);
+        mColors->InsertNextTuple4(color.r, color.g, color.b, color.a);
     }
 
     // Mark data as modified so VTK knows to update
     mPoints->Modified();
     mPolyData->Modified();
+    mColors->Modified();
 
     // Request a render to update the view
     this->renderWindow()->Render();

@@ -28,6 +28,7 @@ add_executable(Tutorial_1
     tutorial_1.cpp
     ../../../ui/MDVisualiser.cpp
     ../../../ui/AtomVTKWidget.cpp
+    ../../../ui/AtomInteractorStyle.cpp
 )
 
 # If your headers are in non-standard locations, add them to the include path:
