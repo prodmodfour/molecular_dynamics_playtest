@@ -1,0 +1,9 @@
+This January I:
+ - Refactored my codebase to better fit SOLID principles. 
+ - Added the ability to initialise the MD simulation using a dialog box
+ - Added the ability to restart the MD simulation using a dialog box
+ - Finished my networking university assignment
+ - Finished my Project Management university assignment
+ - Started new university modules: Maths and Data Visualisation
+
+
