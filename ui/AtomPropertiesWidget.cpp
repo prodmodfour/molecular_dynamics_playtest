@@ -1,53 +1,87 @@
 #include "AtomPropertiesWidget.h"
+#include <QVBoxLayout>
+#include <QLabel>
+#include <QDoubleSpinBox>
+#include <QLineEdit>
+#include <QPushButton>
+
+
 
 ui::AtomPropertiesWidget::AtomPropertiesWidget(QWidget* parent)
     : QWidget(parent)
 {
     mLayout = new QVBoxLayout(this);
 
-    mLabel = new QLabel("Atom Properties", this);
-    mLayout->addWidget(mLabel);
+
+    mLayout->addWidget(new QLabel("Atom Properties", this));
+
 
     mXSpinBox = new QDoubleSpinBox(this);
+    mLayout->addWidget(new QLabel("X", this));
+    mXSpinBox->setSuffix(" Å");
     mLayout->addWidget(mXSpinBox);
 
     mYSpinBox = new QDoubleSpinBox(this);
+    mLayout->addWidget(new QLabel("Y", this));
+    mYSpinBox->setSuffix(" Å");
     mLayout->addWidget(mYSpinBox);
 
     mZSpinBox = new QDoubleSpinBox(this);
+    mLayout->addWidget(new QLabel("Z", this));
+    mZSpinBox->setSuffix(" Å");
     mLayout->addWidget(mZSpinBox);
 
     mFxSpinBox = new QDoubleSpinBox(this);
+    mLayout->addWidget(new QLabel("Fx", this));
+    mFxSpinBox->setSuffix(" eV/Å");
     mLayout->addWidget(mFxSpinBox);
 
     mFySpinBox = new QDoubleSpinBox(this);
+    mLayout->addWidget(new QLabel("Fy", this));
+    mFySpinBox->setSuffix(" eV/Å");
     mLayout->addWidget(mFySpinBox);
 
     mFzSpinBox = new QDoubleSpinBox(this);
+    mLayout->addWidget(new QLabel("Fz", this));
+    mFzSpinBox->setSuffix(" eV/Å");
     mLayout->addWidget(mFzSpinBox);
 
     mVxSpinBox = new QDoubleSpinBox(this);
+    mLayout->addWidget(new QLabel("Vx", this));
+    mVxSpinBox->setSuffix(" Å/ps");
     mLayout->addWidget(mVxSpinBox);
 
     mVySpinBox = new QDoubleSpinBox(this);
+    mLayout->addWidget(new QLabel("Vy", this));
+    mVySpinBox->setSuffix(" Å/ps");
     mLayout->addWidget(mVySpinBox);
 
     mVzSpinBox = new QDoubleSpinBox(this);
+    mLayout->addWidget(new QLabel("Vz", this));
+    mVzSpinBox->setSuffix(" Å/ps");
     mLayout->addWidget(mVzSpinBox);
 
     mRadiusSpinBox = new QDoubleSpinBox(this);
+    mLayout->addWidget(new QLabel("Radius", this));
+    mRadiusSpinBox->setSuffix(" Å");
     mLayout->addWidget(mRadiusSpinBox);
 
     mMassSpinBox = new QDoubleSpinBox(this);
+    mLayout->addWidget(new QLabel("Mass", this));
+    mMassSpinBox->setSuffix(" amu");
     mLayout->addWidget(mMassSpinBox);
 
     mKineticEnergySpinBox = new QDoubleSpinBox(this);
+    mLayout->addWidget(new QLabel("Kinetic Energy", this));
+    mKineticEnergySpinBox->setSuffix(" eV");
     mLayout->addWidget(mKineticEnergySpinBox);
 
     mTypeLineEdit = new QLineEdit(this);
+    mLayout->addWidget(new QLabel("Type", this));
     mLayout->addWidget(mTypeLineEdit);
 
     mNameLineEdit = new QLineEdit(this);
+    mLayout->addWidget(new QLabel("Name", this));
     mLayout->addWidget(mNameLineEdit);
 
     mModifyButton = new QPushButton("Modify", this);

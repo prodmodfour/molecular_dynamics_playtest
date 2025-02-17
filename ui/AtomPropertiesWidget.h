@@ -22,7 +22,6 @@ private:
     class QPushButton;
 
     QVBoxLayout* mLayout;
-    QLabel* mLabel;
 
     // Properties
     QDoubleSpinBox* mXSpinBox;
