@@ -26,6 +26,14 @@ ui::AtomVTKWidget::AtomVTKWidget(QWidget* parent)
     mRenderer = vtkSmartPointer<vtkRenderer>::New();
     mRenderWindow->AddRenderer(mRenderer);
 
+    // Create and set our custom interactor style
+    vtkNew<AtomInteractorStyle> style;
+    style->SetRenderer(mRenderer); // so it knows where to pick from
+    renderWindowInteractor->SetInteractorStyle(style);
+
+    // This initializes the event handling loop for trackball + picking:
+    renderWindowInteractor->Initialize();
+
     // Create points and poly data for atoms
     mPoints = vtkSmartPointer<vtkPoints>::New();
     mPolyData = vtkSmartPointer<vtkPolyData>::New();
