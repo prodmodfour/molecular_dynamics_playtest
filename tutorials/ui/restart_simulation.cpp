@@ -18,10 +18,11 @@
 int main(int argc, char *argv[])
 {   
     // Create a simulation using the initialiser dialogue
-    QApplication app(argc, argv);
+
 
     while (true)
     {
+        QApplication app(argc, argv);
         ui::InitialiserDialog initialiser_dialog;
         if (initialiser_dialog.exec() == QDialog::Accepted)
         {
