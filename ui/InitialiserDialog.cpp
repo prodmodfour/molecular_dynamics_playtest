@@ -16,15 +16,19 @@ ui::InitialiserDialog::InitialiserDialog(QWidget *parent)
     impactEnergySpin = new QDoubleSpinBox(this);
     impactEnergySpin->setRange(0.0, 100);
     impactEnergySpin->setValue(10.0); // example default
+    impactEnergySpin->setSuffix(" eV");
 
     rCutoffSpin = new QDoubleSpinBox(this);
     rCutoffSpin->setRange(0.0, 100);
     rCutoffSpin->setValue(4.0); // example default
+    rCutoffSpin->setSuffix(" Å");
+
 
     timestepSpin = new QDoubleSpinBox(this);
     timestepSpin->setRange(0.0, 1.0);
     timestepSpin->setDecimals(6);
     timestepSpin->setValue(0.001); // example default
+    timestepSpin->setSuffix(" ps");
 
     cubesXSpin = new QSpinBox(this);
     cubesXSpin->setRange(1, 100);
@@ -41,14 +45,17 @@ ui::InitialiserDialog::InitialiserDialog(QWidget *parent)
     impactAtomXOffsetSpin = new QDoubleSpinBox(this);
     impactAtomXOffsetSpin->setRange(0.0, 100);
     impactAtomXOffsetSpin->setValue(0.0); // example default
+    impactAtomXOffsetSpin->setSuffix(" Å");
 
     impactAtomYOffsetSpin = new QDoubleSpinBox(this);
     impactAtomYOffsetSpin->setRange(0.0, 100);
     impactAtomYOffsetSpin->setValue(0.0); // example default
+    impactAtomYOffsetSpin->setSuffix(" Å");
 
     impactAtomZOffsetSpin = new QDoubleSpinBox(this);
     impactAtomZOffsetSpin->setRange(0.0, 100);
     impactAtomZOffsetSpin->setValue(0.0); // example default
+    impactAtomZOffsetSpin->setSuffix(" Å");
 
     numberOfTimestepsSpin = new QSpinBox(this);
     numberOfTimestepsSpin->setRange(1, 1000000);
