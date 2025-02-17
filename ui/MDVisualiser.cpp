@@ -98,11 +98,17 @@ void ui::MDVisualiser::onTimerTimeout()
 
     if (mPlaybackSettings.direction == 1)
     {
-        mSimulationTimeline.progress();
+        for (int i = 0; i < mPlaybackSettings.speed; i++)
+        {
+            mSimulationTimeline.progress();
+        }
     }
     else if (mPlaybackSettings.direction == -1)
     {
-        mSimulationTimeline.backtrack();
+        for (int i = 0; i < mPlaybackSettings.speed; i++)
+        {
+            mSimulationTimeline.backtrack();
+        }
     }
     else
     {
