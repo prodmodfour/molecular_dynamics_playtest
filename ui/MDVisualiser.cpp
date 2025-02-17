@@ -30,6 +30,9 @@ ui::MDVisualiser::MDVisualiser(const std::vector<simulation::Timestep>& simulati
     mVTKWidget = new AtomVTKWidget(central);
     mainLayout->addWidget(mVTKWidget);
 
+    mAtomPropertiesWidget = new AtomPropertiesWidget(central);
+    mainLayout->addWidget(mAtomPropertiesWidget);
+
     // --- Playback Controls ---
     QHBoxLayout* controlsLayout = new QHBoxLayout;
 

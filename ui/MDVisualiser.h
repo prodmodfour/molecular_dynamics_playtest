@@ -6,6 +6,7 @@
 #include "AtomVTKWidget.h"
 #include "PlaybackManager.h"
 #include "../simulation/Timestep.h"
+#include "AtomPropertiesWidget.h"
 
 
 class QTimer;
@@ -31,6 +32,7 @@ private slots:
 
 private:
     ui::AtomVTKWidget*            mVTKWidget;
+    ui::AtomPropertiesWidget*     mAtomPropertiesWidget;
     QSlider*                  mSpeedSlider;
     QPushButton*              mStartPauseButton;
     QPushButton*              mReverseButton;
