@@ -98,4 +98,9 @@ void ui::AtomVTKWidget::updateAtoms(const std::vector<atoms::Atom>& atoms)
     this->renderWindow()->Render();
 }
 
+void ui::AtomVTKWidget::render()
+{
+    this->renderWindow()->Render();
+}
+
 

@@ -4,8 +4,9 @@
 #include <vector>
 
 #include "AtomVTKWidget.h"
-#include "PlaybackManager.h"
+#include "PlaybackSettings.h"
 #include "../simulation/Timestep.h"
+#include "../simulation/SimulationTimeline.h"
 #include "AtomPropertiesWidget.h"
 
 
@@ -20,7 +21,7 @@ class MDVisualiser : public QMainWindow
     Q_OBJECT
 
 public:
-    explicit MDVisualiser(const std::vector<simulation::Timestep>& simulation_data,
+    explicit MDVisualiser(simulation::SimulationTimeline &simulation_timeline,
                         QWidget* parent = nullptr);
 
 private slots:
@@ -39,8 +40,8 @@ private:
     QPushButton*              mRestartButton;
     QTimer*                   mTimer;
 
-    std::vector<simulation::Timestep>     mSimulationData;
-    ui::PlaybackManager           mPlaybackManager;
+    simulation::SimulationTimeline      mSimulationTimeline;
+    ui::PlaybackSettings           mPlaybackSettings;
 };
     
 } // namespace ui

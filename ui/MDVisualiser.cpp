@@ -1,5 +1,6 @@
 #include "MDVisualiser.h"
 #include "../simulation/Timestep.h"
+#include "../simulation/SimulationTimeline.h"
 
 // Qt includes
 #include <QTimer>
@@ -11,14 +12,15 @@
 #include <QApplication>
 #include <QObject>
 #include <QSurfaceFormat>
+#include <stdexcept>
 
 
 
-ui::MDVisualiser::MDVisualiser(const std::vector<simulation::Timestep>& simulation_data,
+ui::MDVisualiser::MDVisualiser(simulation::SimulationTimeline &simulation_timeline,
                        QWidget* parent)
     : QMainWindow(parent)
-    , mSimulationData(simulation_data)
-    , mPlaybackManager(simulation_data.size())
+    , mSimulationTimeline(simulation_timeline)
+    , mPlaybackSettings()
 {
 
     QSurfaceFormat::setDefaultFormat(QVTKOpenGLNativeWidget::defaultFormat());
@@ -87,30 +89,44 @@ ui::MDVisualiser::MDVisualiser(const std::vector<simulation::Timestep>& simulati
 
 void ui::MDVisualiser::onTimerTimeout()
 {
-    // Update the current timestep in the playback manager
-    mPlaybackManager.update_timestep();
+
+    if (mPlaybackSettings.pause)
+    {
+        mVTKWidget->render();
+        return;
+    }
+
+    if (mPlaybackSettings.direction == 1)
+    {
+        mSimulationTimeline.progress();
+    }
+    else if (mPlaybackSettings.direction == -1)
+    {
+        mSimulationTimeline.backtrack();
+    }
+    else
+    {
+        throw std::invalid_argument("Invalid direction");
+    }
 
     // Render the new timestep
-    int current = mPlaybackManager.current_timestep;
-    if (current >= 0 && current < static_cast<int>(mSimulationData.size()))
-    {
-        mVTKWidget->updateAtoms(mSimulationData[current].atoms);
-    }
+    mVTKWidget->updateAtoms(mSimulationTimeline.current_timestep.atoms);
+
 }
 
 void ui::MDVisualiser::onSpeedChanged(int value)
 {
-    mPlaybackManager.change_speed(value);
+    mPlaybackSettings.change_speed(value);
 }
 
 void ui::MDVisualiser::onStartPauseClicked()
 {
-    mPlaybackManager.toggle_pause();
+    mPlaybackSettings.toggle_pause();
 }
 
 void ui::MDVisualiser::onReverseClicked()
 {
-    mPlaybackManager.change_direction();
+    mPlaybackSettings.change_direction();
 }
 
 void ui::MDVisualiser::onRestartClicked()

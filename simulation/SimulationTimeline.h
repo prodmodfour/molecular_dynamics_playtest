@@ -20,6 +20,13 @@ namespace simulation
             future_timesteps.erase(future_timesteps.begin());
         }
 
+        SimulationTimeline(simulation::Timestep first_timestep)
+        {
+            past_timesteps = std::vector<simulation::Timestep>();
+            future_timesteps = std::vector<simulation::Timestep>();
+            current_timestep = first_timestep;
+        }
+
         void add_timestep(const simulation::Timestep& timestep)
         {
             future_timesteps.push_back(timestep);
@@ -43,6 +50,13 @@ namespace simulation
             past_timesteps.push_back(current_timestep);
             current_timestep = future_timesteps.front();
             future_timesteps.erase(future_timesteps.begin());
+        }
+
+        void backtrack()
+        {
+            future_timesteps.insert(future_timesteps.begin(), current_timestep);
+            current_timestep = past_timesteps.back();
+            past_timesteps.pop_back();
         }
         
     };
