@@ -28,9 +28,10 @@
 
 int main(int argc, char *argv[])
 {   
-    // QApplication app(argc, argv);
-    // Test 1: Create a singe atom with no initial velocity. Watch it not move for 100 timesteps.
 
+    // Test 1: Create a singe atom with no initial velocity. Watch it not move for 100 timesteps.
+    //Initialise Qt. This is required for the visualiser.
+    QApplication app(argc, argv);
 
 
     // Create a single atom
@@ -68,52 +69,10 @@ int main(int argc, char *argv[])
     }
 
 
-    vtkSmartPointer<vtkGenericOpenGLRenderWindow> mRenderWindow = vtkSmartPointer<vtkGenericOpenGLRenderWindow>::New();
-    // Create a renderer and add it to the render window
-    vtkSmartPointer<vtkRenderer> mRenderer = vtkSmartPointer<vtkRenderer>::New();
-    mRenderWindow->AddRenderer(mRenderer);
-
-    // Create points and poly data for atoms
-    vtkSmartPointer<vtkPoints>  mPoints = vtkSmartPointer<vtkPoints>::New();
-    vtkSmartPointer<vtkPolyData>  mPolyData = vtkSmartPointer<vtkPolyData>::New();
-    mPolyData->SetPoints(mPoints);
-
-    // Configure the render window
-    mRenderWindow->SetWindowName("Molecular Dynamics Playtest");
-    mRenderWindow->SetSize(1280, 720);
-
-    // Interactor (required for responding to mouse/keyboard, if needed)
-    vtkNew<vtkRenderWindowInteractor> renderWindowInteractor;
-    renderWindowInteractor->SetRenderWindow(mRenderWindow);
-
-    // Create a sphere source to use as a glyph
-    vtkSmartPointer<vtkSphereSource> sphereSource = vtkSmartPointer<vtkSphereSource>::New();
-    sphereSource->SetRadius(1.28);
-
-    // Create glyph mapper
-    vtkSmartPointer<vtkGlyph3DMapper> mGlyphMapper = vtkSmartPointer<vtkGlyph3DMapper>::New();
-    mGlyphMapper->SetInputData(mPolyData);
-    mGlyphMapper->SetSourceConnection(sphereSource->GetOutputPort());
-
-    // Create an actor and set its mapper
-    vtkSmartPointer<vtkActor> mGlyphActor = vtkSmartPointer<vtkActor>::New();
-    mGlyphActor->SetMapper(mGlyphMapper);
-
-    // Add the actor to the renderer
-    mRenderer->AddActor(mGlyphActor);
-
-    // Set a background color
-    vtkSmartPointer<vtkNamedColors> colors = vtkSmartPointer<vtkNamedColors>::New();
-    mRenderer->SetBackground(colors->GetColor3d("Blue").GetData());
-
-    mRenderWindow->Render();
-    renderWindowInteractor->Subunttart();
-
     // Launch the visualiser
-
-    // ui::MDVisualiser visualiser(simulation_data);
-    // visualiser.show();
-    // app.exec();
+    ui::MDVisualiser visualiser(simulation_data);
+    visualiser.show();
+    app.exec();
 
 
 

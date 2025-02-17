@@ -6,7 +6,9 @@ namespace atoms {
 
 class Atom
 {
+
     public:
+
         double x, y, z;
         double fx, fy, fz;
         double vx, vy, vz;
@@ -14,7 +16,7 @@ class Atom
         double radius;
         double kinetic_energy;
         std::string type;
-        std::string name;
+        std::string name; // This is for potential use for labelling atoms in the UI
 
         // Default Constructor
         Atom(std::string type, double mass, double radius)
