@@ -13,11 +13,13 @@ class PlaybackSettings
             this->direction = 1;
             this->speed = 1;
             this->pause = false;
+            this->current_timestep_index = 0;
         }
 
         int direction;
         int speed; 
         bool pause;
+        int current_timestep_index;
 
         void change_direction()
         {
@@ -33,6 +35,13 @@ class PlaybackSettings
         {
             pause = !pause;
         }
+
+        void next_timestep()
+        {
+            current_timestep_index += direction * speed;
+        }
+
+
 };
 
 }
