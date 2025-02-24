@@ -5,6 +5,8 @@
 #include "../../../simulation/Timestep.h"
 #include "../../../ui/MDVisualiser.h"
 #include "../../../ui/data_loaders/BasicDataLoader.h"
+#include "../../../ui/PlaybackSettings.h"
+
 #include <vector>
 #include <iostream>
 #include <QApplication>
@@ -70,19 +72,26 @@ int main(int argc, char *argv[])
         std::cout << "Timestep: " << timestep.time << " " << "Atom position: " << timestep.atoms[0].x << ", " << timestep.atoms[0].y << ", " << timestep.atoms[0].z << std::endl;
     }
 
+    int last_timestep_index = simulation_data.size() - 1;
+    // Set up playback settings
+    ui::PlaybackSettings playback_settings(last_timestep_index);
+
     // Create a data loader
     ui::BasicDataLoader data_loader;
     data_loader.setData(&simulation_data);
+    data_loader.setPlaybackSettings(&playback_settings);
+
 
     // Launch the visualiser
-    ui::MDVisualiser visualiser();
-    visualiser.setDataLoader(&data_loader);
+    ui::MDVisualiser visualiser(nullptr, &data_loader, &playback_settings);
     visualiser.show();
-    app.exec();
+    std::cout << "Visualiser shown" << std::endl;
+    
 
 
 
-    return 0;
+    return app.exec();
+
 }
 
 

@@ -1,9 +1,0 @@
-{
-    "name": "tutorial-1",
-    "version-string": "0.1.0",
-    "dependencies": [
-      "qt5-base",
-      "vtk"
-    ]
-  }
-  
