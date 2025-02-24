@@ -16,10 +16,11 @@
 
 
 
-ui::MDVisualiser::MDVisualiser(simulation::SimulationTimeline &simulation_timeline,
+ui::MDVisualiser::MDVisualiser(
                        QWidget* parent)
     : QMainWindow(parent)
-    , mSimulationTimeline(simulation_timeline)
+    , data_loader_set(false)
+    , mDataLoader(nullptr)
     , mPlaybackSettings()
 {
 
@@ -80,15 +81,14 @@ ui::MDVisualiser::MDVisualiser(simulation::SimulationTimeline &simulation_timeli
             this, &ui::MDVisualiser::onTimerTimeout);
     mTimer->start(42); // update every 42 ms (approx. 24 FPS)
 
-    // Initialize with the first timestep (if available)
-    if (!mSimulationData.empty())
-    {
-        mVTKWidget->updateAtoms(mSimulationData[mPlaybackManager.current_timestep].atoms);
-    }
 }
 
 void ui::MDVisualiser::onTimerTimeout()
 {
+    if (!data_loader_set)
+    {
+        return;
+    }
 
     if (mPlaybackSettings.pause)
     {
@@ -140,5 +140,14 @@ void ui::MDVisualiser::onRestartClicked()
     // Signal the application event loop to exit with code 1:
     qApp->exit(1);
 }
+
+void ui::MDVisualiser::setDataLoader(ui::BasicDataLoader* data_loader)
+{
+    mDataLoader = data_loader;
+    mDataLoader->setPlaybackSettings(&mPlaybackSettings);
+    mDataLoader->setDataOutputPointer(&current_timestep_data);
+    data_loader_set = true;
+}
+
 
 

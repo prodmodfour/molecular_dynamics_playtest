@@ -8,7 +8,7 @@
 #include "../simulation/Timestep.h"
 #include "../simulation/SimulationTimeline.h"
 #include "AtomPropertiesWidget.h"
-
+#include "data_loaders/BasicDataLoader.h"
 
 class QTimer;
 class QSlider;
@@ -21,7 +21,7 @@ class MDVisualiser : public QMainWindow
     Q_OBJECT
 
 public:
-    explicit MDVisualiser(simulation::SimulationTimeline &simulation_timeline,
+    explicit MDVisualiser(
                         QWidget* parent = nullptr);
 
 private slots:
@@ -30,6 +30,8 @@ private slots:
     void onStartPauseClicked();
     void onReverseClicked();
     void onRestartClicked();
+    void setPlaybackSettings(ui::PlaybackSettings* playback_settings);
+    void setDataLoader(ui::BasicDataLoader* data_loader);
 
 private:
     ui::AtomVTKWidget*            mVTKWidget;
@@ -40,8 +42,10 @@ private:
     QPushButton*              mRestartButton;
     QTimer*                   mTimer;
 
-    simulation::SimulationTimeline      mSimulationTimeline;
-    ui::PlaybackSettings           mPlaybackSettings;
+    simulation::Timestep*      current_timestep_data;
+    ui::PlaybackSettings*       mPlaybackSettings;
+    bool                        data_loader_set;
+    ui::BasicDataLoader*        mDataLoader;
 };
     
 } // namespace ui

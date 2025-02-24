@@ -4,6 +4,7 @@
 #include "../../../simulation/Config.h"
 #include "../../../simulation/Timestep.h"
 #include "../../../ui/MDVisualiser.h"
+#include "../../../ui/data_loaders/BasicDataLoader.h"
 #include <vector>
 #include <iostream>
 #include <QApplication>
@@ -21,6 +22,7 @@
 #include <vtkPoints.h>
 #include <vtkPolyDataMapper.h>
 #include <vtkRenderWindowInteractor.h>
+
 
 
 
@@ -68,9 +70,13 @@ int main(int argc, char *argv[])
         std::cout << "Timestep: " << timestep.time << " " << "Atom position: " << timestep.atoms[0].x << ", " << timestep.atoms[0].y << ", " << timestep.atoms[0].z << std::endl;
     }
 
+    // Create a data loader
+    ui::BasicDataLoader data_loader;
+    data_loader.setData(&simulation_data);
 
     // Launch the visualiser
-    ui::MDVisualiser visualiser(simulation_data);
+    ui::MDVisualiser visualiser();
+    visualiser.setDataLoader(&data_loader);
     visualiser.show();
     app.exec();
 

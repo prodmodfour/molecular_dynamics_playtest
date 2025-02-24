@@ -10,16 +10,42 @@
 class BasicDataLoader : public DataLoader
 {
     public:
-        std::vector<simulation::Timestep> data;
-        PlaybackSettings playback_settings;
-        BasicDataLoader(std::vector<simulation::Timestep> &data, PlaybackSettings &playback_settings)
+        std::vector<simulation::Timestep>* data;
+        ui::PlaybackSettings* playback_settings;
+        simulation::Timestep* data_output_pointer;
+
+        BasicDataLoader()
+        {
+            data_output_pointer = nullptr;
+            playback_settings = nullptr;
+            data = nullptr;
+        }
+
+        void load() override
+        {
+            if (data_output_pointer == nullptr)
+            {
+                throw std::invalid_argument("Data output pointer is not set");
+            }
+
+            *data_output_pointer = data->at(playback_settings->current_timestep_index);
+        }
+
+        void setData(std::vector<simulation::Timestep>* data)
         {
             this->data = data;
+        }
+
+        void setPlaybackSettings(ui::PlaybackSettings* playback_settings)
+        {
             this->playback_settings = playback_settings;
         }
-        simulation::Timestep load() 
+
+        void setDataOutputPointer(simulation::Timestep* data_output_pointer)
         {
-            return data[playback_settings.current_timestep];
+            this->data_output_pointer = data_output_pointer;
         }
+
+        
 
 };

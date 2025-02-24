@@ -6,8 +6,9 @@ namespace geometry {
 class Plane
 {
     public:
-        Plane(Vector corner_1, Vector corner_2, Vector corner_3, Vector corner_4)
+        Plane(geometry::Vector corner_1, geometry::Vector corner_2, geometry::Vector corner_3, geometry::Vector corner_4)
         {
+            this->corners = std::vector<geometry::Vector>();
             this->corners.push_back(corner_1);
             this->corners.push_back(corner_2);
             this->corners.push_back(corner_3);
@@ -33,11 +34,13 @@ class Plane
             double x_midpoint = (highest_x + lowest_x) / 2;
             double y_midpoint = (highest_y + lowest_y) / 2;
             double z_midpoint = (highest_z + lowest_z) / 2;
-            this->center = Vector{x_midpoint, y_midpoint, z_midpoint};
+            this->center = geometry::Vector{x_midpoint, y_midpoint, z_midpoint};
+
+            
         };
-        Vector normal;
-        std::vector<Vector> corners;
-        Vector center;
+        geometry::Vector normal;
+        std::vector<geometry::Vector> corners;
+        geometry::Vector center;
 };
 
 }
