@@ -26,6 +26,7 @@ ui::AtomVTKWidget::AtomVTKWidget(QWidget* parent)
     // Create a VTK render window and associate it with this widget
     mRenderWindow = vtkSmartPointer<vtkGenericOpenGLRenderWindow>::New();
     this->setRenderWindow(mRenderWindow);
+    mRenderWindow->SetSize(1280, 720);
 
     // Create a renderer and add it to the render window
     mRenderer = vtkSmartPointer<vtkRenderer>::New();
@@ -90,7 +91,7 @@ void ui::AtomVTKWidget::updateAtoms(const std::vector<atoms::Atom>& atoms)
     {
         mPoints->SetPoint(i, atoms[i].x, atoms[i].y, atoms[i].z);
         Color color = determine_colour_based_on_kinetic_energy(atoms[i].kinetic_energy, 0.01);
-        mColors->InsertNextTuple4(color.r, color.g, color.b, color.a);
+        mColors->SetTuple4(i, color.r, color.g, color.b, color.a);
 
     }
 

@@ -37,6 +37,7 @@ ui::MDVisualiser::MDVisualiser(
 
     // Create our Atom VTK Widget
     mVTKWidget = new AtomVTKWidget(central);
+    mVTKWidget->setFixedSize(1280, 720);
     mainLayout->addWidget(mVTKWidget);
 
 
