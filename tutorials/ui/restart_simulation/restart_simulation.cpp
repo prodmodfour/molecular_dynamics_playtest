@@ -73,9 +73,12 @@ int main(int argc, char *argv[])
         }
 
 
-        // Launch the visualiser
 
-        ui::MDVisualiser visualiser(simulation_data);
+        // Launch the visualiser
+        ui::BasicDataLoader data_loader;    
+        data_loader.setData(&simulation_data);
+        ui::MDVisualiser visualiser();
+        visualiser.setDataLoader(&data_loader);
         visualiser.show();
         int exit_code = app.exec();
         if (exit_code == 1)

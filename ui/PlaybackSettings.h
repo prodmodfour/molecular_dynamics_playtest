@@ -8,18 +8,20 @@ namespace ui {
 class PlaybackSettings
 {
     public:
-        PlaybackSettings()
+        PlaybackSettings(int last_timestep_index)
         {
             this->direction = 1;
             this->speed = 1;
             this->pause = false;
             this->current_timestep_index = 0;
+            this->last_timestep_index = last_timestep_index;
         }
 
         int direction;
         int speed; 
         bool pause;
         int current_timestep_index;
+        int last_timestep_index;
 
         void change_direction()
         {
@@ -38,7 +40,16 @@ class PlaybackSettings
 
         void next_timestep()
         {
+            if (current_timestep_index == last_timestep_index)
+            {
+                return;
+            }
             current_timestep_index += direction * speed;
+        }
+
+        void update_last_timestep_index(int new_last_timestep_index)
+        {
+            last_timestep_index = new_last_timestep_index;
         }
 
 

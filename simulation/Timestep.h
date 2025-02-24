@@ -23,6 +23,14 @@ class Timestep
             this->time = time;
         }
 
+        Timestep()
+        {
+            this->config = simulation::Config();
+            this->atoms = std::vector<atoms::Atom>();
+            this->total_energy = physics::TotalEnergy();
+            this->time = 0;
+        }
+
 
 };
 

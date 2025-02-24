@@ -6,8 +6,9 @@
 #include "../../simulation/Timestep.h"
 #include "../PlaybackSettings.h"
 
-
-class BasicDataLoader : public DataLoader
+namespace ui
+{
+class BasicDataLoader : public ui::DataLoader
 {
     public:
         std::vector<simulation::Timestep>* data;
@@ -49,3 +50,4 @@ class BasicDataLoader : public DataLoader
         
 
 };
+} // namespace ui

@@ -6,8 +6,6 @@
 #include "AtomVTKWidget.h"
 #include "PlaybackSettings.h"
 #include "../simulation/Timestep.h"
-#include "../simulation/SimulationTimeline.h"
-#include "AtomPropertiesWidget.h"
 #include "data_loaders/BasicDataLoader.h"
 
 class QTimer;
@@ -22,9 +20,11 @@ class MDVisualiser : public QMainWindow
 
 public:
     explicit MDVisualiser(
-                        QWidget* parent = nullptr);
+                        QWidget* parent = nullptr,
+                        ui::BasicDataLoader* data_loader = nullptr,
+                        ui::PlaybackSettings* playback_settings = nullptr);
 
-private slots:
+public slots:
     void onTimerTimeout();
     void onSpeedChanged(int value);
     void onStartPauseClicked();
@@ -35,7 +35,6 @@ private slots:
 
 private:
     ui::AtomVTKWidget*            mVTKWidget;
-    ui::AtomPropertiesWidget*     mAtomPropertiesWidget;
     QSlider*                  mSpeedSlider;
     QPushButton*              mStartPauseButton;
     QPushButton*              mReverseButton;

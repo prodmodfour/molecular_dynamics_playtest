@@ -9,6 +9,8 @@
 #include "../../../geometry/FCCGenerator.h"
 #include "../../../geometry/Box.h"
 #include "../../../geometry/geometry.h"
+#include "../../../ui/data_loaders/BasicDataLoader.h"
+
 
 #include <vector>
 #include <iostream>
@@ -56,6 +58,8 @@ int main(int argc, char *argv[])
     // Add the moving atom to the vector of atoms
     atoms.push_back(moving_atom);
 
+    // Set up Atom Pair Library
+    atoms::AtomPairLibrary atom_pair_library;
 
     // Run the simulation
     std::vector<simulation::Timestep> simulation_data;
@@ -63,14 +67,21 @@ int main(int argc, char *argv[])
     double time = 0;
     for (int i = 0; i < total_timesteps; i++) 
     {
-        simulation::Timestep timestep = simulation::simulate_timestep(initial_parameters.config, atoms, time);
+        simulation::Timestep timestep = simulation::simulate_timestep(initial_parameters.config, atoms, time, atom_pair_library);
         simulation_data.push_back(timestep);
     }
 
+    // Create a data loader
+    ui::BasicDataLoader data_loader;
+    data_loader.setData(&simulation_data);
+
+    // Set up playback settings
+    ui::PlaybackSettings playback_settings;
 
     // Launch the visualiser
-
-    ui::MDVisualiser visualiser(simulation_data);
+    ui::MDVisualiser visualiser();
+    visualiser.setPlaybackSettings(&playback_settings);
+    visualiser.setDataLoader(&data_loader);
     visualiser.show();
     app.exec();
 

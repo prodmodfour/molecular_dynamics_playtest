@@ -19,7 +19,6 @@
 #include <vtkPoints.h>
 #include <vtkPolyDataMapper.h>
 #include <vtkRenderWindowInteractor.h>
-
 namespace ui {
 
 
@@ -30,6 +29,7 @@ public:
     explicit AtomVTKWidget(QWidget* parent = nullptr);
 
     void updateAtoms(const std::vector<atoms::Atom>& atoms);
+    void render();
 
 private:
     vtkSmartPointer<vtkGenericOpenGLRenderWindow> mRenderWindow;
@@ -38,6 +38,8 @@ private:
     vtkSmartPointer<vtkPolyData>                  mPolyData;
     vtkSmartPointer<vtkGlyph3DMapper>             mGlyphMapper;
     vtkSmartPointer<vtkActor>                     mGlyphActor;
+    vtkSmartPointer<vtkUnsignedCharArray>         mColors;
+
 };
 
 }

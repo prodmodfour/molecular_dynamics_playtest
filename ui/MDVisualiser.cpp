@@ -1,6 +1,7 @@
 #include "MDVisualiser.h"
 #include "../simulation/Timestep.h"
-#include "../simulation/SimulationTimeline.h"
+#include "../ui/data_loaders/BasicDataLoader.h"
+
 
 // Qt includes
 #include <QTimer>
@@ -17,14 +18,19 @@
 
 
 ui::MDVisualiser::MDVisualiser(
-                       QWidget* parent)
+                       QWidget* parent,
+                       ui::BasicDataLoader* data_loader,
+                       ui::PlaybackSettings* playback_settings)
     : QMainWindow(parent)
     , data_loader_set(false)
-    , mDataLoader(nullptr)
-    , mPlaybackSettings()
+    , mDataLoader(data_loader)
+    , mPlaybackSettings(playback_settings)
+    , current_timestep_data(new simulation::Timestep())
 {
 
-    QSurfaceFormat::setDefaultFormat(QVTKOpenGLNativeWidget::defaultFormat());
+    // Give the data output pointer to the data loader
+    mDataLoader->setDataOutputPointer(current_timestep_data);
+
     // Create a central widget and main layout
     QWidget* central = new QWidget(this);
     QVBoxLayout* mainLayout = new QVBoxLayout(central);
@@ -33,8 +39,6 @@ ui::MDVisualiser::MDVisualiser(
     mVTKWidget = new AtomVTKWidget(central);
     mainLayout->addWidget(mVTKWidget);
 
-    mAtomPropertiesWidget = new AtomPropertiesWidget(central);
-    mainLayout->addWidget(mAtomPropertiesWidget);
 
     // --- Playback Controls ---
     QHBoxLayout* controlsLayout = new QHBoxLayout;
@@ -85,54 +89,28 @@ ui::MDVisualiser::MDVisualiser(
 
 void ui::MDVisualiser::onTimerTimeout()
 {
-    if (!data_loader_set)
-    {
-        return;
-    }
 
-    if (mPlaybackSettings.pause)
-    {
-        mVTKWidget->render();
-        return;
-    }
+    mPlaybackSettings->next_timestep();
+    mDataLoader->load();
 
-    if (mPlaybackSettings.direction == 1)
-    {
-        for (int i = 0; i < mPlaybackSettings.speed; i++)
-        {
-            mSimulationTimeline.progress();
-        }
-    }
-    else if (mPlaybackSettings.direction == -1)
-    {
-        for (int i = 0; i < mPlaybackSettings.speed; i++)
-        {
-            mSimulationTimeline.backtrack();
-        }
-    }
-    else
-    {
-        throw std::invalid_argument("Invalid direction");
-    }
-
-    // Render the new timestep
-    mVTKWidget->updateAtoms(mSimulationTimeline.current_timestep.atoms);
+    // // Render the new timestep
+    mVTKWidget->updateAtoms(current_timestep_data->atoms);
 
 }
 
 void ui::MDVisualiser::onSpeedChanged(int value)
 {
-    mPlaybackSettings.change_speed(value);
+    mPlaybackSettings->change_speed(value);
 }
 
 void ui::MDVisualiser::onStartPauseClicked()
 {
-    mPlaybackSettings.toggle_pause();
+    mPlaybackSettings->toggle_pause();
 }
 
 void ui::MDVisualiser::onReverseClicked()
 {
-    mPlaybackSettings.change_direction();
+    mPlaybackSettings->change_direction();
 }
 
 void ui::MDVisualiser::onRestartClicked()
@@ -141,12 +119,19 @@ void ui::MDVisualiser::onRestartClicked()
     qApp->exit(1);
 }
 
+
+
 void ui::MDVisualiser::setDataLoader(ui::BasicDataLoader* data_loader)
 {
     mDataLoader = data_loader;
-    mDataLoader->setPlaybackSettings(&mPlaybackSettings);
-    mDataLoader->setDataOutputPointer(&current_timestep_data);
+    mDataLoader->setPlaybackSettings(mPlaybackSettings);
+    mDataLoader->setDataOutputPointer(current_timestep_data);
     data_loader_set = true;
+}
+
+void ui::MDVisualiser::setPlaybackSettings(ui::PlaybackSettings* playback_settings)
+{
+    mPlaybackSettings = playback_settings;
 }
 
 

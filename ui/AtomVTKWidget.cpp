@@ -12,7 +12,12 @@
 #include <vtkPoints.h>
 #include <vtkPolyDataMapper.h>
 #include <vtkRenderWindowInteractor.h>
-#include "AtomInteractorStyle.h"
+#include "../atoms/Atom.h"
+#include <vtkPointData.h>
+#include <vtkUnsignedCharArray.h>
+#include "Color.h"
+#include "visualisation_functions.h"
+
 
 
 ui::AtomVTKWidget::AtomVTKWidget(QWidget* parent)
@@ -26,13 +31,6 @@ ui::AtomVTKWidget::AtomVTKWidget(QWidget* parent)
     mRenderer = vtkSmartPointer<vtkRenderer>::New();
     mRenderWindow->AddRenderer(mRenderer);
 
-    // Create and set our custom interactor style
-    vtkNew<AtomInteractorStyle> style;
-    style->SetRenderer(mRenderer); // so it knows where to pick from
-    renderWindowInteractor->SetInteractorStyle(style);
-
-    // This initializes the event handling loop for trackball + picking:
-    renderWindowInteractor->Initialize();
 
     // Create points and poly data for atoms
     mPoints = vtkSmartPointer<vtkPoints>::New();
@@ -43,16 +41,10 @@ ui::AtomVTKWidget::AtomVTKWidget(QWidget* parent)
     mColors = vtkSmartPointer<vtkUnsignedCharArray>::New();
     mColors->SetNumberOfComponents(4);
     mColors->SetNumberOfTuples(0);
+    mColors->SetName("Colors");
     mPolyData->GetPointData()->AddArray(mColors);
 
 
-    // Configure the render window
-    mRenderWindow->SetWindowName("Molecular Dynamics Playtest");
-    mRenderWindow->SetSize(1280, 720);
-
-    // Interactor (required for responding to mouse/keyboard, if needed)
-    vtkNew<vtkRenderWindowInteractor> renderWindowInteractor;
-    renderWindowInteractor->SetRenderWindow(mRenderWindow);
 
     // Create a sphere source to use as a glyph
     vtkSmartPointer<vtkSphereSource> sphereSource = vtkSmartPointer<vtkSphereSource>::New();
@@ -62,6 +54,11 @@ ui::AtomVTKWidget::AtomVTKWidget(QWidget* parent)
     mGlyphMapper = vtkSmartPointer<vtkGlyph3DMapper>::New();
     mGlyphMapper->SetInputData(mPolyData);
     mGlyphMapper->SetSourceConnection(sphereSource->GetOutputPort());
+    mGlyphMapper->ScalarVisibilityOn();
+    mGlyphMapper->SetScalarModeToUsePointFieldData();
+    mGlyphMapper->SelectColorArray("Colors");
+    mGlyphMapper->SetColorModeToDirectScalars();
+    mGlyphMapper->SetUseLookupTableScalarRange(false);
 
     // Create an actor and set its mapper
     mGlyphActor = vtkSmartPointer<vtkActor>::New();
@@ -72,7 +69,12 @@ ui::AtomVTKWidget::AtomVTKWidget(QWidget* parent)
 
     // Set a background color
     vtkSmartPointer<vtkNamedColors> colors = vtkSmartPointer<vtkNamedColors>::New();
-    mRenderer->SetBackground(colors->GetColor3d("Blue").GetData());
+    mRenderer->SetBackground(colors->GetColor3d("Black").GetData());
+
+    // Set the camera
+    mRenderer->ResetCamera();
+
+    
 }
 
 void ui::AtomVTKWidget::updateAtoms(const std::vector<atoms::Atom>& atoms)
@@ -80,6 +82,8 @@ void ui::AtomVTKWidget::updateAtoms(const std::vector<atoms::Atom>& atoms)
     // Clear current points
     mPoints->Reset();
     mPoints->SetNumberOfPoints(atoms.size());
+    mColors->Reset();
+    mColors->SetNumberOfTuples(atoms.size());
 
     // Populate vtkPoints with atom positions
     for (size_t i = 0; i < atoms.size(); ++i)
@@ -87,6 +91,7 @@ void ui::AtomVTKWidget::updateAtoms(const std::vector<atoms::Atom>& atoms)
         mPoints->SetPoint(i, atoms[i].x, atoms[i].y, atoms[i].z);
         Color color = determine_colour_based_on_kinetic_energy(atoms[i].kinetic_energy, 0.01);
         mColors->InsertNextTuple4(color.r, color.g, color.b, color.a);
+
     }
 
     // Mark data as modified so VTK knows to update

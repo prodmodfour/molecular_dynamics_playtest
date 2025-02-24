@@ -1,5 +1,7 @@
 #pragma once
 
+namespace ui
+{
 class DataLoader 
 {
 public:
@@ -9,3 +11,4 @@ public:
     // Pure virtual function: must be implemented by derived classes
     virtual void load() = 0;
 };
+} // namespace ui

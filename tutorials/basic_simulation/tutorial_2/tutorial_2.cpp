@@ -1,8 +1,9 @@
 #include "../../../physics/Atom.h"
-#include "../../../simulation/MDSimulator.h"
 #include "../../../simulation/Config.h"
 #include "../../../simulation/Timestep.h"
 #include "../../../ui/MDVisualiser.h"
+#include "../../../ui/data_loaders/BasicDataLoader.h"
+
 #include <vector>
 #include <iostream>
 #include <QApplication>

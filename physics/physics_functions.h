@@ -22,7 +22,7 @@ void evaluate_interactions(simulation::Config config, physics::TotalEnergy &tota
     double fxij, fyij, fzij, fij;
     double squared_distance, distance, sigma_squared;
     double sr2, sr6, sr12, epsilon4, epsilon24;
-    double potential_ij, potential_energy, unit_vector_x, unit_vector_y, unit_vector_z;
+    double potential_ij, unit_vector_x, unit_vector_y, unit_vector_z;
     double reciprocal_distance;
 
     total_energy.potential = 0;
