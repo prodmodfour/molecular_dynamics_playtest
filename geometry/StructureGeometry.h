@@ -1,6 +1,6 @@
 #pragma once
 #include <vector>
-#include "Atom.h"
+#include "../atoms/Atom.h"
 #include <string>
 #include "Vector.h"
 #include <map>
@@ -11,23 +11,23 @@ namespace geometry {
 class StructureGeometry
 {
     public:
-        StructureGeometry(std::vector<Atom> atoms, std::string shape, std::vector<Vector> corners, std::map<std::string, Plane> planes, Vector center)
+        StructureGeometry(std::vector<atoms::Atom> atoms, std::string shape_name, std::vector<Vector> corners, std::map<std::string, Plane> planes, Vector center)
         {
             this->atoms = atoms;
-            this->shape = shape;
+            this->shape_name = shape_name;
             this->corners = corners;
             this->planes = planes;
             this->center = center;
         }
     
-    std::vector<Atom> get_atoms()
+    std::vector<atoms::Atom> get_atoms()
     {
         return this->atoms;
     }
 
-    std::string get_shape()
+    std::string get_shape_name()
     {
-        return this->shape;
+        return this->shape_name;
     }
 
     std::vector<Vector> get_corners()
@@ -46,8 +46,8 @@ class StructureGeometry
     }
 
     private:
-        std::vector<Atom> atoms;
-        std::string shape;
+        std::vector<atoms::Atom> atoms;
+        std::string shape_name;
         std::vector<Vector> corners;
         std::map<std::string, Plane> planes;
 

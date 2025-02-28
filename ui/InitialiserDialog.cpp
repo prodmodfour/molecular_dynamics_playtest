@@ -42,6 +42,11 @@ ui::InitialiserDialog::InitialiserDialog(QWidget *parent)
     cubesZSpin->setRange(1, 100);
     cubesZSpin->setValue(4); // example default
 
+    atomSpacingSpin = new QDoubleSpinBox(this);
+    atomSpacingSpin->setRange(0.0, 100);
+    atomSpacingSpin->setValue(3.61); // example default
+    atomSpacingSpin->setSuffix(" Å");
+
     impactAtomXOffsetSpin = new QDoubleSpinBox(this);
     impactAtomXOffsetSpin->setRange(0.0, 100);
     impactAtomXOffsetSpin->setValue(0.0); // example default
@@ -72,6 +77,7 @@ ui::InitialiserDialog::InitialiserDialog(QWidget *parent)
     formLayout->addRow("Impact Atom X Offset:", impactAtomXOffsetSpin);
     formLayout->addRow("Impact Atom Y Offset:", impactAtomYOffsetSpin);
     formLayout->addRow("Impact Atom Z Offset:", impactAtomZOffsetSpin);
+    formLayout->addRow("Atom Spacing:", atomSpacingSpin);
 
     // OK/Cancel buttons
     QDialogButtonBox *buttonBox = new QDialogButtonBox(
@@ -90,9 +96,9 @@ ui::InitialiserDialog::InitialiserDialog(QWidget *parent)
     setLayout(mainLayout);
 }
 
-InitialParameters InitialiserDialog::getInitialParameters() const
+simulation::InitialParameters ui::InitialiserDialog::getInitialParameters() const
 {
-    return InitialParameters(
+    return simulation::InitialParameters(
         impactEnergySpin->value(),
         rCutoffSpin->value(),
         timestepSpin->value(),
@@ -102,7 +108,8 @@ InitialParameters InitialiserDialog::getInitialParameters() const
         impactAtomXOffsetSpin->value(),
         impactAtomYOffsetSpin->value(),
         impactAtomZOffsetSpin->value(),
-        numberOfTimestepsSpin->value()
+        numberOfTimestepsSpin->value(),
+        atomSpacingSpin->value()
     );
 }
 

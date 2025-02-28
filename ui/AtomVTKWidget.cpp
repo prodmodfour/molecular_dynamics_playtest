@@ -17,6 +17,9 @@
 #include <vtkUnsignedCharArray.h>
 #include "Color.h"
 #include "visualisation_functions.h"
+#include <vtkCamera.h>
+#include <vtkInteractorStyleTrackballCamera.h>
+
 
 
 
@@ -45,8 +48,6 @@ ui::AtomVTKWidget::AtomVTKWidget(QWidget* parent)
     mColors->SetName("Colors");
     mPolyData->GetPointData()->AddArray(mColors);
 
-
-
     // Create a sphere source to use as a glyph
     vtkSmartPointer<vtkSphereSource> sphereSource = vtkSmartPointer<vtkSphereSource>::New();
     sphereSource->SetRadius(1.28);
@@ -72,8 +73,12 @@ ui::AtomVTKWidget::AtomVTKWidget(QWidget* parent)
     vtkSmartPointer<vtkNamedColors> colors = vtkSmartPointer<vtkNamedColors>::New();
     mRenderer->SetBackground(colors->GetColor3d("Black").GetData());
 
-    // Set the camera
-    mRenderer->ResetCamera();
+    // Create the interactor style
+    vtkSmartPointer<vtkInteractorStyleTrackballCamera> style = vtkSmartPointer<vtkInteractorStyleTrackballCamera>::New();
+
+    // Set the style on the interactor
+    mRenderWindow->GetInteractor()->SetInteractorStyle(style);
+
 
     
 }

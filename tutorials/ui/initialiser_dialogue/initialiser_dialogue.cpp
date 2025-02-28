@@ -1,16 +1,15 @@
-
-
-#include "../../../physics/Atom.h"
-#include "../../../simulation/simulation_functions.h"
-#include "../../../simulation/InitialParameters.h"
-#include "../../../simulation/Config.h"
-#include "../../../simulation/Timestep.h"
-#include "../../../ui/MDVisualiser.h"
-#include "../../../geometry/FCCGenerator.h"
-#include "../../../geometry/Box.h"
-#include "../../../geometry/geometry.h"
-#include "../../../ui/data_loaders/BasicDataLoader.h"
-
+#include "../../atoms/Atom.h"
+#include "../../simulation/simulation_functions.h"
+#include "../../simulation/InitialParameters.h"
+#include "../../simulation/Config.h"
+#include "../../simulation/Timestep.h"
+#include "../../ui/MDVisualiser.h"
+#include "../../geometry/Box.h"
+#include "../../geometry/geometry_functions.h"
+#include "../../ui/data_loaders/BasicDataLoader.h"
+#include "../../ui/PlaybackSettings.h"
+#include "../../ui/InitialiserDialog.h"
+#include "../../atoms/atom_generation_functions.h"
 
 #include <vector>
 #include <iostream>
@@ -22,9 +21,10 @@ int main(int argc, char *argv[])
     // Create a simulation using the initialiser dialogue
     QApplication app(argc, argv);
     ui::InitialiserDialog initialiser_dialog;
+    simulation::InitialParameters initial_parameters;
     if (initialiser_dialog.exec() == QDialog::Accepted)
     {
-        simulation::InitialParameters initial_parameters = initialiser_dialog.getInitialParameters();
+        initial_parameters = initialiser_dialog.getInitialParameters();
     }
 
 
@@ -71,20 +71,21 @@ int main(int argc, char *argv[])
         simulation_data.push_back(timestep);
     }
 
+    int last_timestep_index = simulation_data.size() - 1;
+    // Set up playback settings
+    ui::PlaybackSettings playback_settings(last_timestep_index);
+
     // Create a data loader
     ui::BasicDataLoader data_loader;
     data_loader.setData(&simulation_data);
+    data_loader.setPlaybackSettings(&playback_settings);
 
-    // Set up playback settings
-    ui::PlaybackSettings playback_settings;
 
     // Launch the visualiser
-    ui::MDVisualiser visualiser();
-    visualiser.setPlaybackSettings(&playback_settings);
-    visualiser.setDataLoader(&data_loader);
+    ui::MDVisualiser visualiser(nullptr, &data_loader, &playback_settings);
     visualiser.show();
-    app.exec();
-
+    std::cout << "Visualiser shown" << std::endl;
+    
 
 
     return 0;

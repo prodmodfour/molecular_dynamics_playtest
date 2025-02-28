@@ -31,7 +31,6 @@ public:
     void updateAtoms(const std::vector<atoms::Atom>& atoms);
     void render();
 
-private:
     vtkSmartPointer<vtkGenericOpenGLRenderWindow> mRenderWindow;
     vtkSmartPointer<vtkRenderer>                  mRenderer;
     vtkSmartPointer<vtkPoints>                    mPoints;

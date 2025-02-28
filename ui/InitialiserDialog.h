@@ -1,7 +1,9 @@
 #pragma once
 
 #include <QDialog>
-#include "InitialParameters.h"
+#include "../simulation/InitialParameters.h"
+#include <QDoubleSpinBox>
+#include <QSpinBox>
 
 namespace ui {
 
@@ -13,12 +15,10 @@ public:
     explicit InitialiserDialog(QWidget *parent = nullptr);
 
     // Access the values and construct an InitialConfig
-    InitialParameters getInitialParameters() const;
+    simulation::InitialParameters getInitialParameters() const;
 
 private:
 
-    class QDoubleSpinBox;
-    class QSpinBox;
 
     QDoubleSpinBox *impactEnergySpin;
     QDoubleSpinBox *rCutoffSpin;
@@ -30,6 +30,7 @@ private:
     QDoubleSpinBox *impactAtomYOffsetSpin;
     QDoubleSpinBox *impactAtomZOffsetSpin;
     QSpinBox       *numberOfTimestepsSpin;
+    QDoubleSpinBox *atomSpacingSpin;
 };
 
 } // namespace ui

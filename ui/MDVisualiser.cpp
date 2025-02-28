@@ -85,6 +85,8 @@ ui::MDVisualiser::MDVisualiser(
     connect(mTimer, &QTimer::timeout,
             this, &ui::MDVisualiser::onTimerTimeout);
     mTimer->start(42); // update every 42 ms (approx. 24 FPS)
+    
+    
 
 }
 

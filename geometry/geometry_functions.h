@@ -1,8 +1,9 @@
 #pragma once
 #include "Vector.h"
 #include "Plane.h"
-#include "Atom.h"
+#include "../atoms/Atom.h"
 #include <vector>
+#include "StructureGeometry.h"
 
 namespace geometry {
 
@@ -15,33 +16,32 @@ Vector calculate_unit_vector_between_two_points(Vector point1, Vector point2)
     return Vector{x / length, y / length, z / length};
 }
 
-std::vector<Vector> determine_cuboid_corners(std::vector<Atom> atoms)
+std::vector<Vector> determine_cuboid_corners(std::vector<atoms::Atom> atoms)
 {
     std::vector<Vector> corners(8, Vector{0, 0, 0});
 
     for (auto atom : atoms)
     {
         if (atom.x < corners[0].x)
-            corners[0] = atom.position;
+            corners[0] = atom.get_position();
         if (atom.x > corners[1].x)
-            corners[1] = atom.position;
+            corners[1] = atom.get_position();
         if (atom.y < corners[2].y)
-            corners[2] = atom.position;
+            corners[2] = atom.get_position();
         if (atom.y > corners[3].y)
-            corners[3] = atom.position;
+            corners[3] = atom.get_position();
         if (atom.z < corners[4].z)
-            corners[4] = atom.position;
+            corners[4] = atom.get_position();
         if (atom.z > corners[5].z)
-            corners[5] = atom.position;
+            corners[5] = atom.get_position();
         if (atom.z < corners[6].z)
-            corners[6] = atom.position;
+            corners[6] = atom.get_position();
         if (atom.z > corners[7].z)
-            corners[7] = atom.position;
+            corners[7] = atom.get_position();
     }
 
     return corners;
 }
-
 
 
 }

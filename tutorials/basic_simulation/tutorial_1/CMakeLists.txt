@@ -23,6 +23,7 @@ find_package(VTK CONFIG REQUIRED COMPONENTS
     RenderingCore
     RenderingOpenGL2
     GUISupportQt
+    InteractionStyle
 )
 
 # ------------------------------------------------------------------------------

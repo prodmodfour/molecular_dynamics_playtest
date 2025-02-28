@@ -6,6 +6,11 @@ namespace geometry {
 class Plane
 {
     public:
+        Plane()
+        {
+            
+        }
+
         Plane(geometry::Vector corner_1, geometry::Vector corner_2, geometry::Vector corner_3, geometry::Vector corner_4)
         {
             this->corners = std::vector<geometry::Vector>();
