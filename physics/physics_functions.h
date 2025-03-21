@@ -151,11 +151,11 @@ void calculate_motion(double timestep_size, std::vector<atoms::Atom> &atoms)
     double vxi3, vyi3, vzi3;
     double fxi, fyi, fzi;
     double delta_vxi, delta_vyi, delta_vzi;
-    double scaling = 0.01;
+    double scaling_factor = 0.01;
 
     for (atoms::Atom &atom : atoms)
     {
-        double velocity_scale = scaling * timestep_size / atom.mass;
+        double velocity_scaling_factor = scaling_factor * timestep_size / atom.mass;
 
         // Calculate velocity V(t + 0.5dt)
         vxi = atom.vx;
@@ -166,9 +166,9 @@ void calculate_motion(double timestep_size, std::vector<atoms::Atom> &atoms)
         fyi = atom.fy;
         fzi = atom.fz;
 
-        delta_vxi = fxi * velocity_scale;
-        delta_vyi = fyi * velocity_scale;
-        delta_vzi = fzi * velocity_scale;
+        delta_vxi = fxi * velocity_scaling_factor;
+        delta_vyi = fyi * velocity_scaling_factor;
+        delta_vzi = fzi * velocity_scaling_factor;
 
         vxi2 = vxi + delta_vxi;
         vyi2 = vyi + delta_vyi;
@@ -205,9 +205,9 @@ void calculate_motion(double timestep_size, atoms::Atom &atom)
     double fxi, fyi, fzi;
 
     double delta_vxi, delta_vyi, delta_vzi;
-    double scaling = 0.01;
+    double scaling_factor = 0.01;
 
-    double velocity_scale = scaling * timestep_size / atom.mass;
+    double velocity_scaling_factor = scaling_factor * timestep_size / atom.mass;
 
     // Calculate velocity V(t + 0.5dt)
     vxi = atom.vx;
@@ -218,9 +218,9 @@ void calculate_motion(double timestep_size, atoms::Atom &atom)
     fyi = atom.fy;
     fzi = atom.fz;
 
-    delta_vxi = fxi * velocity_scale;
-    delta_vyi = fyi * velocity_scale;
-    delta_vzi = fzi * velocity_scale;
+    delta_vxi = fxi * velocity_scaling_factor;
+    delta_vyi = fyi * velocity_scaling_factor;
+    delta_vzi = fzi * velocity_scaling_factor;
 
     vxi2 = vxi + delta_vxi;
     vyi2 = vyi + delta_vyi;

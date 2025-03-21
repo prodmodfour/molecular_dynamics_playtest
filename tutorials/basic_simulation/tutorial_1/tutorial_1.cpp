@@ -40,8 +40,8 @@ int main(int argc, char *argv[])
 
     // Create a single atom
     std::string atom_type = "Cu";
-    double mass = 63.546;
-    double radius = 1.28;
+    double mass = 63.546; // Atomic mass of copper in amu
+    double radius = 1.28; // Atomic radius of copper in Angstroms
     atoms::Atom atom(atom_type, mass, radius);
     std::vector<atoms::Atom> atoms;
     atoms.push_back(atom);
