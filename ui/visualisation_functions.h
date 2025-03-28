@@ -4,6 +4,8 @@
 
 Color determine_colour_based_on_kinetic_energy(double kinetic_energy, double reference_ke)
 {
+
+
     double ratio = kinetic_energy / reference_ke;
     if (ratio > 1) {
         ratio = 1;

@@ -188,7 +188,7 @@ void calculate_motion(double timestep_size, std::vector<atoms::Atom> &atoms)
         v_squared = vxi3*vxi3 + vyi3*vyi3 + vzi3*vzi3;
         atom.kinetic_energy = 0.5 * atom.mass * v_squared;
         // Convert to eV
-        atom.kinetic_energy *= 1.602176634e-19;
+        atom.kinetic_energy /= 1.602176634e-19;
 
         // Update velocities
         atom.vx = vxi2;
@@ -239,8 +239,9 @@ void calculate_motion(double timestep_size, atoms::Atom &atom)
     vzi3 = (vzi + vzi2) / 2;
     v_squared = vxi3*vxi3 + vyi3*vyi3 + vzi3*vzi3;
     atom.kinetic_energy = 0.5 * atom.mass * v_squared;
-    // Convert to eV
-    atom.kinetic_energy *= 1.602176634e-19;
+
+    atom.kinetic_energy *= 1.037e-05;
+
 
     // Update velocities
     atom.vx = vxi2;

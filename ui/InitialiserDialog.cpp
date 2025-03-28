@@ -58,8 +58,8 @@ ui::InitialiserDialog::InitialiserDialog(QWidget *parent)
     impactAtomYOffsetSpin->setSuffix(" Å");
 
     impactAtomZOffsetSpin = new QDoubleSpinBox(this);
-    impactAtomZOffsetSpin->setRange(1.0, 100);
-    impactAtomZOffsetSpin->setValue(0.0); // example default
+    impactAtomZOffsetSpin->setRange(0.0, 100);
+    impactAtomZOffsetSpin->setValue(4.0); // example default
     impactAtomZOffsetSpin->setSuffix(" Å");
 
     numberOfTimestepsSpin = new QSpinBox(this);
