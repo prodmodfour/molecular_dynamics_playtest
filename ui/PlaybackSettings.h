@@ -12,7 +12,7 @@ class PlaybackSettings
         {
             this->direction = 1;
             this->speed = 1;
-            this->pause = false;
+            this->pause = true;
             this->current_timestep_index = 0;
             this->last_timestep_index = last_timestep_index;
         }
@@ -44,12 +44,18 @@ class PlaybackSettings
             if (current_timestep_index < 0)
             {
                 current_timestep_index = 0;
+                return;
             }
             if (current_timestep_index > last_timestep_index)
             {
                 current_timestep_index = last_timestep_index;
+                return;
             }
-            if (current_timestep_index == last_timestep_index)
+            if (current_timestep_index == last_timestep_index && direction == 1)
+            {
+                return;
+            }
+            if (current_timestep_index == 0 && direction == -1)
             {
                 return;
             }

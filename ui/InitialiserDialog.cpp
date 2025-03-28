@@ -32,15 +32,15 @@ ui::InitialiserDialog::InitialiserDialog(QWidget *parent)
 
     cubesXSpin = new QSpinBox(this);
     cubesXSpin->setRange(1, 100);
-    cubesXSpin->setValue(1); // example default
+    cubesXSpin->setValue(8); // example default
 
     cubesYSpin = new QSpinBox(this);
     cubesYSpin->setRange(1, 100);
-    cubesYSpin->setValue(1); // example default
+    cubesYSpin->setValue(4); // example default
 
     cubesZSpin = new QSpinBox(this);
     cubesZSpin->setRange(1, 100);
-    cubesZSpin->setValue(1); // example default
+    cubesZSpin->setValue(4); // example default
 
     atomSpacingSpin = new QDoubleSpinBox(this);
     atomSpacingSpin->setRange(0.0, 100);
@@ -59,7 +59,7 @@ ui::InitialiserDialog::InitialiserDialog(QWidget *parent)
 
     impactAtomZOffsetSpin = new QDoubleSpinBox(this);
     impactAtomZOffsetSpin->setRange(0.0, 100);
-    impactAtomZOffsetSpin->setValue(4.0); // example default
+    impactAtomZOffsetSpin->setValue(6.0); // example default
     impactAtomZOffsetSpin->setSuffix(" Å");
 
     numberOfTimestepsSpin = new QSpinBox(this);
