@@ -78,11 +78,6 @@ int main(int argc, char *argv[])
     }
 
   
-
-
-
-
-
     int last_timestep_index = simulation_data.size() - 1;
     // Set up playback settings
     ui::PlaybackSettings playback_settings(last_timestep_index);
