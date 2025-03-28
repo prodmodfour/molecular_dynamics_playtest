@@ -14,6 +14,7 @@
 #include <QObject>
 #include <QSurfaceFormat>
 #include <stdexcept>
+#include "data_loaders/BasicDataLoader.h"
 
 
 
@@ -28,6 +29,7 @@ ui::MDVisualiser::MDVisualiser(
     , current_timestep_data(new simulation::Timestep())
 {
 
+    setDataLoader(data_loader);
     // Give the data output pointer to the data loader
     mDataLoader->setDataOutputPointer(current_timestep_data);
 
@@ -92,12 +94,15 @@ ui::MDVisualiser::MDVisualiser(
 
 void ui::MDVisualiser::onTimerTimeout()
 {
+    if (mPlaybackSettings->pause == false)
+    {
+        mPlaybackSettings->next_timestep();
 
-    mPlaybackSettings->next_timestep();
-    mDataLoader->load();
+        mDataLoader->load();
+    }
 
 
-    // // Render the new timestep
+    // // // Render the new timestep
     mVTKWidget->updateAtoms(current_timestep_data->atoms);
 
 }

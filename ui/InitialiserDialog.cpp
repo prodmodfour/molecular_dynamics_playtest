@@ -20,7 +20,7 @@ ui::InitialiserDialog::InitialiserDialog(QWidget *parent)
 
     rCutoffSpin = new QDoubleSpinBox(this);
     rCutoffSpin->setRange(0.0, 100);
-    rCutoffSpin->setValue(4.0); // example default
+    rCutoffSpin->setValue(6.0); // example default
     rCutoffSpin->setSuffix(" Å");
 
 
@@ -32,15 +32,15 @@ ui::InitialiserDialog::InitialiserDialog(QWidget *parent)
 
     cubesXSpin = new QSpinBox(this);
     cubesXSpin->setRange(1, 100);
-    cubesXSpin->setValue(8); // example default
+    cubesXSpin->setValue(1); // example default
 
     cubesYSpin = new QSpinBox(this);
     cubesYSpin->setRange(1, 100);
-    cubesYSpin->setValue(8); // example default
+    cubesYSpin->setValue(1); // example default
 
     cubesZSpin = new QSpinBox(this);
     cubesZSpin->setRange(1, 100);
-    cubesZSpin->setValue(4); // example default
+    cubesZSpin->setValue(1); // example default
 
     atomSpacingSpin = new QDoubleSpinBox(this);
     atomSpacingSpin->setRange(0.0, 100);
@@ -58,7 +58,7 @@ ui::InitialiserDialog::InitialiserDialog(QWidget *parent)
     impactAtomYOffsetSpin->setSuffix(" Å");
 
     impactAtomZOffsetSpin = new QDoubleSpinBox(this);
-    impactAtomZOffsetSpin->setRange(0.0, 100);
+    impactAtomZOffsetSpin->setRange(1.0, 100);
     impactAtomZOffsetSpin->setValue(0.0); // example default
     impactAtomZOffsetSpin->setSuffix(" Å");
 

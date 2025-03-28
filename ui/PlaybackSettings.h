@@ -40,10 +40,20 @@ class PlaybackSettings
 
         void next_timestep()
         {
+
+            if (current_timestep_index < 0)
+            {
+                current_timestep_index = 0;
+            }
+            if (current_timestep_index > last_timestep_index)
+            {
+                current_timestep_index = last_timestep_index;
+            }
             if (current_timestep_index == last_timestep_index)
             {
                 return;
             }
+
             current_timestep_index += direction * speed;
         }
 

@@ -13,7 +13,7 @@ class AtomPairLibrary
         AtomPairLibrary()
         {
             atom_pair_data = std::vector<AtomPairData>();
-            atom_pair_data.push_back(AtomPairData("Cu", "Cu", 1.0, 1.0));
+            atom_pair_data.push_back(AtomPairData("Cu", "Cu", 46291.3, 2.285));
         }
         std::vector<AtomPairData> atom_pair_data;
 

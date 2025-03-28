@@ -103,9 +103,10 @@ void evaluate_interactions(simulation::Config config, physics::TotalEnergy &tota
             atoms[j].fz -= fzij;
         }
 
-        // Convert to eV
-        total_energy.potential *= 1.602176634e-19;
+
     }
+    // Convert to eV
+    total_energy.potential *= 1.602176634e-19;
 }
 
 void zero_forces(std::vector<atoms::Atom> &atoms)

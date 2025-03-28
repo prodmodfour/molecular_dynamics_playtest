@@ -1,60 +1,39 @@
 #pragma once
 #include <vector>
+#include <stdexcept>  
 
 #include "DataLoader.h"
-#include "../../simulation/SimulationDataChannels.h"
-#include "../../simulation/Timestep.h"
-#include "../PlaybackSettings.h"
 
-namespace ui
-{
+namespace simulation {
+    class Timestep;
+}
+
+namespace ui {
+   
+class PlaybackSettings;
+class MDVisualiser;
+
 class BasicDataLoader : public ui::DataLoader
 {
-    public:
-        std::vector<simulation::Timestep>* data;
-        ui::PlaybackSettings* playback_settings;
-        simulation::Timestep* data_output_pointer;
-        ui::MDVisualiser* visualiser;
+public:
+    BasicDataLoader();
 
+    // Overridden functions
+    void load() override;
 
-        BasicDataLoader()
-        {
-            data_output_pointer = nullptr;
-            playback_settings = nullptr;
-            data = nullptr;
-        }
+    // Setter methods
+    void setData(std::vector<simulation::Timestep>* data);
+    void setPlaybackSettings(ui::PlaybackSettings* playback_settings);
+    void setDataOutputPointer(simulation::Timestep* data_output_pointer);
+    void setVisualiser(ui::MDVisualiser* visualiser);
 
-        void load() override
-        {
-            if (visualiser->current_timestep_data == nullptr)
-            {
-                throw std::invalid_argument("Data output pointer is not set");
-            }
-
-            visualiser->current_timestep_data = data->at(playback_settings->current_timestep_index);
-        }
-
-        void setData(std::vector<simulation::Timestep>* data)
-        {
-            this->data = data;
-        }
-
-        void setPlaybackSettings(ui::PlaybackSettings* playback_settings)
-        {
-            this->playback_settings = playback_settings;
-        }
-
-        void setDataOutputPointer(simulation::Timestep* data_output_pointer)
-        {
-            this->data_output_pointer = data_output_pointer;
-        }
-
-        void setVisualiser(ui::MDVisualiser* visualiser)
-        {
-            this->visualiser = visualiser;
-        }
-
-        
-
+private:
+    std::vector<simulation::Timestep>* data;
+    ui::PlaybackSettings* playback_settings;
+    simulation::Timestep* data_output_pointer;
+    ui::MDVisualiser* visualiser;
 };
+
 } // namespace ui
+
+

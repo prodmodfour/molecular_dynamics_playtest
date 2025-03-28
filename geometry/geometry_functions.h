@@ -4,10 +4,13 @@
 #include "../atoms/Atom.h"
 #include <vector>
 #include "StructureGeometry.h"
+#include <limits>
+#include <cmath>
+
 
 namespace geometry {
 
-Vector calculate_unit_vector_between_two_points(Vector point1, Vector point2)
+Vector calculate_unit_vector_from_point1_to_point2(Vector point1, Vector point2)
 {
     double x = point2.x - point1.x;
     double y = point2.y - point1.y;
@@ -18,28 +21,39 @@ Vector calculate_unit_vector_between_two_points(Vector point1, Vector point2)
 
 std::vector<Vector> determine_cuboid_corners(std::vector<atoms::Atom> atoms)
 {
-    std::vector<Vector> corners(8, Vector{0, 0, 0});
+double min_x = std::numeric_limits<double>::infinity();
+double max_x = -std::numeric_limits<double>::infinity();
+double min_y = std::numeric_limits<double>::infinity();
+double max_y = -std::numeric_limits<double>::infinity();
+double min_z = std::numeric_limits<double>::infinity();
+double max_z = -std::numeric_limits<double>::infinity();
 
-    for (auto atom : atoms)
-    {
-        if (atom.x < corners[0].x)
-            corners[0] = atom.get_position();
-        if (atom.x > corners[1].x)
-            corners[1] = atom.get_position();
-        if (atom.y < corners[2].y)
-            corners[2] = atom.get_position();
-        if (atom.y > corners[3].y)
-            corners[3] = atom.get_position();
-        if (atom.z < corners[4].z)
-            corners[4] = atom.get_position();
-        if (atom.z > corners[5].z)
-            corners[5] = atom.get_position();
-        if (atom.z < corners[6].z)
-            corners[6] = atom.get_position();
-        if (atom.z > corners[7].z)
-            corners[7] = atom.get_position();
-    }
+for (auto &atom : atoms)
+{
+    double x = atom.x;
+    double y = atom.y;
+    double z = atom.z;
 
+    if (x < min_x) min_x = x;
+    if (x > max_x) max_x = x;
+    if (y < min_y) min_y = y;
+    if (y > max_y) max_y = y;
+    if (z < min_z) min_z = z;
+    if (z > max_z) max_z = z;
+}
+
+std::vector<Vector> corners;
+corners.reserve(8);
+
+// The typical arrangement is:
+corners.emplace_back(min_x, min_y, min_z); // #0
+corners.emplace_back(min_x, min_y, max_z); // #1
+corners.emplace_back(min_x, max_y, min_z); // #2
+corners.emplace_back(min_x, max_y, max_z); // #3
+corners.emplace_back(max_x, min_y, min_z); // #4
+corners.emplace_back(max_x, min_y, max_z); // #5
+corners.emplace_back(max_x, max_y, min_z); // #6
+corners.emplace_back(max_x, max_y, max_z); // #7
     return corners;
 }
 

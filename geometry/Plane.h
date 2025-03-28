@@ -1,6 +1,8 @@
 #pragma once
 #include "Vector.h"
 #include <vector>
+#include <limits>
+#include <cmath>
 
 namespace geometry {
 class Plane
@@ -18,13 +20,13 @@ class Plane
             this->corners.push_back(corner_2);
             this->corners.push_back(corner_3);
             this->corners.push_back(corner_4);
-            double highest_x, highest_y, highest_z, lowest_x, lowest_y, lowest_z;
-            highest_x = 0;
-            highest_y = 0;
-            highest_z = 0;
-            lowest_x = 0;
-            lowest_y = 0;
-            lowest_z = 0;
+
+            double highest_x = -std::numeric_limits<double>::infinity();
+            double highest_y = -std::numeric_limits<double>::infinity();
+            double highest_z = -std::numeric_limits<double>::infinity();
+            double lowest_x  =  std::numeric_limits<double>::infinity();
+            double lowest_y  =  std::numeric_limits<double>::infinity();
+            double lowest_z  =  std::numeric_limits<double>::infinity();
 
             for (auto corner : this->corners)
             {

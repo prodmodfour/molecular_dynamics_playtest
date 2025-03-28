@@ -34,6 +34,7 @@ add_executable(Initialiser_Dialogue
     ../../../ui/MDVisualiser.cpp
     ../../../ui/AtomVTKWidget.cpp
     ../../../ui/InitialiserDialog.cpp
+    ../../../ui/data_loaders/BasicDataLoader.cpp
 )
 
 # If you have headers in non-standard locations:
