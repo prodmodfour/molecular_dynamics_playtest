@@ -40,17 +40,7 @@ int main(int argc, char *argv[])
     initial_parameters.atom_spacing, 
     atom_type, mass, radius);
 
-    std::cout << "Number of atoms: " << atoms.size() << std::endl;
-    // Print all atoms
-    for (int i = 0; i < atoms.size(); i++)
-    {
-        // Print the atom position
-        std::cout << "Atom " << i << ": " << atoms[i].x << ", " << atoms[i].y << ", " << atoms[i].z << std::endl;
-        // Print the atom velocity
-        std::cout << "Atom " << i << " velocity: " << atoms[i].vx << ", " << atoms[i].vy << ", " << atoms[i].vz << std::endl;
-        // Print the atom force
-        std::cout << "Atom " << i << " force: " << atoms[i].fx << ", " << atoms[i].fy << ", " << atoms[i].fz << std::endl;
-    }
+   
 
     // Get dimensions of the box that contains the atoms
     geometry::Box box(atoms);
@@ -61,18 +51,14 @@ int main(int argc, char *argv[])
     moving_atom.y = box.top_plane.center.y + initial_parameters.impact_atom_offset.y;
     moving_atom.z = box.top_plane.center.z + initial_parameters.impact_atom_offset.z;
 
-    std::cout << "Moving atom: " << moving_atom.x << ", " << moving_atom.y << ", " << moving_atom.z << std::endl;
-
-    // Calculate the unit vector between the moving atom and the center of the top plane of the box
-    std::cout << "Box top plane center: " << box.top_plane.center.x << ", " << box.top_plane.center.y << ", " << box.top_plane.center.z << std::endl;
-    std::cout << "Moving atom position: " << moving_atom.get_position().x << ", " << moving_atom.get_position().y << ", " << moving_atom.get_position().z << std::endl;
+  
     geometry::Vector unit_vector = geometry::calculate_unit_vector_from_point1_to_point2(moving_atom.get_position(), box.top_plane.center);
 
-    std::cout << "Unit vector: " << unit_vector.x << ", " << unit_vector.y << ", " << unit_vector.z << std::endl;
+
     // Apply kinetic energy to the moving atom
     double kinetic_energy = initial_parameters.impact_energy;
     physics::apply_kinetic_energy(moving_atom, kinetic_energy, unit_vector);
-    std::cout << "kinetic energy: " << kinetic_energy << std::endl;
+
 
 
     // Add the moving atom to the vector of atoms
@@ -93,25 +79,8 @@ int main(int argc, char *argv[])
 
   
 
-    std::cout << "Simulation data size: " << simulation_data.size() << std::endl;
-    // Print the last timestep
-    std::cout << "Last timestep: " << simulation_data[simulation_data.size() - 1].time << std::endl;
 
-    // Print the last system state
-    std::cout << "Last system state: " << std::endl;
-    for (int i = 0; i < atoms.size(); i++)
-    {
-        // Print the atom position
-        std::cout << "Atom " << i << ": " << atoms[i].x << ", " << atoms[i].y << ", " << atoms[i].z << std::endl;
-        // Print the atom velocity
-        std::cout << "Atom " << i << " velocity: " << atoms[i].vx << ", " << atoms[i].vy << ", " << atoms[i].vz << std::endl;
-        // Print the atom force
-        std::cout << "Atom " << i << " force: " << atoms[i].fx << ", " << atoms[i].fy << ", " << atoms[i].fz << std::endl;
-    }
-  // show position, velocity and forces on last atom at the 2nd timestep
-    std::cout << "Position of last atom at 2nd timestep: " << simulation_data[1].atoms[simulation_data[1].atoms.size() - 1].x << ", " << simulation_data[1].atoms[simulation_data[1].atoms.size() - 1].y << ", " << simulation_data[1].atoms[simulation_data[1].atoms.size() - 1].z << std::endl;
-    std::cout << "Velocity of last atom at 2nd timestep: " << simulation_data[1].atoms[simulation_data[1].atoms.size() - 1].vx << ", " << simulation_data[1].atoms[simulation_data[1].atoms.size() - 1].vy << ", " << simulation_data[1].atoms[simulation_data[1].atoms.size() - 1].vz << std::endl;
-    std::cout << "Force of last atom at 2nd timestep: " << simulation_data[1].atoms[simulation_data[1].atoms.size() - 1].fx << ", " << simulation_data[1].atoms[simulation_data[1].atoms.size() - 1].fy << ", " << simulation_data[1].atoms[simulation_data[1].atoms.size() - 1].fz << std::endl;
+
 
 
     int last_timestep_index = simulation_data.size() - 1;

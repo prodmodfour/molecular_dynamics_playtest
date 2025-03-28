@@ -98,10 +98,10 @@ void ui::MDVisualiser::onTimerTimeout()
     {
         mPlaybackSettings->next_timestep();
 
-        mDataLoader->load();
+
     }
 
-
+        mDataLoader->load();
     // // // Render the new timestep
     mVTKWidget->updateAtoms(current_timestep_data->atoms);
 
