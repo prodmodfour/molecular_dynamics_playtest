@@ -2,6 +2,7 @@
 
 #include "Config.h"
 #include "../geometry/Vector.h"
+#include <iostream>
 
 namespace simulation {
 
@@ -36,6 +37,20 @@ class InitialParameters
         int cubes_in_z;
         int number_of_timesteps;
         double atom_spacing;
+
+        void print()
+        {
+            std::cout << "--------------------------------" << std::endl;
+            std::cout << "Impact energy: " << impact_energy << std::endl;
+            std::cout << "Impact atom offset: " << impact_atom_offset.x << ", " << impact_atom_offset.y << ", " << impact_atom_offset.z << std::endl;
+            std::cout << "Config: " << config.r_cutoff << ", " << config.timestep_size << std::endl;
+            std::cout << "Cubes in x: " << cubes_in_x << std::endl;
+            std::cout << "Cubes in y: " << cubes_in_y << std::endl;
+            std::cout << "Cubes in z: " << cubes_in_z << std::endl;
+            std::cout << "Number of timesteps: " << number_of_timesteps << std::endl;
+            std::cout << "Atom spacing: " << atom_spacing << std::endl;
+            std::cout << "--------------------------------" << std::endl;
+        }
 
 };
 

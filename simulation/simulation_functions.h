@@ -10,7 +10,7 @@
 namespace simulation
 {
 
-simulation::Timestep simulate_timestep(simulation::Config config, std::vector<atoms::Atom> atoms, double &time, atoms::AtomPairLibrary &atom_pair_library)
+simulation::Timestep simulate_timestep(simulation::Config config, std::vector<atoms::Atom> &atoms, double &time, atoms::AtomPairLibrary &atom_pair_library)
 {
     physics::TotalEnergy total_energy(0, 0);
     physics::evaluate_interactions(config, total_energy, atoms, atom_pair_library); // Calculate forces

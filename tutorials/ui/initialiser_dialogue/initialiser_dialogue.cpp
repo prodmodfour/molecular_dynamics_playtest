@@ -27,7 +27,7 @@ int main(int argc, char *argv[])
         initial_parameters = initialiser_dialog.getInitialParameters();
     }
 
-
+    initial_parameters.print();
 
     // Create a FCC crystal lattice
     std::string atom_type = "Cu";
@@ -39,14 +39,23 @@ int main(int argc, char *argv[])
     initial_parameters.atom_spacing, 
     atom_type, mass, radius);
 
+    std::cout << "Number of atoms: " << atoms.size() << std::endl;
+    // Print all atoms
+    for (int i = 0; i < atoms.size(); i++)
+    {
+        std::cout << "Atom " << i << ": " << atoms[i].x << ", " << atoms[i].y << ", " << atoms[i].z << std::endl;
+    }
+
     // Get dimensions of the box that contains the atoms
     geometry::Box box(atoms);
 
-    // Create a moving atom that starts a set offset away from the center of the top place of the box
+    // Create a moving atom that starts a set offset away from the center of the top plane of the box
     atoms::Atom moving_atom(atom_type, mass, radius);
     moving_atom.x = box.top_plane.center.x + initial_parameters.impact_atom_offset.x;
     moving_atom.y = box.top_plane.center.y + initial_parameters.impact_atom_offset.y;
     moving_atom.z = box.top_plane.center.z + initial_parameters.impact_atom_offset.z;
+
+    std::cout << "Moving atom: " << moving_atom.x << ", " << moving_atom.y << ", " << moving_atom.z << std::endl;
 
     // Calculate the unit vector between the moving atom and the center of the top plane of the box
     geometry::Vector unit_vector = geometry::calculate_unit_vector_between_two_points(moving_atom.get_position(), box.top_plane.center);
@@ -71,6 +80,18 @@ int main(int argc, char *argv[])
         simulation_data.push_back(timestep);
     }
 
+    std::cout << "Simulation data size: " << simulation_data.size() << std::endl;
+    // Print the last timestep
+    std::cout << "Last timestep: " << simulation_data[simulation_data.size() - 1].time << std::endl;
+
+    // Print the last system state
+    std::cout << "Last system state: " << std::endl;
+    for (int i = 0; i < atoms.size(); i++)
+    {
+        std::cout << "Atom " << i << ": " << atoms[i].x << ", " << atoms[i].y << ", " << atoms[i].z << std::endl;
+    }
+
+
     int last_timestep_index = simulation_data.size() - 1;
     // Set up playback settings
     ui::PlaybackSettings playback_settings(last_timestep_index);
@@ -88,5 +109,5 @@ int main(int argc, char *argv[])
     
 
 
-    return 0;
+    return app.exec();
 }

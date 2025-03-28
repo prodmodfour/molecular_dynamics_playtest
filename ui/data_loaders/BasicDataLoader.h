@@ -14,6 +14,8 @@ class BasicDataLoader : public ui::DataLoader
         std::vector<simulation::Timestep>* data;
         ui::PlaybackSettings* playback_settings;
         simulation::Timestep* data_output_pointer;
+        ui::MDVisualiser* visualiser;
+
 
         BasicDataLoader()
         {
@@ -24,12 +26,12 @@ class BasicDataLoader : public ui::DataLoader
 
         void load() override
         {
-            if (data_output_pointer == nullptr)
+            if (visualiser->current_timestep_data == nullptr)
             {
                 throw std::invalid_argument("Data output pointer is not set");
             }
 
-            *data_output_pointer = data->at(playback_settings->current_timestep_index);
+            visualiser->current_timestep_data = data->at(playback_settings->current_timestep_index);
         }
 
         void setData(std::vector<simulation::Timestep>* data)
@@ -45,6 +47,11 @@ class BasicDataLoader : public ui::DataLoader
         void setDataOutputPointer(simulation::Timestep* data_output_pointer)
         {
             this->data_output_pointer = data_output_pointer;
+        }
+
+        void setVisualiser(ui::MDVisualiser* visualiser)
+        {
+            this->visualiser = visualiser;
         }
 
         

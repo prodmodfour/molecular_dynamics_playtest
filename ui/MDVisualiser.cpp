@@ -96,6 +96,7 @@ void ui::MDVisualiser::onTimerTimeout()
     mPlaybackSettings->next_timestep();
     mDataLoader->load();
 
+
     // // Render the new timestep
     mVTKWidget->updateAtoms(current_timestep_data->atoms);
 
@@ -129,6 +130,7 @@ void ui::MDVisualiser::setDataLoader(ui::BasicDataLoader* data_loader)
     mDataLoader = data_loader;
     mDataLoader->setPlaybackSettings(mPlaybackSettings);
     mDataLoader->setDataOutputPointer(current_timestep_data);
+    mDataLoader->setVisualiser(this);
     data_loader_set = true;
 }
 
