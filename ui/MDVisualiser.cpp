@@ -46,11 +46,17 @@ ui::MDVisualiser::MDVisualiser(
     // --- Playback Controls ---
     QHBoxLayout* controlsLayout = new QHBoxLayout;
 
-    // Speed slider
-    mSpeedSlider = new QSlider(Qt::Horizontal, central);
-    mSpeedSlider->setRange(1, 10);
-    mSpeedSlider->setValue(1); // default speed
-    controlsLayout->addWidget(mSpeedSlider);
+    // Speed controls
+    mSpeedDownButton = new QPushButton("-", central);
+    controlsLayout->addWidget(mSpeedDownButton);
+
+    mSpeedLineEdit = new QLineEdit(central);
+    mSpeedLineEdit->setText(QString::number(mPlaybackSettings->speed)); 
+    mSpeedLineEdit->setFixedWidth(50); // just to limit the size a bit
+    controlsLayout->addWidget(mSpeedLineEdit);
+
+    mSpeedUpButton = new QPushButton("+", central);
+    controlsLayout->addWidget(mSpeedUpButton);
 
     // Start/Pause button
     mStartPauseButton = new QPushButton("Start/Pause", central);
@@ -70,9 +76,13 @@ ui::MDVisualiser::MDVisualiser(
     mainLayout->addLayout(controlsLayout);
     setCentralWidget(central);
 
-    // Connect slider to playback manager
-    connect(mSpeedSlider, &QSlider::valueChanged,
-            this, &ui::MDVisualiser::onSpeedChanged);
+    // Connect speed controls
+    connect(mSpeedDownButton, &QPushButton::clicked,
+            this, &MDVisualiser::onSpeedDownClicked);
+    connect(mSpeedUpButton, &QPushButton::clicked,
+            this, &MDVisualiser::onSpeedUpClicked);
+    connect(mSpeedLineEdit, &QLineEdit::editingFinished,
+            this, &MDVisualiser::onSpeedLineEditChanged);
 
     // Connect start/pause button
     connect(mStartPauseButton, &QPushButton::clicked,
@@ -107,9 +117,37 @@ void ui::MDVisualiser::onTimerTimeout()
 
 }
 
-void ui::MDVisualiser::onSpeedChanged(int value)
+void MDVisualiser::onSpeedDownClicked()
 {
-    mPlaybackSettings->change_speed(value);
+    bool ok;
+    int currentSpeed = mSpeedLineEdit->text().toInt(&ok);
+    if (!ok) return; // Invalid input, do nothing
+    if (currentSpeed > 1)
+    {
+        currentSpeed--;
+        mSpeedLineEdit->setText(QString::number(currentSpeed));
+        mPlaybackSettings->change_speed(currentSpeed);
+    }
+}
+
+void MDVisualiser::onSpeedUpClicked()
+{
+    bool ok;
+    int currentSpeed = mSpeedLineEdit->text().toInt(&ok);
+    if (!ok) return; // Invalid input, do nothing
+    
+    currentSpeed++;
+    mSpeedLineEdit->setText(QString::number(currentSpeed));
+    mPlaybackSettings->change_speed(currentSpeed);
+}
+
+void MDVisualiser::onSpeedLineEditChanged()
+{
+    bool ok;
+    int newSpeed = mSpeedLineEdit->text().toInt(&ok);
+    if (!ok) return; // Invalid input, revert or ignore
+
+    mPlaybackSettings->change_speed(newSpeed);
 }
 
 void ui::MDVisualiser::onStartPauseClicked()

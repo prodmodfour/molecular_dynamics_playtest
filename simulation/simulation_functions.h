@@ -32,4 +32,13 @@ simulation::Timestep simulate_timestep(simulation::Config config, std::vector<at
     return simulation::Timestep(config, atoms, total_energy, time);
 }
 
+void run_simulation(simulation::Config config, std::vector<atoms::Atom> &atoms, double &time, atoms::AtomPairLibrary &atom_pair_library, std::vector<atoms::Atom> )
+{
+    while (true)
+    {
+
+        simulation::Timestep timestep = simulation::simulate_timestep(config, atoms, time, atom_pair_library);
+    }
+}
+
 } // namespace simulation

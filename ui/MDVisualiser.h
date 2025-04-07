@@ -29,7 +29,9 @@ public:
 
 public slots:
     void onTimerTimeout();
-    void onSpeedChanged(int value);
+    void onSpeedLineEditChanged();
+    void onSpeedUpClicked();
+    void onSpeedDownClicked();
     void onStartPauseClicked();
     void onReverseClicked();
     void onRestartClicked();
@@ -38,7 +40,9 @@ public slots:
 
 private:
     ui::AtomVTKWidget*            mVTKWidget;
-    QSlider*                  mSpeedSlider;
+    QPushButton* mSpeedDownButton; 
+    QLineEdit* mSpeedLineEdit;
+    QPushButton* mSpeedUpButton;
     QPushButton*              mStartPauseButton;
     QPushButton*              mReverseButton;
     QPushButton*              mRestartButton;
