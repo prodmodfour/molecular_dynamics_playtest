@@ -170,6 +170,8 @@ void ui::MDVisualiser::onRestartClicked()
 
 void ui::MDVisualiser::setDataLoader(ui::BasicDataLoader* data_loader)
 {
+    // Setting the data loader sets the data loader's playback settings and visualiser
+    // This is a similar way of linking objects to the way that VTK does it.
     mDataLoader = data_loader;
     mDataLoader->setPlaybackSettings(mPlaybackSettings);
     mDataLoader->setVisualiser(this);
