@@ -11,9 +11,7 @@ int main()
     ui::BasicDataLoader data_loader;
 
     // Create a playback settings
-    ui::PlaybackSettings playback_settings;
-
-
+    ui::PlaybackSettings playback_settings(0);
 
     // Create a visualiser
     ui::MDVisualiser visualiser(&data_loader, &playback_settings);

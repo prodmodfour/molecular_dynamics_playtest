@@ -50,9 +50,7 @@ private:
     QPushButton*              mRestartButton;
     QTimer*                   mTimer;
 
-    
     ui::PlaybackSettings*       mPlaybackSettings;
-    bool                        data_loader_set;
     ui::BasicDataLoader*        mDataLoader;
 };
     

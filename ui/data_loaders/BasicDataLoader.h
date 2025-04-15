@@ -4,6 +4,7 @@
 
 #include "DataLoader.h"
 
+// Needed to forward declare this to get it to compile
 namespace simulation {
     class Timestep;
 }
@@ -24,13 +25,11 @@ public:
     // Setter methods
     void setData(std::vector<simulation::Timestep>* data);
     void setPlaybackSettings(ui::PlaybackSettings* playback_settings);
-    void setDataOutputPointer(simulation::Timestep* data_output_pointer);
     void setVisualiser(ui::MDVisualiser* visualiser);
 
 private:
     std::vector<simulation::Timestep>* data;
     ui::PlaybackSettings* playback_settings;
-    simulation::Timestep* data_output_pointer;
     ui::MDVisualiser* visualiser;
 };
 
