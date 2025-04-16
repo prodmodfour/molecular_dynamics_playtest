@@ -99,19 +99,19 @@ void run_simulation(SharedData* shared_data, std::vector<simulation::Timestep>* 
         lock.unlock();
 
         std::unique_lock<std::mutex> lock2(simulation_data_mutex);
-        simulation::Timestep timestep = simulation_data[index_of_timestep_to_simulate];
+        simulation::Timestep input_timestep = simulation_data->at(index_of_timestep_to_simulate);
         lock2.unlock();
 
-        simulation::Timestep timestep = simulation::simulate_timestep(timestep, shared_data->atom_pair_library);
+        simulation::Timestep output_timestep = simulation::simulate_timestep(input_timestep, shared_data->atom_pair_library);
 
         std::unique_lock<std::mutex> lock3(simulation_data_mutex);
         if (index_of_timestep_to_simulate >= simulation_data->size())
         {
-            simulation_data->push_back(timestep);
+            simulation_data->push_back(output_timestep);
         }
         else
         {
-            simulation_data[index_of_timestep_to_simulate] = timestep;
+            simulation_data->at(index_of_timestep_to_simulate) = output_timestep;
         }
         lock3.unlock();
 
