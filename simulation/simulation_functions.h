@@ -38,30 +38,30 @@ simulation::Timestep simulate_timestep(simulation::Config config, std::vector<at
     return simulation::Timestep(config, atoms, total_energy, time);
 }
 
-simulation::Timestep simulate_timestep(simulation::Timestep timestep)
+simulation::Timestep simulate_timestep(simulation::Timestep timestep, atoms::AtomPairLibrary &atom_pair_library)
 {
     physics::TotalEnergy total_energy(0, 0);
-    physics::evaluate_interactions(timestep.config, total_energy, timestep.atoms, timestep.atom_pair_library); // Calculate forces
+    physics::evaluate_interactions(timestep.config, total_energy, timestep.atoms, atom_pair_library); // Calculate forces
 
-    for (atoms::Atom &atom : atoms)
+    for (atoms::Atom &atom : timestep.atoms)
     {
         physics::calculate_motion(timestep.config.timestep_size, atom);
     }
 
     double total_kinetic_energy = 0;
-    for (atoms::Atom &atom : atoms)
+    for (atoms::Atom &atom : timestep.atoms)
     {
         total_kinetic_energy += atom.kinetic_energy;
     }
 
     total_energy.kinetic = total_kinetic_energy;
-    time += config.timestep_size;
+    time += timestep.config.timestep_size;
 
-    return simulation::Timestep(config, atoms, total_energy, time);
+    return simulation::Timestep(timestep.config, timestep.atoms, total_energy, time);
 }
 
 
-void run_simulation(ui::SharedData* shared_data, simulation::Timestep* simulation_data)
+void run_simulation(ui::SharedData* shared_data, simulation::Timestep* simulation_data, atoms::AtomPairLibrary &atom_pair_library)
 {
     while (true)
     {
@@ -102,7 +102,7 @@ void run_simulation(ui::SharedData* shared_data, simulation::Timestep* simulatio
         simulation::Timestep timestep = simulation_data[index_of_timestep_to_simulate];
         lock2.unlock();
 
-        simulation::Timestep timestep = simulation::simulate_timestep(timestep);
+        simulation::Timestep timestep = simulation::simulate_timestep(timestep, atom_pair_library);
 
         std::unique_lock<std::mutex> lock3(simulation_data_mutex);
         if (index_of_timestep_to_simulate >= simulation_data->size())
