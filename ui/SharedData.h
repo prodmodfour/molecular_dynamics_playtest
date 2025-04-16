@@ -22,7 +22,7 @@ class SharedData
         atoms::AtomPairLibrary atom_pair_library;
         std::mutex mutex;
     
-}
+};
 
 class LocalUnsavedChangesToSharedData : public SharedData
 {
@@ -42,4 +42,4 @@ class LocalUnsavedChangesToSharedData : public SharedData
 
         
         
-}
+};
