@@ -1,6 +1,5 @@
 #include "BasicDataLoader.h"
 #include "DataLoader.h" 
-#include "../../simulation/SimulationDataChannels.h"
 #include "../../simulation/Timestep.h"
 #include "../PlaybackSettings.h"
 #include "../MDVisualiser.h"
