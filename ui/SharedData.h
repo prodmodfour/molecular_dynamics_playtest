@@ -1,9 +1,9 @@
 #pragma once
 #include <vector>
-#include "../../simulation/Timestep.h"
-#include "../../simulation/Config.h"
-#include "../../atoms/Atom.h"
-#include "../../atoms/AtomPairLibrary.h"
+#include "../simulation/Timestep.h"
+#include "../simulation/Config.h"
+#include "../atoms/Atom.h"
+#include "../atoms/AtomPairLibrary.h"
 #include <mutex>
 
 
