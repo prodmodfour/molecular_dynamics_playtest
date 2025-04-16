@@ -61,7 +61,7 @@ simulation::Timestep simulate_timestep(simulation::Timestep timestep, atoms::Ato
 }
 
 
-void run_simulation(ui::SharedData* shared_data, simulation::Timestep* simulation_data, atoms::AtomPairLibrary &atom_pair_library)
+void run_simulation(SharedData* shared_data, simulation::Timestep* simulation_data, atoms::AtomPairLibrary &atom_pair_library)
 {
     while (true)
     {

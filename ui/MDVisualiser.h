@@ -26,8 +26,8 @@ public:
                         QWidget* parent = nullptr,
                         ui::BasicDataLoader* data_loader = nullptr,
                         ui::PlaybackSettings* playback_settings = nullptr
-                        // ui::SharedData* shared_data = nullptr,
-                        // ui::SharedData local_unsaved_changes_to_shared_data = SharedData()
+                        // SharedData* shared_data = nullptr,
+                        //SharedData local_unsaved_changes_to_shared_data = SharedData()
                         );
 
 public slots:
