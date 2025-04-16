@@ -69,7 +69,7 @@ void run_simulation(SharedData* shared_data, std::vector<simulation::Timestep>* 
         if (shared_data->indexes_of_timesteps_edited_by_ui.size() > 0)
         {
             shared_data->changed_by_ui_since_last_loop = true;
-            int smallest_index = shared_data->simulation_data.size() - 1;
+            int smallest_index = simulation_data->size() - 1;
 
             for (int index : shared_data->indexes_of_timesteps_edited_by_ui)
             {
