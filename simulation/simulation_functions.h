@@ -61,7 +61,7 @@ simulation::Timestep simulate_timestep(simulation::Timestep timestep, atoms::Ato
 }
 
 
-void run_simulation(SharedData* shared_data, simulation::Timestep* simulation_data, atoms::AtomPairLibrary &atom_pair_library)
+void run_simulation(SharedData* shared_data, std::vector<simulation::Timestep>* simulation_data)
 {
     while (true)
     {
@@ -102,7 +102,7 @@ void run_simulation(SharedData* shared_data, simulation::Timestep* simulation_da
         simulation::Timestep timestep = simulation_data[index_of_timestep_to_simulate];
         lock2.unlock();
 
-        simulation::Timestep timestep = simulation::simulate_timestep(timestep, atom_pair_library);
+        simulation::Timestep timestep = simulation::simulate_timestep(timestep, shared_data->atom_pair_library);
 
         std::unique_lock<std::mutex> lock3(simulation_data_mutex);
         if (index_of_timestep_to_simulate >= simulation_data->size())
