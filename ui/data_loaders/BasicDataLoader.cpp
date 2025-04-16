@@ -39,10 +39,6 @@ void BasicDataLoader::setPlaybackSettings(ui::PlaybackSettings* playback_setting
     this->playback_settings = playback_settings;
 }
 
-void BasicDataLoader::setDataOutputPointer(simulation::Timestep* data_output_pointer)
-{
-    this->data_output_pointer = data_output_pointer;
-}
 
 void BasicDataLoader::setVisualiser(ui::MDVisualiser* visualiser)
 {

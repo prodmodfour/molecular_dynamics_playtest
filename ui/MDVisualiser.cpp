@@ -25,15 +25,13 @@ ui::MDVisualiser::MDVisualiser(
                        ui::BasicDataLoader* data_loader,
                        ui::PlaybackSettings* playback_settings)
     : QMainWindow(parent)
-    , data_loader_set(false)
     , mDataLoader(data_loader)
     , mPlaybackSettings(playback_settings)
     , current_timestep_data(new simulation::Timestep())
 {
 
     setDataLoader(data_loader);
-    // Give the data output pointer to the data loader
-    mDataLoader->setDataOutputPointer(current_timestep_data);
+
 
     // Create a central widget and main layout
     QWidget* central = new QWidget(this);
