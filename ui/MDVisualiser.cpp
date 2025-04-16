@@ -117,7 +117,7 @@ void ui::MDVisualiser::onTimerTimeout()
 
 }
 
-void MDVisualiser::onSpeedDownClicked()
+void ui::MDVisualiser::onSpeedDownClicked()
 {
     bool ok;
     int currentSpeed = mSpeedLineEdit->text().toInt(&ok);
@@ -130,7 +130,7 @@ void MDVisualiser::onSpeedDownClicked()
     }
 }
 
-void MDVisualiser::onSpeedUpClicked()
+void ui::MDVisualiser::onSpeedUpClicked()
 {
     bool ok;
     int currentSpeed = mSpeedLineEdit->text().toInt(&ok);
@@ -141,7 +141,7 @@ void MDVisualiser::onSpeedUpClicked()
     mPlaybackSettings->change_speed(currentSpeed);
 }
 
-void MDVisualiser::onSpeedLineEditChanged()
+void ui::MDVisualiser::onSpeedLineEditChanged()
 {
     bool ok;
     int newSpeed = mSpeedLineEdit->text().toInt(&ok);
