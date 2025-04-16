@@ -10,6 +10,7 @@
 class QTimer;
 class QSlider;
 class QPushButton;
+class QLineEdit;
 
 namespace ui
 {
