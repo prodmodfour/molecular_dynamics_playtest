@@ -1,4 +1,3 @@
-#pragma once
 #include "BasicDataLoader.h"
 #include "DataLoader.h" 
 #include "../../simulation/SimulationDataChannels.h"
