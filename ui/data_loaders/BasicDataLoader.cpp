@@ -13,7 +13,6 @@ namespace ui
 BasicDataLoader::BasicDataLoader()
     : data(nullptr),
       playback_settings(nullptr),
-      data_output_pointer(nullptr),
       visualiser(nullptr)
 {
 }
