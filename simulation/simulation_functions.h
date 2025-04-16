@@ -55,9 +55,9 @@ simulation::Timestep simulate_timestep(simulation::Timestep timestep, atoms::Ato
     }
 
     total_energy.kinetic = total_kinetic_energy;
-    time += timestep.config.timestep_size;
+    timestep.time += timestep.config.timestep_size;
 
-    return simulation::Timestep(timestep.config, timestep.atoms, total_energy, time);
+    return simulation::Timestep(timestep.config, timestep.atoms, total_energy, timestep.time);
 }
 
 
