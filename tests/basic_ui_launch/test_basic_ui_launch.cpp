@@ -2,7 +2,6 @@
 
 #include "../../atoms/Atom.h"
 #include "../../simulation/simulation_functions.h"
-#include "../../simulation/InitialParameters.h"
 #include "../../simulation/Config.h"
 #include "../../simulation/Timestep.h"
 #include "../../ui/MDVisualiser.h"
@@ -10,7 +9,6 @@
 #include "../../geometry/geometry_functions.h"
 #include "../../ui/data_loaders/BasicDataLoader.h"
 #include "../../ui/PlaybackSettings.h"
-#include "../../ui/InitialiserDialog.h"
 #include "../../atoms/atom_generation_functions.h"
 #include "../../ui/MDVisualiser.h"
 
