@@ -33,7 +33,6 @@ add_executable(Test_Basic_UI_Launch
     test_basic_ui_launch.cpp
     ../../../ui/MDVisualiser.cpp
     ../../../ui/AtomVTKWidget.cpp
-    ../../../ui/InitialiserDialog.cpp
     ../../../ui/data_loaders/BasicDataLoader.cpp
 )
 
