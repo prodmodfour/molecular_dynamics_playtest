@@ -1,7 +1,7 @@
 #include "MDVisualiser.h"
 #include "../simulation/Timestep.h"
-#include "../ui/data_loaders/BasicDataLoader.h"
-
+#include <stdexcept>
+#include "data_loaders/BasicDataLoader.h"
 
 // Qt includes
 #include <QTimer>
@@ -13,8 +13,10 @@
 #include <QApplication>
 #include <QObject>
 #include <QSurfaceFormat>
-#include <stdexcept>
-#include "data_loaders/BasicDataLoader.h"
+#include <QLineEdit>
+
+
+
 
 
 
