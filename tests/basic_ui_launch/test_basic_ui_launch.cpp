@@ -28,7 +28,7 @@ int main(int argc, char *argv[])
     ui::PlaybackSettings playback_settings(0);
 
     // Create a visualiser
-    ui::MDVisualiser visualiser(&data_loader, &playback_settings);
+    ui::MDVisualiser visualiser(nullptr, &data_loader, &playback_settings);
     visualiser.show();
     return app.exec();
 }
