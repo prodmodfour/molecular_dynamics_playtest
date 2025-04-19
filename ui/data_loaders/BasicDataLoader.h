@@ -20,12 +20,14 @@ public:
     BasicDataLoader();
 
     // Overridden functions
-    void load() override;
+    bool load() override;
 
     // Setter methods
     void setData(std::vector<simulation::Timestep>* data);
     void setPlaybackSettings(ui::PlaybackSettings* playback_settings);
     void setVisualiser(ui::MDVisualiser* visualiser);
+
+    bool simulation_data_set;
 
 private:
     std::vector<simulation::Timestep>* data;

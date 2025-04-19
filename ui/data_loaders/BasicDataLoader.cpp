@@ -13,15 +13,22 @@ namespace ui
 BasicDataLoader::BasicDataLoader()
     : data(nullptr),
       playback_settings(nullptr),
-      visualiser(nullptr)
+      visualiser(nullptr),
+      simulation_data_set(false)
 {
 }
 
-void BasicDataLoader::load()
+bool BasicDataLoader::load()
 {
+    if (!simulation_data_set)
+    {
+        return false;
+    }
+    
     std::vector<atoms::Atom> atoms = data->at(playback_settings->current_timestep_index).atoms;
     // Use the current timestep index to load the correct data element.
     visualiser->current_timestep_data = &data->at(playback_settings->current_timestep_index);
+    return true;
 }
 
 void BasicDataLoader::setData(std::vector<simulation::Timestep>* data)

@@ -9,6 +9,6 @@ public:
     virtual ~DataLoader() = default;
 
     // Pure virtual function: must be implemented by derived classes
-    virtual void load() = 0;
+    virtual bool load() = 0;
 };
 } // namespace ui

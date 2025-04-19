@@ -59,6 +59,10 @@ class PlaybackSettings
             {
                 return;
             }
+            if (current_timestep_index == 0 && last_timestep_index == 0)
+            {
+                return;
+            }
 
             current_timestep_index += direction * speed;
         }

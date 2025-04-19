@@ -107,13 +107,13 @@ void ui::MDVisualiser::onTimerTimeout()
     if (mPlaybackSettings->pause == false)
     {
         mPlaybackSettings->next_timestep();
-
-
     }
 
-    mDataLoader->load();
-    // // // Render the new timestep
-    mVTKWidget->updateAtoms(current_timestep_data->atoms);
+    if (mDataLoader->load())
+    {
+        // // // Render the new timestep
+        mVTKWidget->updateAtoms(current_timestep_data->atoms);
+    }
 
 }
 
