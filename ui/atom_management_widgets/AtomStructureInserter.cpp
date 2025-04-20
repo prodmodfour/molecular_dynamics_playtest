@@ -136,7 +136,7 @@ void AtomStructureInserter::onApplyKineticEnergyChanged(bool checked) {
   kineticEnergyGroup->setVisible(checked);
 }
 
-AtomStructureInserter::AtomStructureParameters AtomStructureInserter::getParameters() const {
+AtomStructureParameters AtomStructureInserter::getParameters() const {
   AtomStructureParameters params;
   params.structureType = structureTypeComboBox->currentText() == "Single Atom" ? StructureType::SingleAtom : StructureType::FCCCrystal;
   params.atomType = atomTypeComboBox->currentText() == "Copper" ? AtomType::Copper : AtomType::Argon;

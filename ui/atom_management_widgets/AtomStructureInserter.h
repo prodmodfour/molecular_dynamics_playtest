@@ -10,6 +10,21 @@
 #include <QPushButton>
 #include <QGroupBox>
 
+struct AtomStructureParametersParameters {
+    QString structureType;
+    QString atomType;
+    double atomRadius;
+    double centerX, centerY, centerZ;
+    int cubesX, cubesY, cubesZ;
+    double atomSpacing;
+    bool applyKineticEnergy;
+    double kineticEnergy;
+    double targetX, targetY, targetZ;
+    double offsetX, offsetY, offsetZ;
+};
+
+AtomStructureParameters getParameters() const;
+
 class AtomStructureInserter : public QDialog {
     Q_OBJECT
 
@@ -17,20 +32,7 @@ public:
     AtomStructureInserter(QWidget *parent = nullptr);
     ~AtomStructureInserter() override;
 
-    struct Parameters {
-        QString structureType;
-        QString atomType;
-        double atomRadius;
-        double centerX, centerY, centerZ;
-        int cubesX, cubesY, cubesZ;
-        double atomSpacing;
-        bool applyKineticEnergy;
-        double kineticEnergy;
-        double targetX, targetY, targetZ;
-        double offsetX, offsetY, offsetZ;
-    };
 
-    Parameters getParameters() const;
 
 private slots:
     void onStructureTypeChanged(const QString &text);
