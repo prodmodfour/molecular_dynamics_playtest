@@ -180,7 +180,7 @@ void ui::MDVisualiser::onAddAtomsClicked()
     AtomStructureInserter inserterDialog(this);
     if (inserterDialog.exec() == QDialog::Accepted) { 
 
-        AtomStructureInserter::AtomStructureParameters params = inserterDialog.getParameters();
+        AtomStructureParameters params = inserterDialog.getParameters();
 
         std::cout << "Atom Structure Inserter accepted." << std::endl;
 
@@ -197,7 +197,7 @@ void ui::MDVisualiser::onAddAtomsClicked()
         std::cout << "Kinetic Energy: " << params.kineticEnergyParams.kineticEnergy << std::endl;
         std::cout << "Target Coordinates: (" << params.kineticEnergyParams.targetCoordinates.x << ", " << params.kineticEnergyParams.targetCoordinates.y << ", " << params.kineticEnergyParams.targetCoordinates.z << ")" << std::endl;
         std::cout << "Offset: (" << params.kineticEnergyParams.offset.x << ", " << params.kineticEnergyParams.offset.y << ", " << params.kineticEnergyParams.offset.z << ")" << std::endl;
-        
+
     }
     else {
         std::cout << "Atom Structure Inserter canceled." << std::endl;

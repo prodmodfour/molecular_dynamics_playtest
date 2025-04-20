@@ -10,7 +10,7 @@
 #include <QPushButton>
 #include <QGroupBox>
 
-struct AtomStructureParametersParameters {
+struct AtomStructureParameters {
     QString structureType;
     QString atomType;
     double atomRadius;
