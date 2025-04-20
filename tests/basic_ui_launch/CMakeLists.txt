@@ -34,6 +34,7 @@ add_executable(Test_Basic_UI_Launch
     ../../../ui/MDVisualiser.cpp
     ../../../ui/AtomVTKWidget.cpp
     ../../../ui/data_loaders/BasicDataLoader.cpp
+    ../../../ui/atom_management_widgets/AtomStructureInserter.cpp
 )
 
 # If you have headers in non-standard locations:
