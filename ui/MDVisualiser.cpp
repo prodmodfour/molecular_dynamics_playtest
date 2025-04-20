@@ -2,7 +2,7 @@
 #include "../simulation/Timestep.h"
 #include <stdexcept>
 #include "data_loaders/BasicDataLoader.h"
-#include "atom_management_widgets/AtomStructureInserter.h" 
+#include "atom_management_widgets/AtomStructureInserter.h"
 
 // Qt includes
 #include <QTimer>
@@ -15,8 +15,8 @@
 #include <QObject>
 #include <QSurfaceFormat>
 #include <QLineEdit>
-#include <QDialog> 
-#include <iostream> 
+#include <QDialog>
+#include <iostream>
 
 
 ui::MDVisualiser::MDVisualiser(
@@ -26,7 +26,7 @@ ui::MDVisualiser::MDVisualiser(
     : QMainWindow(parent)
     , mDataLoader(data_loader)
     , mPlaybackSettings(playback_settings)
-    , current_timestep_data(new simulation::Timestep())
+    , current_timestep_data(new simulation::Timestep()) // Ensure this initialization is correct
 {
 
     setDataLoader(data_loader);
@@ -116,10 +116,15 @@ void ui::MDVisualiser::onTimerTimeout()
         mPlaybackSettings->next_timestep();
     }
 
-    if (mDataLoader->load())
+    if (mDataLoader && mDataLoader->load()) // Check mDataLoader validity
     {
         // // // Render the new timestep
-        mVTKWidget->updateAtoms(current_timestep_data->atoms);
+        // Ensure current_timestep_data is valid and updated by the loader
+        if (current_timestep_data) { 
+             mVTKWidget->updateAtoms(current_timestep_data->atoms);
+        } else {
+            std::cerr << "Error: current_timestep_data is null in onTimerTimeout." << std::endl;
+        }
     }
 
 }
@@ -152,7 +157,10 @@ void ui::MDVisualiser::onSpeedLineEditChanged()
 {
     bool ok;
     int newSpeed = mSpeedLineEdit->text().toInt(&ok);
-    if (!ok) return; // Invalid input, revert or ignore
+    if (!ok || newSpeed <= 0) { // Ensure speed is positive
+         mSpeedLineEdit->setText(QString::number(mPlaybackSettings->speed)); // Revert on invalid input
+         return;
+    }
 
     mPlaybackSettings->change_speed(newSpeed);
 }
@@ -184,39 +192,48 @@ void ui::MDVisualiser::onAddAtomsClicked()
 
         std::cout << "Atom Structure Inserter accepted." << std::endl;
 
-        // print paramaters
-        std::cout << "Structure Type: " << params.structureType.toStdString() << std::endl;
-        std::cout << "Atom Type: " << params.atomType.toStdString() << std::endl;
+        // print parameters (updated access)
+        std::cout << "Structure Type Enum: " << static_cast<int>(params.structureType) << " (0:Single, 1:FCC)" << std::endl;
+        std::cout << "Atom Type Enum: " << static_cast<int>(params.atomType) << " (0:Copper, 1:Argon)" << std::endl;
         std::cout << "Atom Radius: " << params.atomRadius << std::endl;
         std::cout << "Center: (" << params.center.x << ", " << params.center.y << ", " << params.center.z << ")" << std::endl;
-        std::cout << "Cubes in X: " << params.fccParams.cubes.x << std::endl;
-        std::cout << "Cubes in Y: " << params.fccParams.cubes.y << std::endl;
-        std::cout << "Cubes in Z: " << params.fccParams.cubes.z << std::endl;
-        std::cout << "Atom Spacing: " << params.fccParams.spacing << std::endl;
+
+        if (params.structureType == StructureType::FCCCrystal) {
+            std::cout << "Cubes in X: " << params.fccParams.cubesX << std::endl; 
+            std::cout << "Cubes in Y: " << params.fccParams.cubesY << std::endl; 
+            std::cout << "Cubes in Z: " << params.fccParams.cubesZ << std::endl; 
+            std::cout << "Atom Spacing: " << params.fccParams.spacing << std::endl;
+        }
+
         std::cout << "Apply Kinetic Energy: " << (params.applyKineticEnergy ? "Yes" : "No") << std::endl;
-        std::cout << "Kinetic Energy: " << params.kineticEnergyParams.kineticEnergy << std::endl;
-        std::cout << "Target Coordinates: (" << params.kineticEnergyParams.targetCoordinates.x << ", " << params.kineticEnergyParams.targetCoordinates.y << ", " << params.kineticEnergyParams.targetCoordinates.z << ")" << std::endl;
-        std::cout << "Offset: (" << params.kineticEnergyParams.offset.x << ", " << params.kineticEnergyParams.offset.y << ", " << params.kineticEnergyParams.offset.z << ")" << std::endl;
+        if (params.applyKineticEnergy) {
+            std::cout << "Kinetic Energy: " << params.kineticEnergyParams.kineticEnergy << std::endl;
+            std::cout << "Target Coordinates: (" << params.kineticEnergyParams.targetCoordinates.x << ", " << params.kineticEnergyParams.targetCoordinates.y << ", " << params.kineticEnergyParams.targetCoordinates.z << ")" << std::endl;
+            std::cout << "Offset: (" << params.kineticEnergyParams.offset.x << ", " << params.kineticEnergyParams.offset.y << ", " << params.kineticEnergyParams.offset.z << ")" << std::endl;
+        }
+
+        // TODO: Add logic here to actually use the 'params' to add atoms 
 
     }
     else {
         std::cout << "Atom Structure Inserter canceled." << std::endl;
     }
-    mPlaybackSettings->pause = false;
+    mPlaybackSettings->pause = false; // Resume playback
 }
 
 
 void ui::MDVisualiser::setDataLoader(ui::BasicDataLoader* data_loader)
 {
-    // Setting the data loader sets the data loader's playback settings and visualiser
-    // This is a similar way of linking objects to the way that VTK does it.
     mDataLoader = data_loader;
-    mDataLoader->setPlaybackSettings(mPlaybackSettings);
-    mDataLoader->setVisualiser(this);
+    if (mDataLoader) { 
+        mDataLoader->setPlaybackSettings(mPlaybackSettings);
+        mDataLoader->setVisualiser(this);
+    } else {
+         std::cerr << "Error: Attempted to set a null data loader." << std::endl;
+    }
 }
 
 void ui::MDVisualiser::setPlaybackSettings(ui::PlaybackSettings* playback_settings)
 {
     mPlaybackSettings = playback_settings;
 }
-

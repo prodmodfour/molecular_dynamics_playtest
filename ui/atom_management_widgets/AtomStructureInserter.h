@@ -1,42 +1,63 @@
 #pragma once
 
 #include <QDialog>
-#include <QComboBox>
-#include <QDoubleSpinBox>
-#include <QSpinBox>
-#include <QCheckBox>
-#include <QLabel>
-#include <QGridLayout>
-#include <QPushButton>
-#include <QGroupBox>
+#include <QString> // Include QString
 
-struct AtomStructureParameters {
-    QString structureType;
-    QString atomType;
-    double atomRadius;
-    double centerX, centerY, centerZ;
-    int cubesX, cubesY, cubesZ;
-    double atomSpacing;
-    bool applyKineticEnergy;
-    double kineticEnergy;
-    double targetX, targetY, targetZ;
-    double offsetX, offsetY, offsetZ;
+// Forward declarations for Qt classes
+class QComboBox;
+class QDoubleSpinBox;
+class QSpinBox;
+class QCheckBox;
+class QLabel;
+class QGridLayout;
+class QPushButton;
+class QGroupBox;
+
+// Define necessary enums and structs based on AtomStructureInserter.cpp usage
+enum class StructureType { SingleAtom, FCCCrystal };
+enum class AtomType { Copper, Argon }; // Assuming these are the types
+
+// Define a simple struct for 3D coordinates/vectors
+struct Vector3D {
+    double x = 0.0, y = 0.0, z = 0.0;
 };
 
-AtomStructureParameters getParameters() const;
+struct FCCParams {
+    int cubesX = 1, cubesY = 1, cubesZ = 1; // Match spinbox type (int)
+    double spacing = 0.0;
+};
+
+struct KineticEnergyParams {
+    double kineticEnergy = 0.0;
+    Vector3D targetCoordinates;
+    Vector3D offset;
+};
+
+struct AtomStructureParameters {
+    StructureType structureType = StructureType::SingleAtom;
+    AtomType atomType = AtomType::Copper;
+    double atomRadius = 0.0;
+    Vector3D center; // Represents the center coordinates
+    FCCParams fccParams; // Nested struct for FCC params
+    bool applyKineticEnergy = false;
+    KineticEnergyParams kineticEnergyParams; // Nested struct for KE params
+};
+
 
 class AtomStructureInserter : public QDialog {
     Q_OBJECT
 
 public:
     AtomStructureInserter(QWidget *parent = nullptr);
-    ~AtomStructureInserter() override;
+    // Remove destructor if not custom implemented: ~AtomStructureInserter() override;
 
-
+    // Moved getParameters inside the class
+    AtomStructureParameters getParameters() const;
 
 private slots:
-    void onStructureTypeChanged(const QString &text);
-    void onApplyKineticEnergyChanged(int state);
+    // Corrected signatures
+    void onStructureTypeChanged(int index);
+    void onApplyKineticEnergyChanged(bool checked);
 
 private:
     QComboBox *structureTypeComboBox;
@@ -44,8 +65,8 @@ private:
     QDoubleSpinBox *atomRadiusSpinBox;
     QDoubleSpinBox *centerXSpinBox, *centerYSpinBox, *centerZSpinBox;
 
-    // FCC Crystal Specific
-    QGroupBox *fccCrystalGroup;
+    // FCC Crystal Specific - Renamed member
+    QGroupBox *fccPropertiesGroup; // <--- Renamed
     QSpinBox *cubesXSpinBox, *cubesYSpinBox, *cubesZSpinBox;
     QDoubleSpinBox *atomSpacingSpinBox;
 
@@ -55,12 +76,12 @@ private:
     QDoubleSpinBox *targetXSpinBox, *targetYSpinBox, *targetZSpinBox;
     QDoubleSpinBox *offsetXSpinBox, *offsetYSpinBox, *offsetZSpinBox;
 
+    // Added missing members from cpp constructor
     QPushButton *okButton, *cancelButton;
 
-    void createLayout();
-    void updateKineticEnergyGroupVisibility(bool visible);
-    void updateFCCGroupVisibility(bool visible);
-    void calculateOffset();
+    // Removed unused private helper declarations if they aren't defined in cpp
+    // void createLayout();
+    // void updateKineticEnergyGroupVisibility(bool visible);
+    // void updateFCCGroupVisibility(bool visible);
+    // void calculateOffset();
 };
-
-

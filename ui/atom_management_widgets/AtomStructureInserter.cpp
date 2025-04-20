@@ -1,4 +1,4 @@
-#pragma once
+// Remove #pragma once from .cpp file
 
 #include "AtomStructureInserter.h"
 
@@ -8,12 +8,13 @@
 #include <QFormLayout>
 #include <QGroupBox>
 #include <QLabel>
-#include <QLineEdit>
+#include <QLineEdit> // Note: QLineEdit is included but not used, could be removed
 #include <QVBoxLayout>
 #include <QCheckBox>
+#include <QSpinBox> // Make sure QSpinBox is included
 
 #include <iostream>
-#include <stdexcept>
+#include <stdexcept> // Note: <stdexcept> is included but not used, could be removed
 
 AtomStructureInserter::AtomStructureInserter(QWidget *parent) : QDialog(parent) {
   setWindowTitle("Atom Structure Inserter");
@@ -55,7 +56,7 @@ AtomStructureInserter::AtomStructureInserter(QWidget *parent) : QDialog(parent) 
   mainLayout->addWidget(atomPropertiesGroup);
 
   // FCC Crystal properties (initially hidden)
-  fccPropertiesGroup = new QGroupBox("FCC Crystal Properties", this);
+  fccPropertiesGroup = new QGroupBox("FCC Crystal Properties", this); // Matches corrected header
   auto fccPropertiesLayout = new QFormLayout(fccPropertiesGroup);
   cubesXSpinBox = new QSpinBox(this);
   cubesYSpinBox = new QSpinBox(this);
@@ -83,7 +84,7 @@ AtomStructureInserter::AtomStructureInserter(QWidget *parent) : QDialog(parent) 
   kineticEnergyGroup = new QGroupBox("Kinetic Energy", this);
   auto kineticEnergyLayout = new QFormLayout(kineticEnergyGroup);
   applyKineticEnergyCheckBox = new QCheckBox("Apply kinetic energy to structure", this);
-  kineticEnergyLayout->addWidget(applyKineticEnergyCheckBox);
+  kineticEnergyLayout->addWidget(applyKineticEnergyCheckBox); // Add checkbox first
 
   kineticEnergySpinBox = new QDoubleSpinBox(this);
   kineticEnergySpinBox->setRange(0.0, 1000.0); // Example range
@@ -111,13 +112,13 @@ AtomStructureInserter::AtomStructureInserter(QWidget *parent) : QDialog(parent) 
   kineticEnergyLayout->addRow("Offset Z (Å):", offsetZSpinBox);
 
   mainLayout->addWidget(kineticEnergyGroup);
-  kineticEnergyGroup->hide();
+  // kineticEnergyGroup->hide(); // Visibility handled by onApplyKineticEnergyChanged
 
-  // Connect signals and slots
-  connect(structureTypeComboBox, &QComboBox::currentIndexChanged, this, &AtomStructureInserter::onStructureTypeChanged);
+  // Connect signals and slots (Corrected connections)
+  connect(structureTypeComboBox, qOverload<int>(&QComboBox::currentIndexChanged), this, &AtomStructureInserter::onStructureTypeChanged);
   connect(applyKineticEnergyCheckBox, &QCheckBox::toggled, this, &AtomStructureInserter::onApplyKineticEnergyChanged);
 
-  // Initially update visibility
+  // Initially update visibility based on default values
   onStructureTypeChanged(structureTypeComboBox->currentIndex());
   onApplyKineticEnergyChanged(applyKineticEnergyCheckBox->isChecked());
 
@@ -129,7 +130,11 @@ AtomStructureInserter::AtomStructureInserter(QWidget *parent) : QDialog(parent) 
 }
 
 void AtomStructureInserter::onStructureTypeChanged(int index) {
-  fccPropertiesGroup->setVisible(structureTypeComboBox->itemText(index) == "FCC Crystal");
+  bool isFCC = (structureTypeComboBox->itemText(index) == "FCC Crystal");
+  fccPropertiesGroup->setVisible(isFCC);
+  // Also control visibility of kinetic energy checkbox based on structure type if needed,
+  // or just keep it always visible and let the user decide.
+  // applyKineticEnergyCheckBox->setVisible(isFCC); // Example: Only allow KE for FCC
 }
 
 void AtomStructureInserter::onApplyKineticEnergyChanged(bool checked) {
@@ -144,7 +149,10 @@ AtomStructureParameters AtomStructureInserter::getParameters() const {
   params.center = {centerXSpinBox->value(), centerYSpinBox->value(), centerZSpinBox->value()};
 
   if (params.structureType == StructureType::FCCCrystal) {
-    params.fccParams.cubes = {cubesXSpinBox->value(), cubesYSpinBox->value(), cubesZSpinBox->value()};
+    // Corrected assignment for FCC parameters
+    params.fccParams.cubesX = cubesXSpinBox->value();
+    params.fccParams.cubesY = cubesYSpinBox->value();
+    params.fccParams.cubesZ = cubesZSpinBox->value();
     params.fccParams.spacing = atomSpacingSpinBox->value();
   }
 
