@@ -2,6 +2,7 @@
 #include "../simulation/Timestep.h"
 #include <stdexcept>
 #include "data_loaders/BasicDataLoader.h"
+#include "atom_management_widgets/AtomStructureInserter.h" 
 
 // Qt includes
 #include <QTimer>
@@ -14,10 +15,8 @@
 #include <QObject>
 #include <QSurfaceFormat>
 #include <QLineEdit>
-
-
-
-
+#include <QDialog> 
+#include <iostream> 
 
 
 ui::MDVisualiser::MDVisualiser(
@@ -51,7 +50,7 @@ ui::MDVisualiser::MDVisualiser(
     controlsLayout->addWidget(mSpeedDownButton);
 
     mSpeedLineEdit = new QLineEdit(central);
-    mSpeedLineEdit->setText(QString::number(mPlaybackSettings->speed)); 
+    mSpeedLineEdit->setText(QString::number(mPlaybackSettings->speed));
     mSpeedLineEdit->setFixedWidth(50); // just to limit the size a bit
     controlsLayout->addWidget(mSpeedLineEdit);
 
@@ -69,6 +68,10 @@ ui::MDVisualiser::MDVisualiser(
     // Restart button
     mRestartButton = new QPushButton("Restart", central);
     controlsLayout->addWidget(mRestartButton);
+
+    // Add Atoms button
+    mAddAtomsButton = new QPushButton("Add Atoms", central); // Instantiate the button
+    controlsLayout->addWidget(mAddAtomsButton); // Add to layout
 
     connect(mRestartButton, &QPushButton::clicked,
             this, &ui::MDVisualiser::onRestartClicked);
@@ -92,13 +95,17 @@ ui::MDVisualiser::MDVisualiser(
     connect(mReverseButton, &QPushButton::clicked,
             this, &ui::MDVisualiser::onReverseClicked);
 
+    // Connect Add Atoms button
+    connect(mAddAtomsButton, &QPushButton::clicked, // Connect the signal
+            this, &ui::MDVisualiser::onAddAtomsClicked); // To the slot
+
     // Setup timer to update animation
     mTimer = new QTimer(this);
     connect(mTimer, &QTimer::timeout,
             this, &ui::MDVisualiser::onTimerTimeout);
     mTimer->start(42); // update every 42 ms (approx. 24 FPS)
-    
-    
+
+
 
 }
 
@@ -166,6 +173,37 @@ void ui::MDVisualiser::onRestartClicked()
     qApp->exit(1);
 }
 
+// Implementation for the onAddAtomsClicked slot
+void ui::MDVisualiser::onAddAtomsClicked()
+{
+    mPlaybackSettings->pause = true;
+    AtomStructureInserter inserterDialog(this);
+    if (inserterDialog.exec() == QDialog::Accepted) { 
+
+        AtomStructureInserter::AtomStructureParameters params = inserterDialog.getParameters();
+
+        std::cout << "Atom Structure Inserter accepted." << std::endl;
+
+        // print paramaters
+        std::cout << "Structure Type: " << params.structureType.toStdString() << std::endl;
+        std::cout << "Atom Type: " << params.atomType.toStdString() << std::endl;
+        std::cout << "Atom Radius: " << params.atomRadius << std::endl;
+        std::cout << "Center: (" << params.center.x << ", " << params.center.y << ", " << params.center.z << ")" << std::endl;
+        std::cout << "Cubes in X: " << params.fccParams.cubes.x << std::endl;
+        std::cout << "Cubes in Y: " << params.fccParams.cubes.y << std::endl;
+        std::cout << "Cubes in Z: " << params.fccParams.cubes.z << std::endl;
+        std::cout << "Atom Spacing: " << params.fccParams.spacing << std::endl;
+        std::cout << "Apply Kinetic Energy: " << (params.applyKineticEnergy ? "Yes" : "No") << std::endl;
+        std::cout << "Kinetic Energy: " << params.kineticEnergyParams.kineticEnergy << std::endl;
+        std::cout << "Target Coordinates: (" << params.kineticEnergyParams.targetCoordinates.x << ", " << params.kineticEnergyParams.targetCoordinates.y << ", " << params.kineticEnergyParams.targetCoordinates.z << ")" << std::endl;
+        std::cout << "Offset: (" << params.kineticEnergyParams.offset.x << ", " << params.kineticEnergyParams.offset.y << ", " << params.kineticEnergyParams.offset.z << ")" << std::endl;
+        
+    }
+    else {
+        std::cout << "Atom Structure Inserter canceled." << std::endl;
+    }
+    mPlaybackSettings->pause = false;
+}
 
 
 void ui::MDVisualiser::setDataLoader(ui::BasicDataLoader* data_loader)
@@ -181,6 +219,4 @@ void ui::MDVisualiser::setPlaybackSettings(ui::PlaybackSettings* playback_settin
 {
     mPlaybackSettings = playback_settings;
 }
-
-
 

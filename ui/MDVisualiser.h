@@ -11,6 +11,8 @@ class QTimer;
 class QSlider;
 class QPushButton;
 class QLineEdit;
+class QAction;
+class QMenu;
 
 namespace ui
 {
@@ -40,6 +42,7 @@ public slots:
     void onRestartClicked();
     void setPlaybackSettings(ui::PlaybackSettings* playback_settings);
     void setDataLoader(ui::BasicDataLoader* data_loader);
+    void onAddAtomsClicked();
 
 private:
     ui::AtomVTKWidget*            mVTKWidget;
@@ -49,6 +52,7 @@ private:
     QPushButton*              mStartPauseButton;
     QPushButton*              mReverseButton;
     QPushButton*              mRestartButton;
+    QPushButton*              mAddAtomsButton;
     QTimer*                   mTimer;
 
     ui::PlaybackSettings*       mPlaybackSettings;
