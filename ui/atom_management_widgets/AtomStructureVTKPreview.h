@@ -1,5 +1,4 @@
-#ifndef ATOMSTRUCTUREVTKPREVIEW_H
-#define ATOMSTRUCTUREVTKPREVIEW_H
+#pragma once
 
 #include <QVTKOpenGLNativeWidget.h>
 #include <vtkSmartPointer.h>
