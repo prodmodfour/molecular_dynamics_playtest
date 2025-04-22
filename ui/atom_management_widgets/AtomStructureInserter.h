@@ -1,7 +1,7 @@
 #pragma once
 
 #include <QDialog>
-#include <QString> // Include QString
+#include <QString> 
 
 // Forward declarations for Qt classes
 class QComboBox;
@@ -79,9 +79,5 @@ private:
     // Added missing members from cpp constructor
     QPushButton *okButton, *cancelButton;
 
-    // Removed unused private helper declarations if they aren't defined in cpp
-    // void createLayout();
-    // void updateKineticEnergyGroupVisibility(bool visible);
-    // void updateFCCGroupVisibility(bool visible);
-    // void calculateOffset();
+
 };

@@ -111,9 +111,9 @@ AtomStructureInserter::AtomStructureInserter(QWidget *parent) : QDialog(parent) 
   kineticEnergyLayout->addRow("Offset Z (Å):", offsetZSpinBox);
 
   mainLayout->addWidget(kineticEnergyGroup);
-  // kineticEnergyGroup->hide(); // Visibility handled by onApplyKineticEnergyChanged
 
-  // Connect signals and slots (Corrected connections)
+
+  // Connect signals and slots
   connect(structureTypeComboBox, qOverload<int>(&QComboBox::currentIndexChanged), this, &AtomStructureInserter::onStructureTypeChanged);
   connect(applyKineticEnergyCheckBox, &QCheckBox::toggled, this, &AtomStructureInserter::onApplyKineticEnergyChanged);
 
@@ -131,9 +131,7 @@ AtomStructureInserter::AtomStructureInserter(QWidget *parent) : QDialog(parent) 
 void AtomStructureInserter::onStructureTypeChanged(int index) {
   bool isFCC = (structureTypeComboBox->itemText(index) == "FCC Crystal");
   fccPropertiesGroup->setVisible(isFCC);
-  // Also control visibility of kinetic energy checkbox based on structure type if needed,
-  // or just keep it always visible and let the user decide.
-  // applyKineticEnergyCheckBox->setVisible(isFCC); // Example: Only allow KE for FCC
+
 }
 
 void AtomStructureInserter::onApplyKineticEnergyChanged(bool checked) {
@@ -148,7 +146,7 @@ AtomStructureParameters AtomStructureInserter::getParameters() const {
   params.center = {centerXSpinBox->value(), centerYSpinBox->value(), centerZSpinBox->value()};
 
   if (params.structureType == StructureType::FCCCrystal) {
-    // Corrected assignment for FCC parameters
+
     params.fccParams.cubesX = cubesXSpinBox->value();
     params.fccParams.cubesY = cubesYSpinBox->value();
     params.fccParams.cubesZ = cubesZSpinBox->value();

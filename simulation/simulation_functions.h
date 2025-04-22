@@ -65,37 +65,49 @@ void run_simulation(SharedData* shared_data, std::vector<simulation::Timestep>* 
 {
     while (true)
     {
+        // Lock the shared data mutex to access shared variables.
         std::unique_lock<std::mutex> lock(shared_data->mutex);
+        // Check if the UI has edited any timesteps.
         if (shared_data->indexes_of_timesteps_edited_by_ui.size() > 0)
         {
-            shared_data->changed_by_ui_since_last_loop = true;
-            int smallest_index = simulation_data->size() - 1;
 
+            shared_data->changed_by_ui_since_last_loop = true;
+            // Start with the assumption that the latest timestep is the smallest index.
+            int smallest_index_edited_by_ui = simulation_data->size() - 1;
+
+            // Iterate over the indices of timesteps edited by the UI.
             for (int index : shared_data->indexes_of_timesteps_edited_by_ui)
             {
-                if (index < smallest_index)
+                // If a smaller index is found, update smallest_index.
+                if (index < smallest_index_edited_by_ui)
                 {
-                    smallest_index = index;
+                    smallest_index_edited_by_ui = index;
                 }
             }
 
-            shared_data->index_of_latest_timestep_simulated = smallest_index;
+            // Set the index of the latest timestep to be simulated to the smallest edited index.
+            shared_data->index_of_latest_timestep_simulated = smallest_index_edited_by_ui;
             
             
         }
 
+        // If something changed since the last loop.
         if (shared_data->changed_by_ui_since_last_loop)
         {
 
         }
+        // Reset the flag.
         shared_data->changed_by_ui_since_last_loop = false;
 
+        // If the simulation is ahead of the display plus the buffer, wait for UI to catch up.
         if (shared_data->index_of_latest_timestep_simulated >= shared_data->index_of_latest_timestep_displayed + shared_data->buffer_size)
         {
             continue;
         }
 
+        // Determine which timestep to simulate next.
         int index_of_timestep_to_simulate = shared_data->index_of_latest_timestep_simulated + 1;
+
         lock.unlock();
 
         std::unique_lock<std::mutex> lock2(simulation_data_mutex);
