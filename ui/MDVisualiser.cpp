@@ -230,6 +230,7 @@ void ui::MDVisualiser::onAddAtomsClicked()
         std::cout << "Atom Structure Inserter canceled." << std::endl;
     }
     mPlaybackSettings->pause = false; 
+}
 
 
 void ui::MDVisualiser::setDataLoader(ui::BasicDataLoader* data_loader)
