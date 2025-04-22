@@ -32,8 +32,7 @@ int main(int argc, char *argv[])
     // We detach because we control the simulation using shared_data
     simulation_thread.detach()
 
-
-   //----------------------------------Visualisation Section--------------------------------
+   //---------------------------------Visualisation Section--------------------------------
 
     ui::BasicDataLoader data_loader;
     ui::PlaybackSettings playback_settings(0);
