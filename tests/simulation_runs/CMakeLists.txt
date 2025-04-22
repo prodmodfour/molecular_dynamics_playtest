@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.10)
-project(Test_Basic_UI_Launch)
+project(Test_Simulation_Runs)
 
 # Tell CMake to use C++17
 set(CMAKE_CXX_STANDARD 17)
@@ -29,16 +29,19 @@ find_package(VTK CONFIG REQUIRED COMPONENTS
 # ------------------------------------------------------------------------------
 #  Add your executable and source files
 # ------------------------------------------------------------------------------
-add_executable(Test_Basic_UI_Launch
-    test_basic_ui_launch.cpp
+add_executable(Test_Simulation_Runs
+    test_simulation_runs.cpp
     ../../../ui/MDVisualiser.cpp
     ../../../ui/AtomVTKWidget.cpp
+    ../../../ui/visualisation_functions.cpp
     ../../../ui/data_loaders/BasicDataLoader.cpp
     ../../../ui/atom_management_widgets/AtomStructureInserter.cpp
+    ../../../ui/atom_management_widgets/AtomStructureVTKPreview.cpp 
+
 )
 
 # If you have headers in non-standard locations:
-target_include_directories(Test_Basic_UI_Launch
+target_include_directories(Test_Simulation_Runs
     PRIVATE
         ${CMAKE_CURRENT_SOURCE_DIR}/../../physics
         ${CMAKE_CURRENT_SOURCE_DIR}/../../simulation
@@ -47,7 +50,7 @@ target_include_directories(Test_Basic_UI_Launch
 )
 
 
-target_link_libraries(Test_Basic_UI_Launch
+target_link_libraries(Test_Simulation_Runs
     PRIVATE
         ${VTK_LIBRARIES}
 )
