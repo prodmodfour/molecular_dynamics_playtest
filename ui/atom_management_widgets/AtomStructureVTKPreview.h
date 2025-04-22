@@ -5,6 +5,8 @@
 #include <vtkSmartPointer.h>
 #include <vector>
 
+#include "../../atoms/Atom.h" // Include the full definition of Atom
+
 // Forward declarations for VTK classes
 class vtkGenericOpenGLRenderWindow;
 class vtkRenderer;
@@ -13,7 +15,7 @@ class vtkPolyData;
 class vtkUnsignedCharArray;
 class vtkGlyph3DMapper;
 class vtkActor;
-class Atom; 
+// class Atom; // Remove forward declaration, we included the header
 
 namespace ui {
 
@@ -24,10 +26,10 @@ public:
     explicit AtomStructureVTKPreview(QWidget* parent = nullptr);
     virtual ~AtomStructureVTKPreview() = default;
 
-    std::vector<Atom>* atoms;
+    std::vector<atoms::Atom>* atoms; // Use namespace for Atom
     bool atom_data_is_set;
 
-    void setAtomData(std::vector<Atom>* atoms);
+    void setAtomData(std::vector<atoms::Atom>* atoms); // Use namespace for Atom
 
     void updateAtoms();
     void renderImage();

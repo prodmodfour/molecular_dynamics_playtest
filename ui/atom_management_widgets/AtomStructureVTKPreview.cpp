@@ -3,7 +3,6 @@
 #include "../Color.h" 
 #include "../visualisation_functions.h" 
 
-
 #include <vtkGenericOpenGLRenderWindow.h>
 #include <vtkRenderer.h>
 #include <vtkPoints.h>
@@ -17,7 +16,8 @@
 #include <vtkRenderWindowInteractor.h>
 #include <vtkInteractorStyleTrackballCamera.h>
 #include <vtkCamera.h>
-
+#include <limits> 
+#include <algorithm> 
 
 namespace ui {
 
@@ -59,14 +59,14 @@ void AtomStructureVTKPreview::setupVTKPipeline()
     mGlyphMapper = vtkSmartPointer<vtkGlyph3DMapper>::New();
     mGlyphMapper->SetInputData(mPolyData);
     mGlyphMapper->SetSourceConnection(sphereSource->GetOutputPort());
-    mGlyphMapper->SetScaleModeToScaleByMagnitude(); // Or another scale mode if desired
-    mGlyphMapper->SetScaleFactor(1.0); // Adjust scale factor as needed
+    mGlyphMapper->SetScaleModeToScaleByMagnitude(); 
+    mGlyphMapper->SetScaleFactor(1.0); 
 
     // Configure color handling
     mGlyphMapper->ScalarVisibilityOn();
     mGlyphMapper->SetScalarModeToUsePointFieldData();
     mGlyphMapper->SelectColorArray("Colors");
-    mGlyphMapper->SetColorModeToDirectScalars(); // Use the RGBA values directly
+    mGlyphMapper->SetColorModeToDirectScalars(); 
     mGlyphMapper->SetUseLookupTableScalarRange(false);
 
     // Create an actor and set its mapper
@@ -92,7 +92,8 @@ void AtomStructureVTKPreview::setupVTKPipeline()
 }
 
 
-void AtomStructureVTKPreview::setAtomData(std::vector<Atom>* atoms) 
+// Need to use the atoms namespace for Atom type
+void AtomStructureVTKPreview::setAtomData(std::vector<atoms::Atom>* atoms) 
 {
     this->atoms = atoms;
     atom_data_is_set = true;
@@ -100,16 +101,22 @@ void AtomStructureVTKPreview::setAtomData(std::vector<Atom>* atoms)
 
 void AtomStructureVTKPreview::updateAtoms()
 {
+    if (!atoms || atoms->empty()) {
+        return; // Nothing to update
+    }
+
     mPoints->Reset();
     mColors->Reset();
     mColors->SetNumberOfTuples(atoms->size()); 
+
+
 
     vtkIdType pointId = 0;
     for (auto& atom : *atoms) {
         mPoints->InsertNextPoint(atom.x, atom.y, atom.z);
 
-        // Get color based on atom type/element
-        Color atomColor = determine_colour_based_on_kinetic_energy(); 
+        // Get color based on kinetic energy relative to the max KE
+        Color atomColor = determine_colour_based_on_kinetic_energy(atom.kinetic_energy, 0.01); 
         unsigned char color[4] = {atomColor.r, atomColor.g, atomColor.b, atomColor.a};
         mColors->SetTypedTuple(pointId++, color);
     }
