@@ -49,4 +49,4 @@ private:
 
 } // namespace ui
 
-#endif // ATOMSTRUCTUREVTKPREVIEW_H
+
