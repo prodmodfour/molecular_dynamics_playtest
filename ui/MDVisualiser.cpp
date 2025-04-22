@@ -19,6 +19,7 @@
 #include <iostream>
 
 
+
 ui::MDVisualiser::MDVisualiser(
                        QWidget* parent,
                        ui::BasicDataLoader* data_loader,
@@ -41,6 +42,10 @@ ui::MDVisualiser::MDVisualiser(
     mVTKWidget->setFixedSize(1280, 720);
     mainLayout->addWidget(mVTKWidget);
 
+    // Create our Atom Structure Preview Widget as a docked widget
+    mAtomStructurePreview = new AtomStructureVTKPreview(central);
+    mAtomStructurePreview->setFixedSize(1280, 720);
+    addDockWidget(Qt::RightDockWidgetArea, mAtomStructurePreview);
 
     // --- Playback Controls ---
     QHBoxLayout* controlsLayout = new QHBoxLayout;
@@ -237,3 +242,5 @@ void ui::MDVisualiser::setPlaybackSettings(ui::PlaybackSettings* playback_settin
 {
     mPlaybackSettings = playback_settings;
 }
+
+

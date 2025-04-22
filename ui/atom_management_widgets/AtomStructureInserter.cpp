@@ -8,13 +8,12 @@
 #include <QFormLayout>
 #include <QGroupBox>
 #include <QLabel>
-#include <QLineEdit> // Note: QLineEdit is included but not used, could be removed
 #include <QVBoxLayout>
 #include <QCheckBox>
-#include <QSpinBox> // Make sure QSpinBox is included
+#include <QSpinBox> 
 
 #include <iostream>
-#include <stdexcept> // Note: <stdexcept> is included but not used, could be removed
+
 
 AtomStructureInserter::AtomStructureInserter(QWidget *parent) : QDialog(parent) {
   setWindowTitle("Atom Structure Inserter");

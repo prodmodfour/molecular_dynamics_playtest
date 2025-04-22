@@ -1,9 +1,9 @@
 #include "AtomStructureVTKPreview.h"
-#include "../../atoms/Atom.h" // Assuming Atom.h is in the atoms directory
-#include "../Color.h" // Assuming Color.h is in the ui directory
-#include "../visualisation_functions.h" // For get_element_color
+#include "../../atoms/Atom.h" 
+#include "../Color.h" 
+#include "../visualisation_functions.h" 
 
-// VTK Includes
+
 #include <vtkGenericOpenGLRenderWindow.h>
 #include <vtkRenderer.h>
 #include <vtkPoints.h>
@@ -20,14 +20,16 @@
 
 
 namespace ui {
-namespace atom_management {
 
 AtomStructureVTKPreview::AtomStructureVTKPreview(QWidget* parent)
-    : QVTKOpenGLNativeWidget(parent) {
+    : QVTKOpenGLNativeWidget(parent) 
+{
     setupVTKPipeline();
+    atom_data_is_set = false;
 }
 
-void AtomStructureVTKPreview::setupVTKPipeline() {
+void AtomStructureVTKPreview::setupVTKPipeline() 
+{
     // Create a VTK render window and associate it with this widget
     mRenderWindow = vtkSmartPointer<vtkGenericOpenGLRenderWindow>::New();
     this->setRenderWindow(mRenderWindow);
@@ -50,7 +52,8 @@ void AtomStructureVTKPreview::setupVTKPipeline() {
     // Create a sphere source to use as a glyph
     vtkSmartPointer<vtkSphereSource> sphereSource = vtkSmartPointer<vtkSphereSource>::New();
     // Use a default radius, can be adjusted later if needed
-    sphereSource->SetRadius(0.5); 
+    // We use the radius of copper as our default
+    sphereSource->SetRadius(1.28); 
 
     // Create glyph mapper
     mGlyphMapper = vtkSmartPointer<vtkGlyph3DMapper>::New();
@@ -75,7 +78,7 @@ void AtomStructureVTKPreview::setupVTKPipeline() {
 
     // Set a background color
     vtkSmartPointer<vtkNamedColors> colors = vtkSmartPointer<vtkNamedColors>::New();
-    mRenderer->SetBackground(colors->GetColor3d("SlateGray").GetData()); // A slightly lighter background
+    mRenderer->SetBackground(colors->GetColor3d("Black").GetData());
 
     // Create and set the interactor style
     vtkSmartPointer<vtkInteractorStyleTrackballCamera> style = vtkSmartPointer<vtkInteractorStyleTrackballCamera>::New();
@@ -85,18 +88,25 @@ void AtomStructureVTKPreview::setupVTKPipeline() {
    
     // Reset camera for initial view
     mRenderer->ResetCamera();
-    mRenderer->GetActiveCamera()->Zoom(1.5); // Zoom in slightly
+    mRenderer->GetActiveCamera()->Zoom(1.5); 
 }
 
 
-void AtomStructureVTKPreview::setAtomData(const std::vector<Atom>& atoms) {
+void AtomStructureVTKPreview::setAtomData(std::vector<Atom>* atoms) 
+{
+    this->atoms = atoms
+    atom_data_is_set = true;
+}
+
+void AtomStructureVTKPreview::updateAtoms()
+{
     mPoints->Reset();
     mColors->Reset();
-    mColors->SetNumberOfTuples(atoms.size()); // Pre-allocate space
+    mColors->SetNumberOfTuples(atoms->size()); 
 
     vtkIdType pointId = 0;
-    for (const auto& atom : atoms) {
-        mPoints->InsertNextPoint(atom.getX(), atom.getY(), atom.getZ());
+    for (auto& atom : atoms) {
+        mPoints->InsertNextPoint(atom.x, atom.y, atom.z);
 
         // Get color based on atom type/element
         Color atomColor = determine_colour_based_on_kinetic_energy; 
@@ -116,16 +126,13 @@ void AtomStructureVTKPreview::setAtomData(const std::vector<Atom>& atoms) {
     // Adjust camera to fit the new data
     mRenderer->ResetCameraClippingRange();
     mRenderer->ResetCamera();
-
-
-    renderImage(); // Render after setting data
 }
 
-void AtomStructureVTKPreview::renderImage() {
+void AtomStructureVTKPreview::renderImage() 
+{
     if (mRenderWindow) {
         mRenderWindow->Render();
     }
 }
 
-} // namespace atom_management
 } // namespace ui
