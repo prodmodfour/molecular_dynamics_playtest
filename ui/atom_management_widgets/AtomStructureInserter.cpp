@@ -84,11 +84,11 @@ AtomStructureInserter::AtomStructureInserter(QWidget *parent) : QDialog(parent) 
   kineticEnergyGroup = new QGroupBox("Kinetic Energy", this);
   auto kineticEnergyLayout = new QFormLayout(kineticEnergyGroup);
   applyKineticEnergyCheckBox = new QCheckBox("Apply kinetic energy to structure", this);
-  kineticEnergyLayout->addWidget(applyKineticEnergyCheckBox); // Add checkbox first
+  kineticEnergyLayout->addWidget(applyKineticEnergyCheckBox); 
 
   kineticEnergySpinBox = new QDoubleSpinBox(this);
-  kineticEnergySpinBox->setRange(0.0, 1000.0); // Example range
-  kineticEnergySpinBox->setValue(10.0);      // Default value
+  kineticEnergySpinBox->setRange(0.0, 1000.0); 
+  kineticEnergySpinBox->setValue(10.0);      
   kineticEnergyLayout->addRow("Kinetic Energy (eV):", kineticEnergySpinBox);
 
   targetXSpinBox = new QDoubleSpinBox(this);
