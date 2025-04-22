@@ -16,6 +16,7 @@
 #include <QSurfaceFormat>
 #include <QLineEdit>
 #include <QDialog>
+#include <QDockWidget> // <<< Added include
 #include <iostream>
 
 
@@ -42,10 +43,15 @@ ui::MDVisualiser::MDVisualiser(
     mVTKWidget->setFixedSize(1280, 720);
     mainLayout->addWidget(mVTKWidget);
 
-    // Create our Atom Structure Preview Widget as a docked widget
-    mAtomStructurePreview = new AtomStructureVTKPreview(central);
+    // Create our Atom Structure Preview Widget
+    mAtomStructurePreview = new AtomStructureVTKPreview(this); // Parent can be 'this' (QMainWindow)
     mAtomStructurePreview->setFixedSize(1280, 720);
-    addDockWidget(Qt::RightDockWidgetArea, mAtomStructurePreview);
+
+    // Create a QDockWidget to hold the preview widget
+    QDockWidget *previewDock = new QDockWidget("Atom Structure Preview", this);
+    previewDock->setWidget(mAtomStructurePreview); // Set the preview widget inside the dock
+    addDockWidget(Qt::RightDockWidgetArea, previewDock); // Add the dock widget
+
 
     // --- Playback Controls ---
     QHBoxLayout* controlsLayout = new QHBoxLayout;
@@ -125,7 +131,7 @@ void ui::MDVisualiser::onTimerTimeout()
     {
         // // // Render the new timestep
         // Ensure current_timestep_data is valid and updated by the loader
-        if (current_timestep_data) { 
+        if (current_timestep_data) {
              mVTKWidget->updateAtoms(current_timestep_data->atoms);
         } else {
             std::cerr << "Error: current_timestep_data is null in onTimerTimeout." << std::endl;
@@ -152,7 +158,7 @@ void ui::MDVisualiser::onSpeedUpClicked()
     bool ok;
     int currentSpeed = mSpeedLineEdit->text().toInt(&ok);
     if (!ok) return; // Invalid input, do nothing
-    
+
     currentSpeed++;
     mSpeedLineEdit->setText(QString::number(currentSpeed));
     mPlaybackSettings->change_speed(currentSpeed);
@@ -191,7 +197,7 @@ void ui::MDVisualiser::onAddAtomsClicked()
 {
     mPlaybackSettings->pause = true;
     AtomStructureInserter inserterDialog(this);
-    if (inserterDialog.exec() == QDialog::Accepted) { 
+    if (inserterDialog.exec() == QDialog::Accepted) {
 
         AtomStructureParameters params = inserterDialog.getParameters();
 
@@ -204,9 +210,9 @@ void ui::MDVisualiser::onAddAtomsClicked()
         std::cout << "Center: (" << params.center.x << ", " << params.center.y << ", " << params.center.z << ")" << std::endl;
 
         if (params.structureType == StructureType::FCCCrystal) {
-            std::cout << "Cubes in X: " << params.fccParams.cubesX << std::endl; 
-            std::cout << "Cubes in Y: " << params.fccParams.cubesY << std::endl; 
-            std::cout << "Cubes in Z: " << params.fccParams.cubesZ << std::endl; 
+            std::cout << "Cubes in X: " << params.fccParams.cubesX << std::endl;
+            std::cout << "Cubes in Y: " << params.fccParams.cubesY << std::endl;
+            std::cout << "Cubes in Z: " << params.fccParams.cubesZ << std::endl;
             std::cout << "Atom Spacing: " << params.fccParams.spacing << std::endl;
         }
 
@@ -217,7 +223,7 @@ void ui::MDVisualiser::onAddAtomsClicked()
             std::cout << "Offset: (" << params.kineticEnergyParams.offset.x << ", " << params.kineticEnergyParams.offset.y << ", " << params.kineticEnergyParams.offset.z << ")" << std::endl;
         }
 
-        // TODO: Add logic here to actually use the 'params' to add atoms 
+        // TODO: Add logic here to actually use the 'params' to add atoms
 
     }
     else {
@@ -230,7 +236,7 @@ void ui::MDVisualiser::onAddAtomsClicked()
 void ui::MDVisualiser::setDataLoader(ui::BasicDataLoader* data_loader)
 {
     mDataLoader = data_loader;
-    if (mDataLoader) { 
+    if (mDataLoader) {
         mDataLoader->setPlaybackSettings(mPlaybackSettings);
         mDataLoader->setVisualiser(this);
     } else {
@@ -242,5 +248,4 @@ void ui::MDVisualiser::setPlaybackSettings(ui::PlaybackSettings* playback_settin
 {
     mPlaybackSettings = playback_settings;
 }
-
 
