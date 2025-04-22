@@ -11,25 +11,33 @@
 #include "../../ui/PlaybackSettings.h"
 #include "../../atoms/atom_generation_functions.h"
 #include "../../ui/MDVisualiser.h"
+#include "../../ui/SharedData.h"
+#include "../../simulation/simulation_data_mutex.h"
 
 #include <vector>
 #include <iostream>
 #include <QApplication>
+#include <thread>
 
 
 int main(int argc, char *argv[])
 {
     QApplication app(argc, argv);
     
-    // Set up simulation data
+    //---------------------------------Simulation Section---------------------------------
+    SharedData shared_data;
+    Config config;
+    std::vector<simulation::Timestep> simulation_data;
+    std::thread simulation_thread(run_simulation, &shared_data, &simulation_data);
+    // We detach because we control the simulation using shared_data
+    simulation_thread.detach()
 
-    // Create a basic data loader
+
+   //----------------------------------Visualisation Section--------------------------------
+
     ui::BasicDataLoader data_loader;
-
-    // Create a playback settings
     ui::PlaybackSettings playback_settings(0);
 
-    // Create a visualiser
     ui::MDVisualiser visualiser(nullptr, &data_loader, &playback_settings);
     visualiser.show();
     return app.exec();

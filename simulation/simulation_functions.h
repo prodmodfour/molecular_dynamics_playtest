@@ -65,6 +65,12 @@ void run_simulation(SharedData* shared_data, std::vector<simulation::Timestep>* 
 {
     while (true)
     {
+        if(shared_data->simulation_ended)
+        {
+            break;
+        }
+
+        // --------------------------Preprocessing---------------------------------
         // Lock the shared data mutex to access shared variables.
         std::unique_lock<std::mutex> lock(shared_data->mutex);
         // Check if the UI has edited any timesteps.
@@ -87,16 +93,14 @@ void run_simulation(SharedData* shared_data, std::vector<simulation::Timestep>* 
 
             // Set the index of the latest timestep to be simulated to the smallest edited index.
             shared_data->index_of_latest_timestep_simulated = smallest_index_edited_by_ui;
-            
-            
         }
 
-        // If something changed since the last loop.
+        // Apply changes since the last iteration of this loop
         if (shared_data->changed_by_ui_since_last_loop)
         {
 
         }
-        // Reset the flag.
+
         shared_data->changed_by_ui_since_last_loop = false;
 
         // If the simulation is ahead of the display plus the buffer, wait for UI to catch up.
@@ -105,7 +109,7 @@ void run_simulation(SharedData* shared_data, std::vector<simulation::Timestep>* 
             continue;
         }
 
-        // Determine which timestep to simulate next.
+        // -----------------------Simulation starts here-------------------------------
         int index_of_timestep_to_simulate = shared_data->index_of_latest_timestep_simulated + 1;
 
         lock.unlock();
@@ -117,6 +121,7 @@ void run_simulation(SharedData* shared_data, std::vector<simulation::Timestep>* 
         simulation::Timestep output_timestep = simulation::simulate_timestep(input_timestep, shared_data->atom_pair_library);
 
         std::unique_lock<std::mutex> lock3(simulation_data_mutex);
+        // Determine whether the vector is large enough to store the new timestep
         if (index_of_timestep_to_simulate >= simulation_data->size())
         {
             simulation_data->push_back(output_timestep);
@@ -126,8 +131,6 @@ void run_simulation(SharedData* shared_data, std::vector<simulation::Timestep>* 
             simulation_data->at(index_of_timestep_to_simulate) = output_timestep;
         }
         lock3.unlock();
-
-
     }
 }
 
