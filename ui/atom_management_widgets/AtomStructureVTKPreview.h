@@ -29,7 +29,7 @@ public:
 
     void setAtomData(std::vector<Atom>* atoms);
 
-
+    void updateAtoms();
     void renderImage();
     
 

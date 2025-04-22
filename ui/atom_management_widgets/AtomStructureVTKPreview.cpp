@@ -94,7 +94,7 @@ void AtomStructureVTKPreview::setupVTKPipeline()
 
 void AtomStructureVTKPreview::setAtomData(std::vector<Atom>* atoms) 
 {
-    this->atoms = atoms
+    this->atoms = atoms;
     atom_data_is_set = true;
 }
 
@@ -105,11 +105,11 @@ void AtomStructureVTKPreview::updateAtoms()
     mColors->SetNumberOfTuples(atoms->size()); 
 
     vtkIdType pointId = 0;
-    for (auto& atom : atoms) {
+    for (auto& atom : *atoms) {
         mPoints->InsertNextPoint(atom.x, atom.y, atom.z);
 
         // Get color based on atom type/element
-        Color atomColor = determine_colour_based_on_kinetic_energy; 
+        Color atomColor = determine_colour_based_on_kinetic_energy(); 
         unsigned char color[4] = {atomColor.r, atomColor.g, atomColor.b, atomColor.a};
         mColors->SetTypedTuple(pointId++, color);
     }
@@ -121,7 +121,7 @@ void AtomStructureVTKPreview::updateAtoms()
 
 
     // Update the glyph mapper input
-    mGlyphMapper->SetInputData(mPolyData); // Re-set input data if needed
+    mGlyphMapper->SetInputData(mPolyData); 
 
     // Adjust camera to fit the new data
     mRenderer->ResetCameraClippingRange();
