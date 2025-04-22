@@ -28,7 +28,7 @@ ui::MDVisualiser::MDVisualiser(
     : QMainWindow(parent)
     , mDataLoader(data_loader)
     , mPlaybackSettings(playback_settings)
-    , current_timestep_data(new simulation::Timestep()) // Ensure this initialization is correct
+    , current_timestep_data(new simulation::Timestep()) 
 {
 
     setDataLoader(data_loader);
@@ -44,13 +44,13 @@ ui::MDVisualiser::MDVisualiser(
     mainLayout->addWidget(mVTKWidget);
 
     // Create our Atom Structure Preview Widget
-    mAtomStructurePreview = new AtomStructureVTKPreview(this); // Parent can be 'this' (QMainWindow)
+    mAtomStructurePreview = new AtomStructureVTKPreview(this);
     mAtomStructurePreview->setFixedSize(1280, 720);
 
     // Create a QDockWidget to hold the preview widget
     QDockWidget *previewDock = new QDockWidget("Atom Structure Preview", this);
-    previewDock->setWidget(mAtomStructurePreview); // Set the preview widget inside the dock
-    addDockWidget(Qt::RightDockWidgetArea, previewDock); // Add the dock widget
+    previewDock->setWidget(mAtomStructurePreview); 
+    addDockWidget(Qt::RightDockWidgetArea, previewDock); 
 
 
     // --- Playback Controls ---
@@ -62,7 +62,7 @@ ui::MDVisualiser::MDVisualiser(
 
     mSpeedLineEdit = new QLineEdit(central);
     mSpeedLineEdit->setText(QString::number(mPlaybackSettings->speed));
-    mSpeedLineEdit->setFixedWidth(50); // just to limit the size a bit
+    mSpeedLineEdit->setFixedWidth(50); 
     controlsLayout->addWidget(mSpeedLineEdit);
 
     mSpeedUpButton = new QPushButton("+", central);
@@ -81,8 +81,8 @@ ui::MDVisualiser::MDVisualiser(
     controlsLayout->addWidget(mRestartButton);
 
     // Add Atoms button
-    mAddAtomsButton = new QPushButton("Add Atoms", central); // Instantiate the button
-    controlsLayout->addWidget(mAddAtomsButton); // Add to layout
+    mAddAtomsButton = new QPushButton("Add Atoms", central); 
+    controlsLayout->addWidget(mAddAtomsButton);
 
     connect(mRestartButton, &QPushButton::clicked,
             this, &ui::MDVisualiser::onRestartClicked);
@@ -107,8 +107,8 @@ ui::MDVisualiser::MDVisualiser(
             this, &ui::MDVisualiser::onReverseClicked);
 
     // Connect Add Atoms button
-    connect(mAddAtomsButton, &QPushButton::clicked, // Connect the signal
-            this, &ui::MDVisualiser::onAddAtomsClicked); // To the slot
+    connect(mAddAtomsButton, &QPushButton::clicked, 
+            this, &ui::MDVisualiser::onAddAtomsClicked); 
 
     // Setup timer to update animation
     mTimer = new QTimer(this);
@@ -127,9 +127,9 @@ void ui::MDVisualiser::onTimerTimeout()
         mPlaybackSettings->next_timestep();
     }
 
-    if (mDataLoader && mDataLoader->load()) // Check mDataLoader validity
+    if (mDataLoader && mDataLoader->load()) 
     {
-        // // // Render the new timestep
+        // Render the new timestep
         // Ensure current_timestep_data is valid and updated by the loader
         if (current_timestep_data) {
              mVTKWidget->updateAtoms(current_timestep_data->atoms);
@@ -144,7 +144,7 @@ void ui::MDVisualiser::onSpeedDownClicked()
 {
     bool ok;
     int currentSpeed = mSpeedLineEdit->text().toInt(&ok);
-    if (!ok) return; // Invalid input, do nothing
+    if (!ok) return; 
     if (currentSpeed > 1)
     {
         currentSpeed--;
@@ -157,7 +157,7 @@ void ui::MDVisualiser::onSpeedUpClicked()
 {
     bool ok;
     int currentSpeed = mSpeedLineEdit->text().toInt(&ok);
-    if (!ok) return; // Invalid input, do nothing
+    if (!ok) return; 
 
     currentSpeed++;
     mSpeedLineEdit->setText(QString::number(currentSpeed));
@@ -168,8 +168,8 @@ void ui::MDVisualiser::onSpeedLineEditChanged()
 {
     bool ok;
     int newSpeed = mSpeedLineEdit->text().toInt(&ok);
-    if (!ok || newSpeed <= 0) { // Ensure speed is positive
-         mSpeedLineEdit->setText(QString::number(mPlaybackSettings->speed)); // Revert on invalid input
+    if (!ok || newSpeed <= 0) { 
+         mSpeedLineEdit->setText(QString::number(mPlaybackSettings->speed)); 
          return;
     }
 
@@ -188,11 +188,10 @@ void ui::MDVisualiser::onReverseClicked()
 
 void ui::MDVisualiser::onRestartClicked()
 {
-    // Signal the application event loop to exit with code 1:
+
     qApp->exit(1);
 }
 
-// Implementation for the onAddAtomsClicked slot
 void ui::MDVisualiser::onAddAtomsClicked()
 {
     mPlaybackSettings->pause = true;
@@ -201,9 +200,10 @@ void ui::MDVisualiser::onAddAtomsClicked()
 
         AtomStructureParameters params = inserterDialog.getParameters();
 
+        // ------------------------------------------Debug output--------------------------------------------
         std::cout << "Atom Structure Inserter accepted." << std::endl;
 
-        // print parameters (updated access)
+
         std::cout << "Structure Type Enum: " << static_cast<int>(params.structureType) << " (0:Single, 1:FCC)" << std::endl;
         std::cout << "Atom Type Enum: " << static_cast<int>(params.atomType) << " (0:Copper, 1:Argon)" << std::endl;
         std::cout << "Atom Radius: " << params.atomRadius << std::endl;
@@ -223,14 +223,13 @@ void ui::MDVisualiser::onAddAtomsClicked()
             std::cout << "Offset: (" << params.kineticEnergyParams.offset.x << ", " << params.kineticEnergyParams.offset.y << ", " << params.kineticEnergyParams.offset.z << ")" << std::endl;
         }
 
-        // TODO: Add logic here to actually use the 'params' to add atoms
+
 
     }
     else {
         std::cout << "Atom Structure Inserter canceled." << std::endl;
     }
-    mPlaybackSettings->pause = false; // Resume playback
-}
+    mPlaybackSettings->pause = false; 
 
 
 void ui::MDVisualiser::setDataLoader(ui::BasicDataLoader* data_loader)
