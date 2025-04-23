@@ -34,6 +34,7 @@ bool BasicDataLoader::load()
 void BasicDataLoader::setData(std::vector<simulation::Timestep>* data)
 {
     this->data = data;
+    simulation_data_set = true;
 }
 
 void BasicDataLoader::setPlaybackSettings(ui::PlaybackSettings* playback_settings)

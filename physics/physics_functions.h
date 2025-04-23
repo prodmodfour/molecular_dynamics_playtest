@@ -12,7 +12,7 @@ namespace physics
 
 void zero_forces(std::vector<atoms::Atom> &atoms);
 
-void evaluate_interactions(simulation::Config config, physics::TotalEnergy &total_energy, std::vector<atoms::Atom> &atoms, atoms::AtomPairLibrary atom_pair_library)
+void evaluate_interactions(simulation::Config config, double &total_potential_energy, std::vector<atoms::Atom> &atoms, atoms::AtomPairLibrary atom_pair_library)
 {
     zero_forces(atoms);
 
@@ -25,7 +25,7 @@ void evaluate_interactions(simulation::Config config, physics::TotalEnergy &tota
     double potential_ij, unit_vector_x, unit_vector_y, unit_vector_z;
     double reciprocal_distance;
 
-    total_energy.potential = 0;
+    total_potential_energy = 0;
 
     double r_cutoff = config.r_cutoff;
     double r_cutoff_squared = r_cutoff * r_cutoff;
@@ -85,7 +85,7 @@ void evaluate_interactions(simulation::Config config, physics::TotalEnergy &tota
             unit_vector_z = dz * reciprocal_distance;
 
             potential_ij = epsilon4 * (sr12 - sr6);
-            total_energy.potential += potential_ij;
+            total_potential_energy += potential_ij;
 
             fij = epsilon24 * (2 * sr12 - sr6) * reciprocal_distance;
             fxij = fij * unit_vector_x;
@@ -106,7 +106,7 @@ void evaluate_interactions(simulation::Config config, physics::TotalEnergy &tota
 
     }
     // Convert to eV
-    total_energy.potential *= 1.602176634e-19;
+    total_potential_energy *= 1.602176634e-19;
 }
 
 void zero_forces(std::vector<atoms::Atom> &atoms)

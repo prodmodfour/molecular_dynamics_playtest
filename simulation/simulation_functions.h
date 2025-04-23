@@ -18,8 +18,8 @@ namespace simulation
 
 simulation::Timestep simulate_timestep(simulation::Config config, std::vector<atoms::Atom> atoms, double time, atoms::AtomPairLibrary &atom_pair_library)
 {
-    physics::TotalEnergy total_energy(0, 0);
-    physics::evaluate_interactions(config, total_energy, atoms, atom_pair_library); // Calculate forces
+    double total_potential_energy = 0;
+    physics::evaluate_interactions(config, total_potential_energy, atoms, atom_pair_library); // Calculate forces
 
     for (atoms::Atom &atom : atoms)
     {
@@ -32,16 +32,15 @@ simulation::Timestep simulate_timestep(simulation::Config config, std::vector<at
         total_kinetic_energy += atom.kinetic_energy;
     }
 
-    total_energy.kinetic = total_kinetic_energy;
     time += config.timestep_size;
 
-    return simulation::Timestep(config, atoms, total_energy, time);
+    return simulation::Timestep(config, atoms, total_kinetic_energy, total_potential_energy, time);
 }
 
 simulation::Timestep simulate_timestep(simulation::Timestep timestep, atoms::AtomPairLibrary &atom_pair_library)
 {
-    physics::TotalEnergy total_energy(0, 0);
-    physics::evaluate_interactions(timestep.config, total_energy, timestep.atoms, atom_pair_library); // Calculate forces
+    double total_potential_energy = 0;
+    physics::evaluate_interactions(timestep.config, total_potential_energy, timestep.atoms, atom_pair_library); // Calculate forces
 
     for (atoms::Atom &atom : timestep.atoms)
     {
@@ -54,10 +53,9 @@ simulation::Timestep simulate_timestep(simulation::Timestep timestep, atoms::Ato
         total_kinetic_energy += atom.kinetic_energy;
     }
 
-    total_energy.kinetic = total_kinetic_energy;
     timestep.time += timestep.config.timestep_size;
 
-    return simulation::Timestep(timestep.config, timestep.atoms, total_energy, timestep.time);
+    return simulation::Timestep(timestep.config, timestep.atoms, total_kinetic_energy, total_potential_energy, timestep.time);
 }
 
 
