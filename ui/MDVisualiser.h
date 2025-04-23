@@ -46,6 +46,7 @@ public slots:
     void onDisplayedTimestepLineEditChanged();
 
 private:
+    void updateDisplayedTimestepLineEdit(); 
     ui::AtomVTKWidget*            mVTKWidget;
     QPushButton* mSpeedDownButton; 
     QLineEdit* mSpeedLineEdit;
