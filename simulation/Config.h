@@ -5,7 +5,6 @@ namespace simulation {
 
 class Config
 {
-    // a container 
     public:
         Config(double r_cutoff, double timestep_size)
         {

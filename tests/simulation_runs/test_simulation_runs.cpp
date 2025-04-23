@@ -30,7 +30,7 @@ int main(int argc, char *argv[])
     std::vector<simulation::Timestep> simulation_data;
     std::thread simulation_thread(run_simulation, &shared_data, &simulation_data);
     // We detach because we control the simulation using shared_data
-    simulation_thread.detach()
+    simulation_thread.detach();
 
    //---------------------------------Visualisation Section--------------------------------
 
