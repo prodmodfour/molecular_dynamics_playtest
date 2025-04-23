@@ -26,9 +26,9 @@ int main(int argc, char *argv[])
     
     //---------------------------------Simulation Section---------------------------------
     SharedData shared_data;
-    Config config;
+    simulation::Config config;
     std::vector<simulation::Timestep> simulation_data;
-    std::thread simulation_thread(run_simulation, &shared_data, &simulation_data);
+    std::thread simulation_thread(simulation::run_simulation, &shared_data, &simulation_data);
     // We detach because we control the simulation using shared_data
     simulation_thread.detach();
 
