@@ -1,7 +1,6 @@
 #pragma once
 #include "../atoms/Atom.h"
 #include "Config.h"
-#include "../physics/TotalEnergy.h"
 #include "../physics/physics_functions.h"
 #include <vector>
 #include "Timestep.h"

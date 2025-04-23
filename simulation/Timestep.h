@@ -2,7 +2,6 @@
 
 #include "../atoms/Atom.h"
 #include "Config.h"
-#include "../physics/TotalEnergy.h"
 #include <vector>
 
 namespace simulation {

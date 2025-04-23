@@ -2,7 +2,7 @@
 #include "../simulation/Timestep.h"
 #include <stdexcept>
 #include "data_loaders/BasicDataLoader.h"
-#include "atom_management_widgets/AtomStructureInserter.h"
+
 
 // Qt includes
 #include <QTimer>
@@ -16,7 +16,6 @@
 #include <QSurfaceFormat>
 #include <QLineEdit>
 #include <QDialog>
-#include <QDockWidget> // <<< Added include
 #include <iostream>
 
 
@@ -43,15 +42,6 @@ ui::MDVisualiser::MDVisualiser(
     mVTKWidget->setFixedSize(1280, 720);
     mainLayout->addWidget(mVTKWidget);
 
-    // Create our Atom Structure Preview Widget
-    mAtomStructurePreview = new AtomStructureVTKPreview(this);
-    mAtomStructurePreview->setFixedSize(1280, 720);
-
-    // Create a QDockWidget to hold the preview widget
-    QDockWidget *previewDock = new QDockWidget("Atom Structure Preview", this);
-    previewDock->setWidget(mAtomStructurePreview); 
-    addDockWidget(Qt::RightDockWidgetArea, previewDock); 
-
 
     // --- Playback Controls ---
     QHBoxLayout* controlsLayout = new QHBoxLayout;
@@ -72,6 +62,11 @@ ui::MDVisualiser::MDVisualiser(
     mStartPauseButton = new QPushButton("Start/Pause", central);
     controlsLayout->addWidget(mStartPauseButton);
 
+    // Displayed Timestep Line Edit
+    mDisplayedTimestepLineEdit = new QLineEdit(central);
+    mDisplayedTimestepLineEdit->setText(QString::number(mPlaybackSettings->current_timestep_index));
+    controlsLayout->addWidget(mDisplayedTimestepLineEdit);
+
     // Reverse button
     mReverseButton = new QPushButton("Reverse", central);
     controlsLayout->addWidget(mReverseButton);
@@ -80,9 +75,9 @@ ui::MDVisualiser::MDVisualiser(
     mRestartButton = new QPushButton("Restart", central);
     controlsLayout->addWidget(mRestartButton);
 
-    // Add Atoms button
-    mAddAtomsButton = new QPushButton("Add Atoms", central); 
-    controlsLayout->addWidget(mAddAtomsButton);
+    // Manage Atoms button
+    mManageAtomsButton = new QPushButton("Manage Atoms", central); 
+    controlsLayout->addWidget(mManageAtomsButton);
 
     connect(mRestartButton, &QPushButton::clicked,
             this, &ui::MDVisualiser::onRestartClicked);
@@ -106,17 +101,11 @@ ui::MDVisualiser::MDVisualiser(
     connect(mReverseButton, &QPushButton::clicked,
             this, &ui::MDVisualiser::onReverseClicked);
 
-    // Connect Add Atoms button
-    connect(mAddAtomsButton, &QPushButton::clicked, 
-            this, &ui::MDVisualiser::onAddAtomsClicked); 
-
     // Setup timer to update animation
     mTimer = new QTimer(this);
     connect(mTimer, &QTimer::timeout,
             this, &ui::MDVisualiser::onTimerTimeout);
     mTimer->start(42); // update every 42 ms (approx. 24 FPS)
-
-
 
 }
 
@@ -125,6 +114,7 @@ void ui::MDVisualiser::onTimerTimeout()
     if (mPlaybackSettings->pause == false)
     {
         mPlaybackSettings->next_timestep();
+        updateDisplayedTimestepLineEdit();
     }
 
     if (mDataLoader && mDataLoader->load()) 
@@ -192,46 +182,6 @@ void ui::MDVisualiser::onRestartClicked()
     qApp->exit(1);
 }
 
-void ui::MDVisualiser::onAddAtomsClicked()
-{
-    mPlaybackSettings->pause = true;
-    AtomStructureInserter inserterDialog(this);
-    if (inserterDialog.exec() == QDialog::Accepted) {
-
-        AtomStructureParameters params = inserterDialog.getParameters();
-
-        // ------------------------------------------Debug output--------------------------------------------
-        std::cout << "Atom Structure Inserter accepted." << std::endl;
-
-
-        std::cout << "Structure Type Enum: " << static_cast<int>(params.structureType) << " (0:Single, 1:FCC)" << std::endl;
-        std::cout << "Atom Type Enum: " << static_cast<int>(params.atomType) << " (0:Copper, 1:Argon)" << std::endl;
-        std::cout << "Atom Radius: " << params.atomRadius << std::endl;
-        std::cout << "Center: (" << params.center.x << ", " << params.center.y << ", " << params.center.z << ")" << std::endl;
-
-        if (params.structureType == StructureType::FCCCrystal) {
-            std::cout << "Cubes in X: " << params.fccParams.cubesX << std::endl;
-            std::cout << "Cubes in Y: " << params.fccParams.cubesY << std::endl;
-            std::cout << "Cubes in Z: " << params.fccParams.cubesZ << std::endl;
-            std::cout << "Atom Spacing: " << params.fccParams.spacing << std::endl;
-        }
-
-        std::cout << "Apply Kinetic Energy: " << (params.applyKineticEnergy ? "Yes" : "No") << std::endl;
-        if (params.applyKineticEnergy) {
-            std::cout << "Kinetic Energy: " << params.kineticEnergyParams.kineticEnergy << std::endl;
-            std::cout << "Target Coordinates: (" << params.kineticEnergyParams.targetCoordinates.x << ", " << params.kineticEnergyParams.targetCoordinates.y << ", " << params.kineticEnergyParams.targetCoordinates.z << ")" << std::endl;
-            std::cout << "Offset: (" << params.kineticEnergyParams.offset.x << ", " << params.kineticEnergyParams.offset.y << ", " << params.kineticEnergyParams.offset.z << ")" << std::endl;
-        }
-
-
-
-    }
-    else {
-        std::cout << "Atom Structure Inserter canceled." << std::endl;
-    }
-    mPlaybackSettings->pause = false; 
-}
-
 
 void ui::MDVisualiser::setDataLoader(ui::BasicDataLoader* data_loader)
 {
@@ -249,3 +199,21 @@ void ui::MDVisualiser::setPlaybackSettings(ui::PlaybackSettings* playback_settin
     mPlaybackSettings = playback_settings;
 }
 
+void ui::MDVisualiser::onDisplayedTimestepLineEditChanged()
+{
+    mPlaybackSettings->current_timestep_index = mDisplayedTimestepLineEdit->text().toInt();
+}
+
+void ui::MDVisualiser::onManageAtomsClicked()
+{
+    mPlaybackSettings->pause = true;
+
+    // Code to be added
+
+    mPlaybackSettings->pause = false;
+}
+
+void ui::MDVisualiser::updateDisplayedTimestepLineEdit()
+{
+    mDisplayedTimestepLineEdit->setText(QString::number(mPlaybackSettings->current_timestep_index));
+}

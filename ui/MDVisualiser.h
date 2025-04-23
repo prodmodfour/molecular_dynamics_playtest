@@ -6,7 +6,6 @@
 #include "AtomVTKWidget.h"
 #include "PlaybackSettings.h"
 #include "../simulation/Timestep.h"
-#include "atom_management_widgets/AtomStructureVTKPreview.h"
 
 class QTimer;
 class QSlider;
@@ -43,19 +42,19 @@ public slots:
     void onRestartClicked();
     void setPlaybackSettings(ui::PlaybackSettings* playback_settings);
     void setDataLoader(ui::BasicDataLoader* data_loader);
-    void onAddAtomsClicked();
-
+    void onManageAtomsClicked();
+    void onDisplayedTimestepLineEditChanged();
 
 private:
     ui::AtomVTKWidget*            mVTKWidget;
-    ui::AtomStructureVTKPreview* mAtomStructurePreview;
     QPushButton* mSpeedDownButton; 
     QLineEdit* mSpeedLineEdit;
+    QLineEdit* mDisplayedTimestepLineEdit;
     QPushButton* mSpeedUpButton;
     QPushButton*              mStartPauseButton;
     QPushButton*              mReverseButton;
     QPushButton*              mRestartButton;
-    QPushButton*              mAddAtomsButton;
+    QPushButton*              mManageAtomsButton;
     QTimer*                   mTimer;
 
     ui::PlaybackSettings*       mPlaybackSettings;

@@ -3,7 +3,6 @@
 #include "../atoms/Atom.h"
 #include <vector>
 #include "../simulation/Config.h"
-#include "TotalEnergy.h"
 #include <cmath>
 #include "../atoms/AtomPairData.h"
 
