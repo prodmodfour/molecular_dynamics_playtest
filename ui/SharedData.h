@@ -33,7 +33,8 @@ class SharedData
         atoms::AtomPairLibrary atom_pair_library;
         std::mutex mutex;
         bool simulation_ended;
-    
+        StructureList structure_list;
+
 };
 
 class LocalUnsavedChangesToSharedData : public SharedData
@@ -46,11 +47,22 @@ class LocalUnsavedChangesToSharedData : public SharedData
         bool time_changed_since_last_loop;
         bool atom_pair_library_changed_since_last_loop;
         bool latest_timestep_index_changed_since_last_loop;
-        bool buffer_size_changed_since_last_loop;
-
-
-
-
+        bool buffer_size_changed_since_last_loop;        
         
+};
+
+
+class StructureList
+{
+    public:
+        StructureList();
+        std::vector<std::string> structure_names;
+
+        void add_structure(std::string structure_name);
+        void remove_structure(std::string structure_name);
+        void rename_structure(std::string old_name, std::string new_name);
+
+        std::vector<std::string> get_all_structure_names();
+        void print_all_structure_names();
         
 };
