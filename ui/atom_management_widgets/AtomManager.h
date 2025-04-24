@@ -1,8 +1,13 @@
 #pragma once
 
 #include <QMainWindow>
-#include "../MDVisualiser.h"
+
 class QPushButton;
+
+// Forward declaration of MDVisualiser to break the circular dependency
+namespace ui {
+    class MDVisualiser;
+}
 
 namespace ui
 {
@@ -14,11 +19,12 @@ class AtomManager : public QMainWindow
 public:
     AtomManager(QWidget* parent = nullptr);
     void onCloseButtonClicked();
+    void setParentMDVisualiser(MDVisualiser* visualiser);
 
 
 private:
     QPushButton* mCloseButton;
-    ui::MDVisualiser* parentMDVisualiser;
+    MDVisualiser* parentMDVisualiser; // Use the forward-declared class
 
 };
 
