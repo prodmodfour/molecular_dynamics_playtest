@@ -59,26 +59,27 @@ ui::MDVisualiser::MDVisualiser(
     mSpeedUpButton = new QPushButton("+", central);
     controlsLayout->addWidget(mSpeedUpButton);
 
-    // Start/Pause button
+
     mStartPauseButton = new QPushButton("Start/Pause", central);
     controlsLayout->addWidget(mStartPauseButton);
 
-    // Displayed Timestep Line Edit
     mDisplayedTimestepLineEdit = new QLineEdit(central);
     mDisplayedTimestepLineEdit->setText(QString::number(mPlaybackSettings->current_timestep_index));
     controlsLayout->addWidget(mDisplayedTimestepLineEdit);
 
-    // Reverse button
+
     mReverseButton = new QPushButton("Reverse", central);
     controlsLayout->addWidget(mReverseButton);
 
-    // Restart button
+
     mRestartButton = new QPushButton("Restart", central);
     controlsLayout->addWidget(mRestartButton);
 
-    // Manage Atoms button
+
     mManageAtomsButton = new QPushButton("Manage Atoms", central); 
     controlsLayout->addWidget(mManageAtomsButton);
+    connect(mManageAtomsButton, &QPushButton::clicked,
+            this, &ui::MDVisualiser::onManageAtomsClicked);
 
     connect(mRestartButton, &QPushButton::clicked,
             this, &ui::MDVisualiser::onRestartClicked);
@@ -86,7 +87,6 @@ ui::MDVisualiser::MDVisualiser(
     mainLayout->addLayout(controlsLayout);
     setCentralWidget(central);
 
-    // Connect speed controls
     connect(mSpeedDownButton, &QPushButton::clicked,
             this, &MDVisualiser::onSpeedDownClicked);
     connect(mSpeedUpButton, &QPushButton::clicked,
@@ -94,22 +94,22 @@ ui::MDVisualiser::MDVisualiser(
     connect(mSpeedLineEdit, &QLineEdit::editingFinished,
             this, &MDVisualiser::onSpeedLineEditChanged);
 
-    // Connect start/pause button
+
     connect(mStartPauseButton, &QPushButton::clicked,
             this, &ui::MDVisualiser::onStartPauseClicked);
 
-    // Connect reverse button
+
     connect(mReverseButton, &QPushButton::clicked,
             this, &ui::MDVisualiser::onReverseClicked);
 
-    // Setup timer to update animation
+    // QT timer that updates the animation
     mTimer = new QTimer(this);
     connect(mTimer, &QTimer::timeout,
             this, &ui::MDVisualiser::onTimerTimeout);
     mTimer->start(42); // update every 42 ms (approx. 24 FPS)
 
-    // Set up the Atom Manager
     mAtomManager = new ui::AtomManager(this);
+    mAtomManager->setParentMDVisualiser(this);
 
 }
 
