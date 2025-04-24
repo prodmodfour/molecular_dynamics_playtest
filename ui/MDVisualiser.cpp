@@ -2,6 +2,7 @@
 #include "../simulation/Timestep.h"
 #include <stdexcept>
 #include "data_loaders/BasicDataLoader.h"
+#include "atom_management_widgets/AtomManager.h"
 
 
 // Qt includes

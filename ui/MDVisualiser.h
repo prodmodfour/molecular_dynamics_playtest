@@ -7,7 +7,7 @@
 #include "PlaybackSettings.h"
 #include "../simulation/Timestep.h"
 #include "SharedData.h"
-// #include "atom_management_widgets/AtomManager.h" // Remove direct include
+
 class QTimer;
 class QSlider;
 class QPushButton;
@@ -15,7 +15,7 @@ class QLineEdit;
 class QAction;
 class QMenu;
 
-// Forward declaration of AtomManager
+
 namespace ui {
     class AtomManager;
     class BasicDataLoader;
@@ -53,6 +53,7 @@ public slots:
     void onManageAtomsClicked();
     void onDisplayedTimestepLineEditChanged();
     ui::AtomManager* getAtomManager() { return mAtomManager; } // Added getter to access mAtomManager
+    ui::PlaybackSettings* getPlaybackSettings() { return mPlaybackSettings; }
 
 private:
     void updateDisplayedTimestepLineEdit(); 

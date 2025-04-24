@@ -24,7 +24,7 @@ public:
 
 private:
     QPushButton* mCloseButton;
-    MDVisualiser* parentMDVisualiser; // Use the forward-declared class
+    MDVisualiser* parentMDVisualiser; 
 
 };
 
