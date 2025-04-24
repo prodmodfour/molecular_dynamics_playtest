@@ -37,6 +37,7 @@ add_executable(Test_Atom_Management
     ../../../ui/data_loaders/BasicDataLoader.cpp
     ../../../ui/atom_management_widgets/AtomStructureInserter.cpp
     ../../../ui/atom_management_widgets/AtomStructureVTKPreview.cpp 
+    ../../../ui/atom_management_widgets/AtomManager.cpp
 
 )
 

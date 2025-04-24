@@ -6,7 +6,8 @@
 #include "AtomVTKWidget.h"
 #include "PlaybackSettings.h"
 #include "../simulation/Timestep.h"
-
+#include "SharedData.h"
+#include "atom_management_widgets/AtomManager.h"
 class QTimer;
 class QSlider;
 class QPushButton;
@@ -42,12 +43,14 @@ public slots:
     void onRestartClicked();
     void setPlaybackSettings(ui::PlaybackSettings* playback_settings);
     void setDataLoader(ui::BasicDataLoader* data_loader);
+    void setSharedData(SharedData* shared_data);
     void onManageAtomsClicked();
     void onDisplayedTimestepLineEditChanged();
 
 private:
     void updateDisplayedTimestepLineEdit(); 
     ui::AtomVTKWidget*            mVTKWidget;
+    ui::AtomManager*              mAtomManager;
     QPushButton* mSpeedDownButton; 
     QLineEdit* mSpeedLineEdit;
     QLineEdit* mDisplayedTimestepLineEdit;
@@ -60,6 +63,7 @@ private:
 
     ui::PlaybackSettings*       mPlaybackSettings;
     ui::BasicDataLoader*        mDataLoader;
+    SharedData*                 mSharedData;
 };
     
 } // namespace ui

@@ -27,6 +27,8 @@ public:
     void setPlaybackSettings(ui::PlaybackSettings* playback_settings);
     void setVisualiser(ui::MDVisualiser* visualiser);
 
+    void updateLastTimestepIndex();
+    void printDataSize();
     bool simulation_data_set;
 
 private:

@@ -48,4 +48,17 @@ void BasicDataLoader::setVisualiser(ui::MDVisualiser* visualiser)
     this->visualiser = visualiser;
 }
 
+void BasicDataLoader::updateLastTimestepIndex()
+{
+    if (simulation_data_set)
+    {
+        playback_settings->update_last_timestep_index(data->size() - 1);
+    }
+}
+
+void BasicDataLoader::printDataSize()
+{
+    std::cout << "Data size: " << data->size() << std::endl;
+}
+
 } // namespace ui

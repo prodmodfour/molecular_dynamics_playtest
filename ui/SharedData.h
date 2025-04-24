@@ -14,7 +14,7 @@ class SharedData
         SharedData()
         {
             indexes_of_timesteps_edited_by_ui = std::vector<int>();
-            buffer_size = 0;
+            buffer_size = 1000;
             index_of_latest_timestep_simulated = 0;
             index_of_latest_timestep_displayed = 0;
             changed_by_ui_since_last_loop = false;

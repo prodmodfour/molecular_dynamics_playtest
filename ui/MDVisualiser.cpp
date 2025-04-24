@@ -107,20 +107,22 @@ ui::MDVisualiser::MDVisualiser(
             this, &ui::MDVisualiser::onTimerTimeout);
     mTimer->start(42); // update every 42 ms (approx. 24 FPS)
 
+    // Set up the Atom Manager
+    mAtomManager = new ui::AtomManager(this);
+
 }
 
 void ui::MDVisualiser::onTimerTimeout()
 {
     if (mPlaybackSettings->pause == false)
     {
+        mDataLoader->updateLastTimestepIndex();
         mPlaybackSettings->next_timestep();
         updateDisplayedTimestepLineEdit();
     }
 
     if (mDataLoader && mDataLoader->load()) 
     {
-        // Render the new timestep
-        // Ensure current_timestep_data is valid and updated by the loader
         if (current_timestep_data) {
              mVTKWidget->updateAtoms(current_timestep_data->atoms);
         } else {
@@ -208,12 +210,16 @@ void ui::MDVisualiser::onManageAtomsClicked()
 {
     mPlaybackSettings->pause = true;
 
-    // Code to be added
-
-    mPlaybackSettings->pause = false;
+    mAtomManager->show();
 }
 
 void ui::MDVisualiser::updateDisplayedTimestepLineEdit()
 {
     mDisplayedTimestepLineEdit->setText(QString::number(mPlaybackSettings->current_timestep_index));
 }
+
+void ui::MDVisualiser::setSharedData(SharedData* shared_data)
+{
+    mSharedData = shared_data;
+}
+
