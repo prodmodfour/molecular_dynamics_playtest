@@ -17,6 +17,12 @@
 #include <QSurfaceFormat>
 #include <QLineEdit>
 #include <QDialog>
+#include <QToolButton>
+#include <QDoubleSpinBox>
+#include <QLCDNumber>
+#include <QSizePolicy>
+#include <QStyle>
+
 #include <iostream>
 
 
@@ -34,73 +40,6 @@ ui::MDVisualiser::MDVisualiser(
     setDataLoader(data_loader);
 
 
-    // Create a central widget and main layout
-    QWidget* central = new QWidget(this);
-    QVBoxLayout* mainLayout = new QVBoxLayout(central);
-
-    // Create our Atom VTK Widget
-    mVTKWidget = new AtomVTKWidget(central);
-    mVTKWidget->setFixedSize(1280, 720);
-    mainLayout->addWidget(mVTKWidget);
-
-
-    // --- Playback Controls ---
-    QHBoxLayout* controlsLayout = new QHBoxLayout;
-
-    // Speed controls
-    mSpeedDownButton = new QPushButton("-", central);
-    controlsLayout->addWidget(mSpeedDownButton);
-
-    mSpeedLineEdit = new QLineEdit(central);
-    mSpeedLineEdit->setText(QString::number(mPlaybackSettings->speed));
-    mSpeedLineEdit->setFixedWidth(50); 
-    controlsLayout->addWidget(mSpeedLineEdit);
-
-    mSpeedUpButton = new QPushButton("+", central);
-    controlsLayout->addWidget(mSpeedUpButton);
-
-
-    mStartPauseButton = new QPushButton("Start/Pause", central);
-    controlsLayout->addWidget(mStartPauseButton);
-
-    mDisplayedTimestepLineEdit = new QLineEdit(central);
-    mDisplayedTimestepLineEdit->setText(QString::number(mPlaybackSettings->current_timestep_index));
-    controlsLayout->addWidget(mDisplayedTimestepLineEdit);
-
-
-    mReverseButton = new QPushButton("Reverse", central);
-    controlsLayout->addWidget(mReverseButton);
-
-
-    mRestartButton = new QPushButton("Restart", central);
-    controlsLayout->addWidget(mRestartButton);
-
-
-    mManageAtomsButton = new QPushButton("Manage Atoms", central); 
-    controlsLayout->addWidget(mManageAtomsButton);
-    connect(mManageAtomsButton, &QPushButton::clicked,
-            this, &ui::MDVisualiser::onManageAtomsClicked);
-
-    connect(mRestartButton, &QPushButton::clicked,
-            this, &ui::MDVisualiser::onRestartClicked);
-
-    mainLayout->addLayout(controlsLayout);
-    setCentralWidget(central);
-
-    connect(mSpeedDownButton, &QPushButton::clicked,
-            this, &MDVisualiser::onSpeedDownClicked);
-    connect(mSpeedUpButton, &QPushButton::clicked,
-            this, &MDVisualiser::onSpeedUpClicked);
-    connect(mSpeedLineEdit, &QLineEdit::editingFinished,
-            this, &MDVisualiser::onSpeedLineEditChanged);
-
-
-    connect(mStartPauseButton, &QPushButton::clicked,
-            this, &ui::MDVisualiser::onStartPauseClicked);
-
-
-    connect(mReverseButton, &QPushButton::clicked,
-            this, &ui::MDVisualiser::onReverseClicked);
 
     // QT timer that updates the animation
     mTimer = new QTimer(this);
@@ -108,8 +47,113 @@ ui::MDVisualiser::MDVisualiser(
             this, &ui::MDVisualiser::onTimerTimeout);
     mTimer->start(42); // update every 42 ms (approx. 24 FPS)
 
-    mAtomManager = new ui::AtomManager(this);
+
+
+
+    // ---------------  UI SET-UP  ---------------
+    // Central container
+    auto *central = new QWidget(this);
+    auto *main   = new QVBoxLayout(central);
+    main->setContentsMargins(6,6,6,6);          
+    main->setSpacing(6);
+
+    // ---------- 1) 3-D view ----------
+    mVTKWidget = new AtomVTKWidget(central);
+    mVTKWidget->setSizePolicy(QSizePolicy::Expanding,
+                            QSizePolicy::Expanding); 
+    main->addWidget(mVTKWidget, 1);
+
+    // ---------- 2) Playback toolbar ----------
+    auto *bar = new QHBoxLayout;
+    bar->setSpacing(8);
+    bar->addStretch();                           
+
+    // speed ↓
+    auto down = new QToolButton(central);
+    down->setIcon(style()->standardIcon(QStyle::SP_MediaSeekBackward));
+    bar->addWidget(down);
+
+    // speed value
+    auto speedSpin = new QDoubleSpinBox(central);
+    speedSpin->setRange(0.1, 20.0);
+    speedSpin->setSingleStep(0.1);
+    speedSpin->setValue(mPlaybackSettings->speed);
+    speedSpin->setSuffix("×");                     
+    speedSpin->setFixedWidth(70);
+    bar->addWidget(speedSpin);
+    mSpeedSpin = speedSpin;
+
+    // speed ↑
+    auto up = new QToolButton(central);
+    up->setIcon(style()->standardIcon(QStyle::SP_MediaSeekForward));
+    bar->addWidget(up);
+
+    // play / pause
+    auto playPause = new QToolButton(central);
+    playPause->setIcon(style()->standardIcon(QStyle::SP_MediaPlay));
+    playPause->setCheckable(true);                
+    bar->addWidget(playPause);
+
+    // current step (read-only LCD)
+    auto stepLcd = new QLCDNumber(4, central);
+    stepLcd->display(mPlaybackSettings->current_timestep_index);
+    stepLcd->setSegmentStyle(QLCDNumber::Flat);
+    stepLcd->setMinimumWidth(80);
+    bar->addWidget(stepLcd);
+    mStepLcd = stepLcd;
+
+    // reverse
+    auto reverse = new QToolButton(central);
+    reverse->setIcon(style()->standardIcon(QStyle::SP_MediaSkipBackward));
+    bar->addWidget(reverse);
+
+    // restart
+    auto restart = new QToolButton(central);
+    restart->setIcon(style()->standardIcon(QStyle::SP_BrowserReload));
+    bar->addWidget(restart);
+
+    bar->addStretch();                               
+    main->addLayout(bar);
+
+    // ---------- 3) Secondary controls ----------
+    auto *footer = new QHBoxLayout;
+    footer->addStretch();
+    mAtomManager = new AtomManager(central);
     mAtomManager->setParentMDVisualiser(this);
+    auto manageAtoms = new QPushButton("Manage atoms…", central);
+    footer->addWidget(manageAtoms);
+    main->addLayout(footer);
+
+
+    setCentralWidget(central);
+    const int kInitW = 1000;            
+    const int kInitH = 700;
+    resize(kInitW, kInitH);             
+    mVTKWidget->setMinimumSize(800, 600);   
+
+    // ---------------  SIGNALS  ---------------
+    connect(down,        &QToolButton::clicked, this, &MDVisualiser::onSpeedDownClicked);
+    connect(up,          &QToolButton::clicked, this, &MDVisualiser::onSpeedUpClicked);
+    connect(speedSpin,   QOverload<double>::of(&QDoubleSpinBox::valueChanged),
+                        this, &MDVisualiser::onSpeedChanged);
+    connect(playPause,   &QToolButton::toggled, this, &MDVisualiser::onStartPauseToggled);
+    connect(reverse,     &QToolButton::clicked, this, &MDVisualiser::onReverseClicked);
+    connect(restart,     &QToolButton::clicked, this, &MDVisualiser::onRestartClicked);
+    connect(manageAtoms, &QPushButton::clicked, this, &MDVisualiser::onManageAtomsClicked);
+
+    // ---------------  STYLE  ---------------
+    qApp->setStyleSheet(R"(
+        QWidget      { font-family: 'Inter', 'Segoe UI', sans-serif; font-size: 10.5pt; }
+        QToolButton  { background:#2d2d30; border:1px solid #3e3e42; padding:6px; border-radius:4px; }
+        QToolButton:hover         { background:#3e3e42; }
+        QToolButton:checked       { background:#5189ff; }
+        QToolButton:disabled      { background:#555;        color:#777; }
+
+        QPushButton  { background:#5189ff; color:white; border:0; padding:8px 14px; border-radius:4px; }
+        QPushButton:hover         { background:#6ca0ff; }
+        QDoubleSpinBox, QLCDNumber{
+            background:#1e1e1e;   color:#d6d6d6; border:1px solid #3e3e42; border-radius:4px; }
+    )");
 
 }
 
@@ -119,7 +163,7 @@ void ui::MDVisualiser::onTimerTimeout()
     {
         mDataLoader->updateLastTimestepIndex();
         mPlaybackSettings->next_timestep();
-        updateDisplayedTimestepLineEdit();
+        updateStepDisplay();
     }
 
     if (mDataLoader && mDataLoader->load()) 
@@ -135,44 +179,43 @@ void ui::MDVisualiser::onTimerTimeout()
 
 void ui::MDVisualiser::onSpeedDownClicked()
 {
-    bool ok;
-    int currentSpeed = mSpeedLineEdit->text().toInt(&ok);
-    if (!ok) return; 
-    if (currentSpeed > 1)
+
+    double currentSpeed = mSpeedSpin->value();
+    if (currentSpeed > 0.1)
     {
         currentSpeed--;
-        mSpeedLineEdit->setText(QString::number(currentSpeed));
+        mSpeedSpin->setValue(currentSpeed);
         mPlaybackSettings->change_speed(currentSpeed);
     }
 }
 
 void ui::MDVisualiser::onSpeedUpClicked()
 {
-    bool ok;
-    int currentSpeed = mSpeedLineEdit->text().toInt(&ok);
-    if (!ok) return; 
-
-    currentSpeed++;
-    mSpeedLineEdit->setText(QString::number(currentSpeed));
-    mPlaybackSettings->change_speed(currentSpeed);
+    double currentSpeed = mSpeedSpin->value();
+    if (currentSpeed < 20)
+    {
+        currentSpeed++;
+        mSpeedSpin->setValue(currentSpeed);
+        mPlaybackSettings->change_speed(currentSpeed);
+    }
 }
 
-void ui::MDVisualiser::onSpeedLineEditChanged()
+
+void ui::MDVisualiser::onSpeedChanged(double)
 {
-    bool ok;
-    int newSpeed = mSpeedLineEdit->text().toInt(&ok);
-    if (!ok || newSpeed <= 0) { 
-         mSpeedLineEdit->setText(QString::number(mPlaybackSettings->speed)); 
+    double newSpeed = mSpeedSpin->value();
+    if (newSpeed <= 0) { 
+         mSpeedSpin->setValue(mPlaybackSettings->speed); 
          return;
     }
 
     mPlaybackSettings->change_speed(newSpeed);
 }
 
-void ui::MDVisualiser::onStartPauseClicked()
-{
-    mPlaybackSettings->toggle_pause();
-}
+void ui::MDVisualiser::onStartPauseToggled(bool)
+ {
+     if (mPlaybackSettings) mPlaybackSettings->toggle_pause();
+ }
 
 void ui::MDVisualiser::onReverseClicked()
 {
@@ -181,8 +224,7 @@ void ui::MDVisualiser::onReverseClicked()
 
 void ui::MDVisualiser::onRestartClicked()
 {
-
-    qApp->exit(1);
+    mPlaybackSettings->reset();
 }
 
 
@@ -202,10 +244,6 @@ void ui::MDVisualiser::setPlaybackSettings(ui::PlaybackSettings* playback_settin
     mPlaybackSettings = playback_settings;
 }
 
-void ui::MDVisualiser::onDisplayedTimestepLineEditChanged()
-{
-    mPlaybackSettings->current_timestep_index = mDisplayedTimestepLineEdit->text().toInt();
-}
 
 void ui::MDVisualiser::onManageAtomsClicked()
 {
@@ -214,9 +252,12 @@ void ui::MDVisualiser::onManageAtomsClicked()
     mAtomManager->show();
 }
 
-void ui::MDVisualiser::updateDisplayedTimestepLineEdit()
+
+
+void ui::MDVisualiser::updateStepDisplay()
 {
-    mDisplayedTimestepLineEdit->setText(QString::number(mPlaybackSettings->current_timestep_index));
+    if (mStepLcd && mPlaybackSettings)
+        mStepLcd->display(mPlaybackSettings->current_timestep_index);
 }
 
 void ui::MDVisualiser::setSharedData(SharedData* shared_data)

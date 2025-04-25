@@ -72,6 +72,14 @@ class PlaybackSettings
             last_timestep_index = new_last_timestep_index;
         }
 
+        void reset()
+        {
+            current_timestep_index = 0;
+            direction = 1;
+            speed = 1;
+            pause = true;
+        }
+
 
     
 };

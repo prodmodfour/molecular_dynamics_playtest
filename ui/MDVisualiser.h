@@ -14,6 +14,10 @@ class QPushButton;
 class QLineEdit;
 class QAction;
 class QMenu;
+class QToolButton;
+class QDoubleSpinBox;
+class QLCDNumber;
+
 
 
 namespace ui {
@@ -30,48 +34,61 @@ class MDVisualiser : public QMainWindow
     Q_OBJECT
 
 public:
-    simulation::Timestep*      current_timestep_data;
-    explicit MDVisualiser(
-                        QWidget* parent = nullptr,
-                        ui::BasicDataLoader* data_loader = nullptr,
-                        ui::PlaybackSettings* playback_settings = nullptr
-                        // SharedData* shared_data = nullptr,
-                        //SharedData local_unsaved_changes_to_shared_data = SharedData()
-                        );
+    explicit MDVisualiser(QWidget*              parent            = nullptr,
+                          ui::BasicDataLoader*  data_loader       = nullptr,
+                          ui::PlaybackSettings* playback_settings = nullptr);
+
+    simulation::Timestep* current_timestep_data = nullptr;
+
+
+    ui::AtomManager*      getAtomManager()      { return mAtomManager; }
+    ui::PlaybackSettings* getPlaybackSettings() { return mPlaybackSettings; }
 
 public slots:
+    /* core animation */
     void onTimerTimeout();
-    void onSpeedLineEditChanged();
+
+    /* speed controls */
+    void onSpeedChanged(double value);          // from QDoubleSpinBox
     void onSpeedUpClicked();
     void onSpeedDownClicked();
-    void onStartPauseClicked();
+
+    /* playback controls */
+    void onStartPauseToggled(bool playing);     // Play ⇄ Pause
     void onReverseClicked();
     void onRestartClicked();
+
+    /* misc */
+    void onManageAtomsClicked();
+
+    /* external setters */
     void setPlaybackSettings(ui::PlaybackSettings* playback_settings);
     void setDataLoader(ui::BasicDataLoader* data_loader);
     void setSharedData(SharedData* shared_data);
-    void onManageAtomsClicked();
-    void onDisplayedTimestepLineEditChanged();
-    ui::AtomManager* getAtomManager() { return mAtomManager; } // Added getter to access mAtomManager
-    ui::PlaybackSettings* getPlaybackSettings() { return mPlaybackSettings; }
 
 private:
-    void updateDisplayedTimestepLineEdit(); 
-    ui::AtomVTKWidget*            mVTKWidget;
-    ui::AtomManager*              mAtomManager; // Use the forward-declared class
-    QPushButton* mSpeedDownButton; 
-    QLineEdit* mSpeedLineEdit;
-    QLineEdit* mDisplayedTimestepLineEdit;
-    QPushButton* mSpeedUpButton;
-    QPushButton*              mStartPauseButton;
-    QPushButton*              mReverseButton;
-    QPushButton*              mRestartButton;
-    QPushButton*              mManageAtomsButton;
-    QTimer*                   mTimer;
+    void updateStepDisplay();     
 
-    ui::PlaybackSettings*       mPlaybackSettings;
-    ui::BasicDataLoader*        mDataLoader;
-    SharedData*                 mSharedData;
+    /* widgets */
+    ui::AtomVTKWidget* mVTKWidget      = nullptr;
+    ui::AtomManager*   mAtomManager    = nullptr;
+
+    QToolButton*       mSpeedDownBtn   = nullptr;
+    QDoubleSpinBox*    mSpeedSpin      = nullptr;
+    QToolButton*       mSpeedUpBtn     = nullptr;
+
+    QToolButton*       mPlayPauseBtn   = nullptr;
+    QLCDNumber*        mStepLcd        = nullptr;
+    QToolButton*       mReverseBtn     = nullptr;
+    QToolButton*       mRestartBtn     = nullptr;
+    QPushButton*       mManageAtomsBtn = nullptr;   // still a full-width push button
+
+    QTimer*            mTimer          = nullptr;
+
+    /* data & settings */
+    ui::PlaybackSettings* mPlaybackSettings = nullptr;
+    ui::BasicDataLoader*  mDataLoader       = nullptr;
+    SharedData*           mSharedData       = nullptr;
 };
-    
+
 } // namespace ui
