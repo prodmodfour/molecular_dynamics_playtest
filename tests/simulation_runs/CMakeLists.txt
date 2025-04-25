@@ -42,9 +42,8 @@ add_executable(Test_Simulation_Runs
     ../../../simulation/Timestep.cpp
     ../../../ui/SharedData.cpp
     ../../../atoms/Structure.cpp
-
-
-
+    ../../../atoms/atom_generation_functions.cpp
+    ../../../geometry/geometry_functions.cpp
 )
 
 # If you have headers in non-standard locations:

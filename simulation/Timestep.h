@@ -6,6 +6,7 @@
 #include <string>
 #include <map>
 #include "StructureList.h"
+#include "../atoms/Structure.h"
 
 namespace simulation {
 
@@ -58,15 +59,22 @@ class Timestep
         {
             std::string structure_name = atom.type + "_atoms";
             std::string structure_type = "Unstructured";
-
-            if (!this->structure_exists(structure_name))
-            {
-                std::vector<atoms::Atom> atoms;
-                this->structures[structure_name] = atoms::Structure(atoms, structure_name, structure_type, atom.type);
-            }
             atom.parent_structure = structure_name;
-            this->structures[structure_name].add_atom(atom);
-            this->atoms.push_back(atom);
+
+            if (!structure_list.structure_exists(structure_name))
+            {
+                std::vector<atoms::Atom> new_atoms;
+                new_atoms.push_back(atom);
+                add_structure(atoms::Structure(new_atoms, structure_name, structure_type, atom.type));
+
+
+            }
+            else
+            {
+                this->structures[structure_name].add_atom(atom);
+                this->atoms.push_back(atom);
+            }
+
         }
 
 

@@ -11,6 +11,11 @@ namespace geometry {
 class Box
 {
     public:
+        Box()
+        {
+            // Nothing
+        }
+
         Box(std::vector<atoms::Atom> &atoms)
         {
             this->corners = determine_cuboid_corners(atoms);

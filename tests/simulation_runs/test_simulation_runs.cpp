@@ -7,6 +7,7 @@
 #include "../../ui/MDVisualiser.h"
 #include "../../geometry/Box.h"
 #include "../../geometry/geometry_functions.h"
+#include "../../geometry/Vector.h"
 #include "../../ui/data_loaders/BasicDataLoader.h"
 #include "../../ui/PlaybackSettings.h"
 #include "../../atoms/atom_generation_functions.h"
@@ -14,6 +15,8 @@
 #include "../../ui/SharedData.h"
 #include "../../simulation/simulation_data_mutex.h"
 #include "../../atoms/Structure.h"
+#include "../../physics/physics_functions.h"
+
 
 
 #include <vector>
@@ -47,6 +50,12 @@ int main(int argc, char *argv[])
     impact_atom.x = copper_block.box.top_plane.center.x + x_offset;
     impact_atom.y = copper_block.box.top_plane.center.y + y_offset;
     impact_atom.z = copper_block.box.top_plane.center.z + z_offset;
+
+    geometry::Vector direction_from_impact_atom_to_center_of_top_of_box = geometry::calculate_unit_vector_from_point1_to_point2(impact_atom.get_position(), copper_block.box.top_plane.center);
+
+    double applied_kinetic_energy = 10; // eV
+    physics::apply_kinetic_energy(impact_atom, applied_kinetic_energy, direction_from_impact_atom_to_center_of_top_of_box);
+
     first_timestep.add_atom(impact_atom);
 
 

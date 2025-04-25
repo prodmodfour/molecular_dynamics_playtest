@@ -1,4 +1,9 @@
 #include "StructureList.h"
+#include "../atoms/Structure.h"
+#include <iostream>
+#include <vector>
+#include <algorithm>
+#include <string>
 
 namespace simulation {
 
@@ -37,7 +42,7 @@ void StructureList::rename_structure(std::string old_name, std::string new_name)
     }
 }
 
-void StructureList::get_all_structure_names()
+std::vector<std::string> StructureList::get_all_structure_names()
 {
     return structure_names;
 }
