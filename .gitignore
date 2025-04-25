@@ -7,4 +7,5 @@
 **/VtkRuntime/
 /QtRuntime/
 /VtkRuntime/
-
+QtRuntime/
+VtkRuntime/
