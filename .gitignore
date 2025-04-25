@@ -5,4 +5,6 @@
 **/build/
 **/QtRuntime/
 **/VtkRuntime/
+/QtRuntime/
+/VtkRuntime/
 
