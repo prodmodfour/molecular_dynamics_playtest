@@ -7,6 +7,7 @@ class QPushButton;
 // Forward declaration of MDVisualiser to break the circular dependency
 namespace ui {
     class MDVisualiser;
+    class AtomVTKPreview;
 }
 
 namespace ui
@@ -20,11 +21,14 @@ public:
     AtomManager(QWidget* parent = nullptr);
     void onCloseButtonClicked();
     void setParentMDVisualiser(MDVisualiser* visualiser);
+    
 
 
 private:
     QPushButton* mCloseButton;
     MDVisualiser* parentMDVisualiser; 
+
+    AtomVTKPreview* mAtomVTKPreview;
 
 };
 

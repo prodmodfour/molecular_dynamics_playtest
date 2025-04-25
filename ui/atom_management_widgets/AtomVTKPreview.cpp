@@ -1,4 +1,4 @@
-#include "AtomStructureVTKPreview.h"
+#include "AtomVTKPreview.h"
 #include "../../atoms/Atom.h" 
 #include "../Color.h" 
 #include "../visualisation_functions.h" 
@@ -21,14 +21,14 @@
 
 namespace ui {
 
-AtomStructureVTKPreview::AtomStructureVTKPreview(QWidget* parent)
+AtomVTKPreview::AtomVTKPreview(QWidget* parent)
     : QVTKOpenGLNativeWidget(parent) 
 {
     setupVTKPipeline();
     atom_data_is_set = false;
 }
 
-void AtomStructureVTKPreview::setupVTKPipeline() 
+void AtomVTKPreview::setupVTKPipeline() 
 {
     // Create a VTK render window and associate it with this widget
     mRenderWindow = vtkSmartPointer<vtkGenericOpenGLRenderWindow>::New();
@@ -92,14 +92,14 @@ void AtomStructureVTKPreview::setupVTKPipeline()
 }
 
 
-// Need to use the atoms namespace for Atom type
-void AtomStructureVTKPreview::setAtomData(std::vector<atoms::Atom>* atoms) 
+
+void AtomVTKPreview::setAtomData(std::vector<atoms::Atom>* atoms) 
 {
     this->atoms = atoms;
     atom_data_is_set = true;
 }
 
-void AtomStructureVTKPreview::updateAtoms()
+void AtomVTKPreview::updateAtoms()
 {
     if (!atoms || atoms->empty()) {
         return; // Nothing to update
@@ -135,11 +135,24 @@ void AtomStructureVTKPreview::updateAtoms()
     mRenderer->ResetCamera();
 }
 
-void AtomStructureVTKPreview::renderImage() 
+void AtomVTKPreview::renderImage() 
 {
     if (mRenderWindow) {
         mRenderWindow->Render();
     }
+}
+
+void AtomVTKPreview::resetCameraToSystem()
+{
+    if (!mRenderer) return;
+
+    mRenderer->ResetCamera();                   
+    auto cam = mRenderer->GetActiveCamera();
+    cam->Zoom(0.80);                           
+    cam->Azimuth(45);                          
+    cam->Elevation(25);                       
+    mRenderer->ResetCameraClippingRange();
+    this->renderWindow()->Render();
 }
 
 } // namespace ui
