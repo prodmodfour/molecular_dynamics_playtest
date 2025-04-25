@@ -3,4 +3,6 @@
 /.vscode
 /vtk_extra
 **/build/
+**/QtRuntime/
+**/VtkRuntime/
 
