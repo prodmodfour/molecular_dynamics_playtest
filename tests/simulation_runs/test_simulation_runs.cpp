@@ -13,6 +13,8 @@
 #include "../../ui/MDVisualiser.h"
 #include "../../ui/SharedData.h"
 #include "../../simulation/simulation_data_mutex.h"
+#include "../../atoms/Structure.h"
+
 
 #include <vector>
 #include <iostream>
@@ -28,25 +30,26 @@ int main(int argc, char *argv[])
     SharedData shared_data;
     simulation::Config config;
     std::vector<simulation::Timestep> simulation_data;
+    std::vector<atoms::Atom> all_atoms;
+
 
     // Create the first timestep that kickstarts the simulation
+    simulation::Timestep first_timestep(config, all_atoms, 0, 0, 0);
+    // We start by creating an Fcc copper block
+    atoms::Structure copper_block(4, 4, 4, "Copper_Block`");
+    first_timestep.add_structure(copper_block);
 
-    atoms::Atom atom("Cu", 63.546, 1.28);
-    atoms::Atom atom2("Cu", 63.546, 1.28);
+    double x_offset = 0.0;
+    double y_offset = 0.0;
+    double z_offset = 5.0;
+    // Then, we add an impact atom
+    atoms::Atom impact_atom("Cu", 63.546, 1.28);
+    impact_atom.x = copper_block.box.top_plane.center.x + x_offset;
+    impact_atom.y = copper_block.box.top_plane.center.y + y_offset;
+    impact_atom.z = copper_block.box.top_plane.center.z + z_offset;
+    first_timestep.add_atom(impact_atom);
 
-    atom.x = 0;
-    atom.y = 0;
-    atom.z = 0;
 
-    atom2.x = 0;
-    atom2.y = 0;
-    atom2.z = 3;
-
-    std::vector<atoms::Atom> atoms;
-    atoms.push_back(atom);
-    atoms.push_back(atom2);
-
-    simulation::Timestep first_timestep(config, atoms, 0, 0, 0);
     simulation_data.push_back(first_timestep);
     ui::PlaybackSettings playback_settings(0);
 

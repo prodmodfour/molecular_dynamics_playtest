@@ -5,6 +5,10 @@
 #include "../atoms/Atom.h"
 #include "../atoms/AtomPairLibrary.h"
 #include <mutex>
+#include <iostream>
+#include <algorithm>
+#include <string>
+
 
 
 
@@ -22,6 +26,7 @@ class SharedData
             time = 0.0;
             atom_pair_library = atoms::AtomPairLibrary();
             simulation_ended = false;
+            structure_list = StructureList();
         };
         std::vector<int> indexes_of_timesteps_edited_by_ui;
         int buffer_size;
@@ -33,7 +38,7 @@ class SharedData
         atoms::AtomPairLibrary atom_pair_library;
         std::mutex mutex;
         bool simulation_ended;
-        StructureList structure_list;
+
 
 };
 
@@ -52,17 +57,4 @@ class LocalUnsavedChangesToSharedData : public SharedData
 };
 
 
-class StructureList
-{
-    public:
-        StructureList();
-        std::vector<std::string> structure_names;
 
-        void add_structure(std::string structure_name);
-        void remove_structure(std::string structure_name);
-        void rename_structure(std::string old_name, std::string new_name);
-
-        std::vector<std::string> get_all_structure_names();
-        void print_all_structure_names();
-        
-};

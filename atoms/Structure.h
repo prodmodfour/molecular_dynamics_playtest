@@ -25,6 +25,8 @@ namespace atoms {
 
             void assign_atoms_to_simulation();
 
+            void label_atoms();
+
         private:
             std::vector<Atom> atoms;
             std::vector<Atom*> atom_pointers;
@@ -33,7 +35,6 @@ namespace atoms {
             std::string structure_type;
             std::string atom_type;
 
-            bool atoms_assigned_to_simulation;
             Box box;
 
 

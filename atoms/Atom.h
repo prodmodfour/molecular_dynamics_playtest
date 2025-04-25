@@ -1,6 +1,7 @@
 #pragma once
 #include <string>
 #include "../geometry/Vector.h"
+#include <vector>
 
 namespace atoms {
 
@@ -17,6 +18,7 @@ class Atom
         double kinetic_energy;
         std::string type;
         std::string name; // This is for potential use for labelling atoms in the UI
+        std::string parent_structure;
 
         // Default Constructor
         Atom(std::string type, double mass, double radius)

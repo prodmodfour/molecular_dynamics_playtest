@@ -3,6 +3,9 @@
 #include "../atoms/Atom.h"
 #include "Config.h"
 #include <vector>
+#include <string>
+#include <map>
+#include "StructureList.h"
 
 namespace simulation {
 
@@ -14,6 +17,8 @@ class Timestep
         double kinetic_energy;
         double potential_energy;
         double time;
+        simulation::StructureList structure_list;
+        std::map<std::string, atoms::Structure> structures;
 
         Timestep(simulation::Config config, std::vector<atoms::Atom> atoms, double kinetic_energy, double potential_energy, double time)
         {
@@ -22,6 +27,8 @@ class Timestep
             this->kinetic_energy = kinetic_energy;
             this->potential_energy = potential_energy;
             this->time = time;
+            this->structure_list = simulation::StructureList();
+            this->structures = std::map<std::string, atoms::Structure>();
         }
 
         Timestep()
@@ -31,9 +38,38 @@ class Timestep
             this->kinetic_energy = 0;
             this->potential_energy = 0;
             this->time = 0;
+            this->structure_list = simulation::StructureList();
+            this->structures = std::map<std::string, atoms::Structure>();
+        }
+
+        void add_structure(atoms::Structure structure)
+        {
+            this->structures[structure.name] = structure;
+            this->structure_list.add_structure(structure);
+
+            // Add the atoms to the atoms vector
+            for (atoms::Atom atom : structure.atoms)
+            {
+                this->atoms.push_back(atom);
+            }
+        }
+
+        void add_atom(atoms::Atom atom)
+        {
+            std::string structure_name = atom.type + "_atoms";
+            std::string structure_type = "Unstructured";
+
+            if (!this->structure_exists(structure_name))
+            {
+                std::vector<atoms::Atom> atoms;
+                this->structures[structure_name] = atoms::Structure(atoms, structure_name, structure_type, atom.type);
+            }
+            atom.parent_structure = structure_name;
+            this->structures[structure_name].add_atom(atom);
+            this->atoms.push_back(atom);
         }
 
 
 };
 
-}
+} // namespace simulation

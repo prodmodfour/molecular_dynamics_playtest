@@ -1,26 +1,28 @@
 #include "Structure.h"
+#include <iostream>
+#include <stdexcept>
 
 namespace atoms {
 
     Structure::Structure(std::vector<Atom> atoms, std::string name = "Unstructured", std::string structure_type = "Unstructured", std::string atom_type = "Cu")
     {
-        atoms_assigned_to_simulation = false;
         this->atoms = atoms;
         this->name = name + "_" + atom_type;
         this->structure_type = structure_type;
         this->atom_type = atom_type;
         this->box = Box(atoms);
+        this->label_atoms();
     }
 
     Structure::Structure(int cubes_in_x, int cubes_in_y, int cubes_in_z, std::string name = "Fcc", std::string structure_type = "Fcc", Atom atom = Atom("Cu", 63.546, 1.28), 
-    double atom_spacing = 1.0)
+    double atom_spacing = 3.61)
     {
-        atoms_assigned_to_simulation = false;
         this->name = name + "_" + atom.type;
         this->structure_type = structure_type;
         this->atom_type = atom.type;
         this->atoms = generate_atoms_in_fcc_pattern(cubes_in_x, cubes_in_y, cubes_in_z, atom_spacing, atom.type, atom.mass, atom.radius);
         this->box = Box(atoms);
+        this->label_atoms();
     }
 
     Structure::~Structure() 
@@ -31,29 +33,24 @@ namespace atoms {
 
     void Structure::add_atom(Atom new_atom)
     {
-        if (atoms_assigned_to_simulation)
-        {
-            atom_pointers.push_back(&new_atom);
-        }
-        else
+        if (this->name == new_atom.parent_structure)
         {
             atoms.push_back(new_atom);
         }
+        else
+        {
+            new_atom.parent_structure = this->name;
+            atoms.push_back(new_atom);
+        }
+
 
     }
 
     void Structure::add_atoms(std::vector<Atom> new_atoms)
     {
-        if (atoms_assigned_to_simulation)
+        for (Atom& atom : new_atoms)
         {
-            for (Atom& atom : new_atoms)
-            {
-                atom_pointers.push_back(&atom);
-            }
-        }
-        else
-        {
-            atoms.insert(atoms.end(), new_atoms.begin(), new_atoms.end());
+            add_atom(atom);
         }
     }
 
@@ -114,6 +111,14 @@ namespace atoms {
             atom_pointers.push_back(&atom_receiver[i]);
         }
 
+    }
+
+    void Structure::label_atoms()
+    {
+        for (Atom& atom : atoms)
+        {
+            atom.parent_structure = this->name;
+        }
     }
     
 
