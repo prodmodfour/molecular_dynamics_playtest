@@ -30,6 +30,7 @@ public:
 
     void updateAtoms(const std::vector<atoms::Atom>& atoms);
     void render();
+    void resetCameraToSystem(); 
 
     vtkSmartPointer<vtkGenericOpenGLRenderWindow> mRenderWindow;
     vtkSmartPointer<vtkRenderer>                  mRenderer;

@@ -57,7 +57,7 @@ ui::MDVisualiser::MDVisualiser(
     main->setContentsMargins(6,6,6,6);          
     main->setSpacing(6);
 
-    // ---------- 1) 3-D view ----------
+    // ---------- 1) VTK ----------
     mVTKWidget = new AtomVTKWidget(central);
     mVTKWidget->setSizePolicy(QSizePolicy::Expanding,
                             QSizePolicy::Expanding); 
@@ -170,6 +170,13 @@ void ui::MDVisualiser::onTimerTimeout()
     {
         if (current_timestep_data) {
              mVTKWidget->updateAtoms(current_timestep_data->atoms);
+
+             if (!FirstViewDone)
+             {
+                mVTKWidget->resetCameraToSystem();
+                FirstViewDone = true;
+             }
+             
         } else {
             std::cerr << "Error: current_timestep_data is null in onTimerTimeout." << std::endl;
         }

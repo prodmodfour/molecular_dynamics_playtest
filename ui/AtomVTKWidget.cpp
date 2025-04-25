@@ -115,3 +115,15 @@ void ui::AtomVTKWidget::render()
 }
 
 
+void ui::AtomVTKWidget::resetCameraToSystem()
+{
+    if (!mRenderer) return;
+
+    mRenderer->ResetCamera();                   
+    auto cam = mRenderer->GetActiveCamera();
+    cam->Zoom(0.80);                           
+    cam->Azimuth(45);                          
+    cam->Elevation(25);                       
+    mRenderer->ResetCameraClippingRange();
+    this->renderWindow()->Render();
+}

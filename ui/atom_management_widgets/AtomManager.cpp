@@ -21,6 +21,7 @@ ui::AtomManager::AtomManager(QWidget* parent) : QMainWindow(parent)
 void ui::AtomManager::onCloseButtonClicked()
 {
     parentMDVisualiser->getPlaybackSettings()->pause = false;
+    parentMDVisualiser->getVTKWidget()->resetCameraToSystem();
     hide();
 }
 

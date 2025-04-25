@@ -45,11 +45,13 @@ public:
     ui::PlaybackSettings* getPlaybackSettings() { return mPlaybackSettings; }
 
 public slots:
+    ui::AtomVTKWidget* getVTKWidget() { return mVTKWidget; }
+
     /* core animation */
     void onTimerTimeout();
 
     /* speed controls */
-    void onSpeedChanged(double value);          // from QDoubleSpinBox
+    void onSpeedChanged(double value);        
     void onSpeedUpClicked();
     void onSpeedDownClicked();
 
@@ -81,7 +83,8 @@ private:
     QLCDNumber*        mStepLcd        = nullptr;
     QToolButton*       mReverseBtn     = nullptr;
     QToolButton*       mRestartBtn     = nullptr;
-    QPushButton*       mManageAtomsBtn = nullptr;   // still a full-width push button
+    QPushButton*       mManageAtomsBtn = nullptr;   
+    bool               FirstViewDone   = false;
 
     QTimer*            mTimer          = nullptr;
 
