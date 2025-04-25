@@ -24,7 +24,7 @@ std::vector<atoms::Atom> generate_atoms_in_fcc_pattern(int cubes_in_x, int cubes
                     atom.y = (iy + b[1]) * atom_spacing;
                     atom.z = (iz + b[2]) * atom_spacing;
 
-                    // Add atom to crystal
+
                     crystal.push_back(atom);
                 }
             }

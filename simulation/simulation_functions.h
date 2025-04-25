@@ -121,10 +121,8 @@ void run_simulation(SharedData* shared_data, std::vector<simulation::Timestep>* 
 
         int index_of_latest_timestep_simulated = shared_data->index_of_latest_timestep_simulated;
 
-
         std::unique_lock<std::mutex> lock2(simulation_data_mutex);
         simulation::Timestep input_timestep = simulation_data->at(index_of_latest_timestep_simulated);
-
 
         simulation::Timestep output_timestep = simulation::simulate_timestep(input_timestep, shared_data->atom_pair_library);
 

@@ -22,6 +22,8 @@
 #include <QLCDNumber>
 #include <QSizePolicy>
 #include <QStyle>
+#include <QLabel>
+
 
 #include <iostream>
 
@@ -73,6 +75,15 @@ ui::MDVisualiser::MDVisualiser(
     down->setIcon(style()->standardIcon(QStyle::SP_MediaSeekBackward));
     bar->addWidget(down);
 
+    auto speedLabel = new QLabel(tr("Speed"), central);
+    speedLabel->setAlignment(Qt::AlignVCenter | Qt::AlignRight);
+
+    QFont f = speedLabel->font();
+    f.setPointSizeF(f.pointSizeF() - 1);  
+    speedLabel->setFont(f);
+    speedLabel->setStyleSheet("color:#666;"); 
+
+
     // speed value
     auto speedSpin = new QDoubleSpinBox(central);
     speedSpin->setRange(0.1, 20.0);
@@ -80,8 +91,15 @@ ui::MDVisualiser::MDVisualiser(
     speedSpin->setValue(mPlaybackSettings->speed);
     speedSpin->setSuffix("×");                     
     speedSpin->setFixedWidth(70);
-    bar->addWidget(speedSpin);
     mSpeedSpin = speedSpin;
+
+    auto *speedColumn = new QVBoxLayout;
+    speedColumn->setContentsMargins(0,0,0,0);
+    speedColumn->setSpacing(2);             
+    speedColumn->addWidget(speedSpin, 0, Qt::AlignHCenter);
+    speedColumn->addWidget(speedLabel,0, Qt::AlignHCenter);
+
+    bar->addLayout(speedColumn);
 
     // speed ↑
     auto up = new QToolButton(central);
@@ -98,7 +116,7 @@ ui::MDVisualiser::MDVisualiser(
     auto stepLcd = new QLCDNumber(4, central);
     stepLcd->display(mPlaybackSettings->current_timestep_index);
     stepLcd->setSegmentStyle(QLCDNumber::Flat);
-    stepLcd->setMinimumWidth(80);
+    stepLcd->setMinimumWidth(30);
     bar->addWidget(stepLcd);
     mStepLcd = stepLcd;
 

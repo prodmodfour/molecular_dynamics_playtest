@@ -38,7 +38,6 @@ class SharedData
         std::mutex mutex;
         bool simulation_ended;
 
-
 };
 
 class LocalUnsavedChangesToSharedData : public SharedData
