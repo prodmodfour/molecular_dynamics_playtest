@@ -26,7 +26,6 @@ class SharedData
             time = 0.0;
             atom_pair_library = atoms::AtomPairLibrary();
             simulation_ended = false;
-            structure_list = StructureList();
         };
         std::vector<int> indexes_of_timesteps_edited_by_ui;
         int buffer_size;

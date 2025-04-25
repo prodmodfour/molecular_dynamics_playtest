@@ -61,7 +61,6 @@ int main(int argc, char *argv[])
     ui::BasicDataLoader data_loader;
     data_loader.setData(&simulation_data);
 
-
     ui::MDVisualiser visualiser(nullptr, &data_loader, &playback_settings);
     visualiser.setSharedData(&shared_data);
     visualiser.show();

@@ -37,6 +37,13 @@ add_executable(Test_Simulation_Runs
     ../../../ui/data_loaders/BasicDataLoader.cpp
     ../../../ui/atom_management_widgets/AtomStructureInserter.cpp
     ../../../ui/atom_management_widgets/AtomStructureVTKPreview.cpp 
+    ../../../ui/atom_management_widgets/AtomManager.cpp 
+    ../../../simulation/StructureList.cpp
+    ../../../simulation/Timestep.cpp
+    ../../../ui/SharedData.cpp
+    ../../../atoms/Structure.cpp
+
+
 
 )
 
