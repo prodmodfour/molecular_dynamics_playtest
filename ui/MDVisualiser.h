@@ -15,7 +15,7 @@ class QLineEdit;
 class QAction;
 class QMenu;
 class QToolButton;
-class QDoubleSpinBox;
+class QSpinBox;
 class QLCDNumber;
 
 
@@ -51,7 +51,7 @@ public slots:
     void onTimerTimeout();
 
     /* speed controls */
-    void onSpeedChanged(double value);        
+    void onSpeedChanged(int value);        
     void onSpeedUpClicked();
     void onSpeedDownClicked();
 
@@ -76,7 +76,7 @@ private:
     ui::AtomManager*   mAtomManager    = nullptr;
 
     QToolButton*       mSpeedDownBtn   = nullptr;
-    QDoubleSpinBox*    mSpeedSpin      = nullptr;
+    QSpinBox*          mSpeedSpin      = nullptr;
     QToolButton*       mSpeedUpBtn     = nullptr;
 
     QToolButton*       mPlayPauseBtn   = nullptr;

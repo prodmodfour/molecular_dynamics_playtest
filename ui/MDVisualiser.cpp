@@ -18,7 +18,7 @@
 #include <QLineEdit>
 #include <QDialog>
 #include <QToolButton>
-#include <QDoubleSpinBox>
+#include <QSpinBox>
 #include <QLCDNumber>
 #include <QSizePolicy>
 #include <QStyle>
@@ -79,11 +79,11 @@ ui::MDVisualiser::MDVisualiser(
     down->setIcon(style()->standardIcon(QStyle::SP_MediaSeekBackward));
     bar->addWidget(down, 0, 1, Qt::AlignVCenter);
 
-    // speed value (line-edit-style spin box)
-    auto speedSpin = new QDoubleSpinBox(central);
-    speedSpin->setRange(0.1, 20.0);
-    speedSpin->setSingleStep(0.1);
-    speedSpin->setValue(mPlaybackSettings->speed);
+    // speed value 
+    auto speedSpin = new QSpinBox(central);
+    speedSpin->setRange(1, 20);         
+    speedSpin->setSingleStep(1);
+    speedSpin->setValue(static_cast<int>(mPlaybackSettings->speed));
     speedSpin->setSuffix(u8"×");
     speedSpin->setFixedWidth(70);
     mSpeedSpin = speedSpin;
@@ -163,7 +163,7 @@ ui::MDVisualiser::MDVisualiser(
     // ---------------  SIGNALS  ---------------
     connect(down,        &QToolButton::clicked, this, &MDVisualiser::onSpeedDownClicked);
     connect(up,          &QToolButton::clicked, this, &MDVisualiser::onSpeedUpClicked);
-    connect(speedSpin,   QOverload<double>::of(&QDoubleSpinBox::valueChanged),
+    connect(speedSpin,   QOverload<int>::of(&QSpinBox::valueChanged),
                         this, &MDVisualiser::onSpeedChanged);
     connect(playPause,   &QToolButton::toggled, this, &MDVisualiser::onStartPauseToggled);
     connect(reverse,     &QToolButton::clicked, this, &MDVisualiser::onReverseClicked);
@@ -215,11 +215,10 @@ void ui::MDVisualiser::onTimerTimeout()
 
 void ui::MDVisualiser::onSpeedDownClicked()
 {
-
-    double currentSpeed = mSpeedSpin->value();
-    if (currentSpeed > 0.1)
+    int currentSpeed = mSpeedSpin->value();
+    if (currentSpeed > 1)
     {
-        currentSpeed--;
+        --currentSpeed;
         mSpeedSpin->setValue(currentSpeed);
         mPlaybackSettings->change_speed(currentSpeed);
     }
@@ -227,19 +226,19 @@ void ui::MDVisualiser::onSpeedDownClicked()
 
 void ui::MDVisualiser::onSpeedUpClicked()
 {
-    double currentSpeed = mSpeedSpin->value();
+    int currentSpeed = mSpeedSpin->value();
     if (currentSpeed < 20)
     {
-        currentSpeed++;
+        ++currentSpeed;
         mSpeedSpin->setValue(currentSpeed);
         mPlaybackSettings->change_speed(currentSpeed);
     }
 }
 
 
-void ui::MDVisualiser::onSpeedChanged(double)
+void ui::MDVisualiser::onSpeedChanged(int)
 {
-    double newSpeed = mSpeedSpin->value();
+    int newSpeed = mSpeedSpin->value();
     if (newSpeed <= 0) { 
          mSpeedSpin->setValue(mPlaybackSettings->speed); 
          return;
