@@ -88,8 +88,8 @@ install(DIRECTORY ${VTK_RUNTIME_DIR}/ DESTINATION bin
 include(InstallRequiredSystemLibraries)  # copies MSVC runtime on Windows
 
 set(CPACK_PACKAGE_NAME            "${PROJECT_NAME}")
-set(CPACK_PACKAGE_VENDOR          "Your Group or Company Name")
-set(CPACK_PACKAGE_DESCRIPTION_SUMMARY "VTK/Qt visualiser for simulation runs")
+set(CPACK_PACKAGE_VENDOR          "STFC")
+set(CPACK_PACKAGE_DESCRIPTION_SUMMARY "VTK/Qt visualiser for simulation runs")  
 set(CPACK_PACKAGE_VERSION         "${PROJECT_VERSION}")
 
 # Choose the generators you want available

@@ -66,72 +66,74 @@ ui::MDVisualiser::MDVisualiser(
     main->addWidget(mVTKWidget, 1);
 
     // ---------- 2) Playback toolbar ----------
-    auto *bar = new QHBoxLayout;
-    bar->setSpacing(8);
-    bar->addStretch();                           
+    auto *bar = new QGridLayout;          
+    bar->setHorizontalSpacing(8);
+    bar->setVerticalSpacing(2);
+
+    // White space
+    bar->addItem(new QSpacerItem(0, 0,
+                QSizePolicy::Expanding, QSizePolicy::Minimum), 0, 0);
 
     // speed ↓
     auto down = new QToolButton(central);
     down->setIcon(style()->standardIcon(QStyle::SP_MediaSeekBackward));
-    bar->addWidget(down);
+    bar->addWidget(down, 0, 1, Qt::AlignVCenter);
 
-    auto speedLabel = new QLabel(tr("Speed"), central);
-    speedLabel->setAlignment(Qt::AlignVCenter | Qt::AlignRight);
-
-    QFont f = speedLabel->font();
-    f.setPointSizeF(f.pointSizeF() - 1);  
-    speedLabel->setFont(f);
-    speedLabel->setStyleSheet("color:#666;"); 
-
-
-    // speed value
+    // speed value (line-edit-style spin box)
     auto speedSpin = new QDoubleSpinBox(central);
     speedSpin->setRange(0.1, 20.0);
     speedSpin->setSingleStep(0.1);
     speedSpin->setValue(mPlaybackSettings->speed);
-    speedSpin->setSuffix("×");                     
+    speedSpin->setSuffix(u8"×");
     speedSpin->setFixedWidth(70);
     mSpeedSpin = speedSpin;
+    bar->addWidget(speedSpin, 0, 2, Qt::AlignVCenter);   
 
-    auto *speedColumn = new QVBoxLayout;
-    speedColumn->setContentsMargins(0,0,0,0);
-    speedColumn->setSpacing(2);             
-    speedColumn->addWidget(speedSpin, 0, Qt::AlignHCenter);
-    speedColumn->addWidget(speedLabel,0, Qt::AlignHCenter);
-
-    bar->addLayout(speedColumn);
+    // “Speed” label directly underneath
+    auto speedLabel = new QLabel(tr("Speed"), central);
+    speedLabel->setAlignment(Qt::AlignHCenter | Qt::AlignTop);
+    QFont f = speedLabel->font();
+    f.setPointSizeF(f.pointSizeF() - 1);
+    speedLabel->setFont(f);
+    speedLabel->setStyleSheet("color:#666;");
+    bar->addWidget(speedLabel, 1, 2, Qt::AlignHCenter); 
 
     // speed ↑
     auto up = new QToolButton(central);
     up->setIcon(style()->standardIcon(QStyle::SP_MediaSeekForward));
-    bar->addWidget(up);
+    bar->addWidget(up, 0, 3, Qt::AlignVCenter);
 
     // play / pause
     auto playPause = new QToolButton(central);
     playPause->setIcon(style()->standardIcon(QStyle::SP_MediaPlay));
-    playPause->setCheckable(true);                
-    bar->addWidget(playPause);
+    playPause->setCheckable(true);
+    bar->addWidget(playPause, 0, 4, Qt::AlignVCenter);
 
     // current step (read-only LCD)
     auto stepLcd = new QLCDNumber(4, central);
     stepLcd->display(mPlaybackSettings->current_timestep_index);
     stepLcd->setSegmentStyle(QLCDNumber::Flat);
     stepLcd->setMinimumWidth(30);
-    bar->addWidget(stepLcd);
     mStepLcd = stepLcd;
+    bar->addWidget(stepLcd, 0, 5, Qt::AlignVCenter);
 
     // reverse
     auto reverse = new QToolButton(central);
     reverse->setIcon(style()->standardIcon(QStyle::SP_MediaSkipBackward));
-    bar->addWidget(reverse);
+    bar->addWidget(reverse, 0, 6, Qt::AlignVCenter);
 
     // restart
     auto restart = new QToolButton(central);
     restart->setIcon(style()->standardIcon(QStyle::SP_BrowserReload));
-    bar->addWidget(restart);
+    bar->addWidget(restart, 0, 7, Qt::AlignVCenter);
 
-    bar->addStretch();                               
+    // White space
+    bar->addItem(new QSpacerItem(0, 0,
+                QSizePolicy::Expanding, QSizePolicy::Minimum), 0, 8);
+
+
     main->addLayout(bar);
+
 
     // ---------- 3) Secondary controls ----------
     auto *footer = new QHBoxLayout;
