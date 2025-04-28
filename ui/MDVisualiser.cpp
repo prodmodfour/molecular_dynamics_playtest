@@ -117,6 +117,15 @@ ui::MDVisualiser::MDVisualiser(
     mStepLcd = stepLcd;
     bar->addWidget(stepLcd, 0, 5, Qt::AlignVCenter);
 
+    // “Current timestep” label
+    auto stepLabel = new QLabel(tr("Current Timestep"), central);
+    stepLabel->setAlignment(Qt::AlignHCenter | Qt::AlignTop);
+    QFont lf = stepLabel->font();
+    lf.setPointSizeF(lf.pointSizeF() - 1);
+    stepLabel->setFont(lf);
+    stepLabel->setStyleSheet("color:#666;");
+    bar->addWidget(stepLabel, 1, 5, Qt::AlignHCenter);
+
     // reverse
     auto reverse = new QToolButton(central);
     reverse->setIcon(style()->standardIcon(QStyle::SP_MediaSkipBackward));
