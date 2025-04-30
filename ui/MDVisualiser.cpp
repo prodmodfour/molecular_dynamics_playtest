@@ -3,6 +3,9 @@
 #include <stdexcept>
 #include "data_loaders/BasicDataLoader.h"
 #include "atom_management_widgets/AtomManager.h"
+#include <vtkCamera.h>
+#include <vtkRendererCollection.h>
+#include <vtkRenderer.h>
 
 
 // Qt includes
@@ -171,7 +174,8 @@ ui::MDVisualiser::MDVisualiser(
 
     // ─── Camera ───────────────────────────────────────────────────────────────────
     // 1) Reset camera – stub for now
-    cameraMenu->addAction(tr("Reset Camera"));
+    QAction* resetCameraAct = cameraMenu->addAction(tr("Reset Camera"));
+    connect(resetCameraAct, &QAction::triggered, this, &MDVisualiser::onResetCameraClicked);
 
     // 2) Camera mode submenu with two mutually exclusive options
     QMenu* camModeMenu      = cameraMenu->addMenu(tr("Camera Mode"));
@@ -185,11 +189,15 @@ ui::MDVisualiser::MDVisualiser(
 
     camGroup->addAction(parallelAct);
     camGroup->addAction(perspectiveAct);
+    connect(parallelAct, &QAction::triggered, this, &MDVisualiser::onParallelCameraToggled);
+    connect(perspectiveAct, &QAction::triggered, this, &MDVisualiser::onPerspectiveCameraToggled);
 
 
     // ─── Atoms ────────────────────────────────────────────────────────────────────
     // 1) Manage atoms… – takes over the old push-button
     QAction* manageAtomsAct = atomsMenu->addAction(tr("Manage Atoms…"));
+    mAtomManager = new AtomManager(central);
+    mAtomManager->setParentMDVisualiser(this);
     connect(manageAtomsAct, &QAction::triggered,
             this,           &ui::MDVisualiser::onManageAtomsClicked);
 
@@ -233,6 +241,10 @@ void ui::MDVisualiser::onTimerTimeout()
     {
         if (current_timestep_data) {
              mVTKWidget->updateAtoms(current_timestep_data->atoms);
+             if ( mSharedData->index_of_latest_timestep_displayed < mPlaybackSettings->current_timestep_index)
+             {
+                mSharedData->index_of_latest_timestep_displayed = mPlaybackSettings->current_timestep_index;
+             }
 
              if (!FirstViewDone)
              {
@@ -332,5 +344,32 @@ void ui::MDVisualiser::updateStepDisplay()
 void ui::MDVisualiser::setSharedData(SharedData* shared_data)
 {
     mSharedData = shared_data;
+}
+
+void ui::MDVisualiser::onParallelCameraToggled(bool checked)
+{
+    auto ren = mVTKWidget->renderWindow()
+                        ->GetRenderers()
+                        ->GetFirstRenderer();
+    if (ren && ren->GetActiveCamera())
+    {
+        ren->GetActiveCamera()->SetParallelProjection(true);  
+    }
+}
+
+void ui::MDVisualiser::onPerspectiveCameraToggled(bool checked)
+{
+    auto ren = mVTKWidget->renderWindow()
+                        ->GetRenderers()
+                        ->GetFirstRenderer();
+    if (ren && ren->GetActiveCamera())
+    {
+        ren->GetActiveCamera()->SetParallelProjection(false);
+    }
+}
+
+void ui::MDVisualiser::onResetCameraClicked()
+{
+    mVTKWidget->resetCameraToSystem();
 }
 

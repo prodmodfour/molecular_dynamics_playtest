@@ -67,6 +67,11 @@ public slots:
     /* misc */
     void onManageAtomsClicked();
 
+    /* camera controls */
+    void onParallelCameraToggled(bool checked);
+    void onPerspectiveCameraToggled(bool checked);
+    void onResetCameraClicked();
+
     /* external setters */
     void setPlaybackSettings(ui::PlaybackSettings* playback_settings);
     void setDataLoader(ui::BasicDataLoader* data_loader);
