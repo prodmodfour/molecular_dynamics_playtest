@@ -6,6 +6,8 @@
 #include "../../atoms/Atom.h"
 #include <iostream>
 #include <vector>
+#include <mutex>
+#include "../../simulation/simulation_data_mutex.h"
 
 namespace ui
 {
@@ -14,7 +16,8 @@ BasicDataLoader::BasicDataLoader()
     : data(nullptr),
       playback_settings(nullptr),
       visualiser(nullptr),
-      simulation_data_set(false)
+      simulation_data_set(false),
+      shared_data(nullptr)
 {
 }
 
@@ -35,6 +38,11 @@ void BasicDataLoader::setData(std::vector<simulation::Timestep>* data)
 {
     this->data = data;
     simulation_data_set = true;
+}
+
+void BasicDataLoader::setSharedData(SharedData* shared_data)
+{
+    this->shared_data = shared_data;
 }
 
 void BasicDataLoader::setPlaybackSettings(ui::PlaybackSettings* playback_settings)
@@ -59,6 +67,17 @@ void BasicDataLoader::updateLastTimestepIndex()
 void BasicDataLoader::printDataSize()
 {
     std::cout << "Data size: " << data->size() << std::endl;
+}
+
+void BasicDataLoader::clearData()
+{
+    std::unique_lock<std::mutex> lock(simulation_data_mutex);
+    simulation::Timestep first_timestep = data->at(0);
+    first_timestep.atoms.clear();
+    data->at(0) = first_timestep;
+
+    std::unique_lock<std::mutex> lock2(shared_data->mutex);
+    shared_data->indexes_of_timesteps_edited_by_ui.push_back(0);
 }
 
 } // namespace ui

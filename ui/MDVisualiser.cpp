@@ -39,11 +39,13 @@
 ui::MDVisualiser::MDVisualiser(
                        QWidget* parent,
                        ui::BasicDataLoader* data_loader,
-                       ui::PlaybackSettings* playback_settings)
+                       ui::PlaybackSettings* playback_settings,
+                       SharedData* shared_data)
     : QMainWindow(parent)
     , mDataLoader(data_loader)
     , mPlaybackSettings(playback_settings)
     , current_timestep_data(new simulation::Timestep()) 
+    , mSharedData(shared_data)
 {
 
     setDataLoader(data_loader);
@@ -115,12 +117,13 @@ ui::MDVisualiser::MDVisualiser(
     bar->addWidget(playPause, 0, 4, Qt::AlignVCenter);
 
     // current step (read-only LCD)
-    auto stepLcd = new QLCDNumber(4, central);
-    stepLcd->display(mPlaybackSettings->current_timestep_index);
-    stepLcd->setSegmentStyle(QLCDNumber::Flat);
-    stepLcd->setMinimumWidth(30);
-    mStepLcd = stepLcd;
-    bar->addWidget(stepLcd, 0, 5, Qt::AlignVCenter);
+    // Commented out because it causes a crash with long simulations
+    // auto stepLcd = new QLCDNumber(4, central);
+    // stepLcd->display(mPlaybackSettings->current_timestep_index);
+    // stepLcd->setSegmentStyle(QLCDNumber::Flat);
+    // stepLcd->setMinimumWidth(30);
+    // mStepLcd = stepLcd;
+    // bar->addWidget(stepLcd, 0, 5, Qt::AlignVCenter);
 
     // “Current timestep” label
     auto stepLabel = new QLabel(tr("Current Timestep"), central);
@@ -200,8 +203,9 @@ ui::MDVisualiser::MDVisualiser(
     connect(manageAtomsAct, &QAction::triggered,
             this,           &ui::MDVisualiser::onManageAtomsClicked);
 
-    // 2) Clear atoms – placeholder
-    atomsMenu->addAction(tr("Clear Atoms"));   
+    // 2) Clear atoms
+    QAction* clearAtomsAct = atomsMenu->addAction(tr("Clear Atoms"));
+    connect(clearAtomsAct, &QAction::triggered, this, &MDVisualiser::onClearAtomsClicked);
 
     // ---------------  SIGNALS  ---------------
     connect(down,        &QToolButton::clicked, this, &MDVisualiser::onSpeedDownClicked);
@@ -229,12 +233,15 @@ ui::MDVisualiser::MDVisualiser(
 
 void ui::MDVisualiser::onTimerTimeout()
 {
+    // It seems that prints don't work here, possibly because of the way that Qt works.
     if (mPlaybackSettings->pause == false)
     {
         std::unique_lock<std::mutex> lock(mSharedData->mutex);
         mPlaybackSettings->update_last_timestep_index(mSharedData->index_of_latest_timestep_simulated);
         lock.unlock();
         mPlaybackSettings->next_timestep();
+
+ 
         updateStepDisplay();
     }
 
@@ -316,6 +323,7 @@ void ui::MDVisualiser::setDataLoader(ui::BasicDataLoader* data_loader)
     if (mDataLoader) {
         mDataLoader->setPlaybackSettings(mPlaybackSettings);
         mDataLoader->setVisualiser(this);
+        mDataLoader->setSharedData(mSharedData);
     } else {
          std::cerr << "Error: Attempted to set a null data loader." << std::endl;
     }
@@ -383,3 +391,9 @@ void ui::MDVisualiser::onSimulationSettingsClicked()
     mPlaybackSettings->reset();
 }
 
+void ui::MDVisualiser::onClearAtomsClicked()
+{
+    mPlaybackSettings->pause = true;
+    mPlaybackSettings->reset();
+    mDataLoader->clearData();
+}

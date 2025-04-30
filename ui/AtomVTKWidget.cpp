@@ -85,6 +85,7 @@ ui::AtomVTKWidget::AtomVTKWidget(QWidget* parent)
 
 void ui::AtomVTKWidget::updateAtoms(const std::vector<atoms::Atom>& atoms)
 {
+
     // Clear current points
     mPoints->Reset();
     mPoints->SetNumberOfPoints(atoms.size());

@@ -41,7 +41,8 @@ class MDVisualiser : public QMainWindow
 public:
     explicit MDVisualiser(QWidget*              parent            = nullptr,
                           ui::BasicDataLoader*  data_loader       = nullptr,
-                          ui::PlaybackSettings* playback_settings = nullptr);
+                          ui::PlaybackSettings* playback_settings = nullptr,
+                          SharedData*           shared_data       = nullptr);
 
     simulation::Timestep* current_timestep_data = nullptr;
 
@@ -68,6 +69,7 @@ public slots:
     /* misc */
     void onManageAtomsClicked();
     void onSimulationSettingsClicked();
+    void onClearAtomsClicked();
 
     /* camera controls */
     void onParallelCameraToggled(bool checked);
