@@ -70,6 +70,7 @@ public slots:
     void onManageAtomsClicked();
     void onSimulationSettingsClicked();
     void onClearAtomsClicked();
+    void onAddAtomClicked();
 
     /* camera controls */
     void onParallelCameraToggled(bool checked);

@@ -8,6 +8,9 @@
 #include <vtkRenderer.h>
 #include <mutex>
 #include "SimulationSettingsDialogue.h"
+#include "../atoms/Atom.h"
+#include <random>
+
 // Qt includes
 #include <QTimer>
 #include <QSlider>
@@ -207,6 +210,10 @@ ui::MDVisualiser::MDVisualiser(
     QAction* clearAtomsAct = atomsMenu->addAction(tr("Clear Atoms"));
     connect(clearAtomsAct, &QAction::triggered, this, &MDVisualiser::onClearAtomsClicked);
 
+    // 3) Add an atom
+    QAction* addAtomAct = atomsMenu->addAction(tr("Add Atom"));
+    connect(addAtomAct, &QAction::triggered, this, &MDVisualiser::onAddAtomClicked);
+
     // ---------------  SIGNALS  ---------------
     connect(down,        &QToolButton::clicked, this, &MDVisualiser::onSpeedDownClicked);
     connect(up,          &QToolButton::clicked, this, &MDVisualiser::onSpeedUpClicked);
@@ -396,4 +403,20 @@ void ui::MDVisualiser::onClearAtomsClicked()
     mPlaybackSettings->pause = true;
     mPlaybackSettings->reset();
     mDataLoader->clearData();
+}
+
+void ui::MDVisualiser::onAddAtomClicked()
+{
+    mPlaybackSettings->pause = true;
+    atoms::Atom atom("Cu", 63.546, 1.28);
+
+    std::random_device rd;
+    std::mt19937 gen(rd());
+    std::uniform_real_distribution<> dis(0.0, 5.0);
+    atom.x = dis(gen);
+    atom.y = dis(gen);
+    atom.z = dis(gen);
+
+    current_timestep_data->atoms.push_back(atom);
+    mSharedData->indexes_of_timesteps_edited_by_ui.push_back(mPlaybackSettings->current_timestep_index);
 }
