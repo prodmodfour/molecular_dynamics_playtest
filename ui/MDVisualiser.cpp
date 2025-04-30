@@ -211,6 +211,7 @@ ui::MDVisualiser::MDVisualiser(
     connect(clearAtomsAct, &QAction::triggered, this, &MDVisualiser::onClearAtomsClicked);
 
     // 3) Add an atom
+    // This exist for testing whether adding atoms works.
     QAction* addAtomAct = atomsMenu->addAction(tr("Add Atom"));
     connect(addAtomAct, &QAction::triggered, this, &MDVisualiser::onAddAtomClicked);
 
