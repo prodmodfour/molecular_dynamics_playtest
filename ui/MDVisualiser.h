@@ -27,6 +27,7 @@ class QActionGroup;
 namespace ui {
     class AtomManager;
     class BasicDataLoader;
+    class SimulationSettingsDialogue;   
 }
 
 namespace ui
@@ -66,6 +67,7 @@ public slots:
 
     /* misc */
     void onManageAtomsClicked();
+    void onSimulationSettingsClicked();
 
     /* camera controls */
     void onParallelCameraToggled(bool checked);

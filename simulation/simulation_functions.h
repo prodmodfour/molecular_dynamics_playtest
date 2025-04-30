@@ -57,6 +57,28 @@ simulation::Timestep simulate_timestep(simulation::Timestep timestep, atoms::Ato
     return simulation::Timestep(timestep.config, timestep.atoms, total_kinetic_energy, total_potential_energy, timestep.time);
 }
 
+simulation::Timestep simulate_timestep(simulation::Timestep timestep, atoms::AtomPairLibrary &atom_pair_library, SharedData* shared_data)
+{
+    double total_potential_energy = 0;
+    simulation::Config config = shared_data->config;
+    physics::evaluate_interactions(config, total_potential_energy, timestep.atoms, atom_pair_library); // Calculate forces
+
+    for (atoms::Atom &atom : timestep.atoms)
+    {
+        physics::calculate_motion(config.timestep_size, atom);
+    }
+
+    double total_kinetic_energy = 0;
+    for (atoms::Atom &atom : timestep.atoms)
+    {
+        total_kinetic_energy += atom.kinetic_energy;
+    }
+
+    timestep.time += config.timestep_size;
+
+    return simulation::Timestep(config, timestep.atoms, total_kinetic_energy, total_potential_energy, timestep.time);
+}
+
 
 void run_simulation(SharedData* shared_data, std::vector<simulation::Timestep>* simulation_data)
 {
@@ -81,11 +103,13 @@ void run_simulation(SharedData* shared_data, std::vector<simulation::Timestep>* 
         // I chose option 2 in order to save the time that it would otherwise take to clear the obsolete data
         // (For large buffer sizes and large systems, this could be considerable)
 
+
+
         std::unique_lock<std::mutex> lock(shared_data->mutex);
         if (shared_data->indexes_of_timesteps_edited_by_ui.size() > 0)
         {
-            std::cout << "Simulation has been edited by the UI since the last loop." << std::endl;
-            shared_data->changed_by_ui_since_last_loop = true;
+
+
 
             // It is possible that the user will have edited multiple timesteps since the last loop.
             // This section finds the smallest index of the timesteps that have been edited.
@@ -100,12 +124,7 @@ void run_simulation(SharedData* shared_data, std::vector<simulation::Timestep>* 
             }
 
             shared_data->index_of_latest_timestep_simulated = smallest_index_edited_by_ui;
-        }
-
-        if (shared_data->changed_by_ui_since_last_loop)
-        {
-            // To do: Apply changes since the last iteration of this loop
-            shared_data->changed_by_ui_since_last_loop = false;
+            shared_data->indexes_of_timesteps_edited_by_ui.clear();
         }
 
 
@@ -124,7 +143,7 @@ void run_simulation(SharedData* shared_data, std::vector<simulation::Timestep>* 
         std::unique_lock<std::mutex> lock2(simulation_data_mutex);
         simulation::Timestep input_timestep = simulation_data->at(index_of_latest_timestep_simulated);
 
-        simulation::Timestep output_timestep = simulation::simulate_timestep(input_timestep, shared_data->atom_pair_library);
+        simulation::Timestep output_timestep = simulation::simulate_timestep(input_timestep, shared_data->atom_pair_library, shared_data);
 
 
         if (index_of_timestep_to_simulate == simulation_data->size())

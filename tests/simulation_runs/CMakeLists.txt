@@ -44,6 +44,7 @@ add_executable(Test_Simulation_Runs
     ../../../atoms/Structure.cpp
     ../../../atoms/atom_generation_functions.cpp
     ../../../geometry/geometry_functions.cpp
+    ../../../ui/SimulationSettingsDialogue.cpp
 )
 
 # If you have headers in non-standard locations:

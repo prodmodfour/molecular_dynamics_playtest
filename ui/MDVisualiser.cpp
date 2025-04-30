@@ -6,8 +6,8 @@
 #include <vtkCamera.h>
 #include <vtkRendererCollection.h>
 #include <vtkRenderer.h>
-
-
+#include <mutex>
+#include "SimulationSettingsDialogue.h"
 // Qt includes
 #include <QTimer>
 #include <QSlider>
@@ -47,8 +47,6 @@ ui::MDVisualiser::MDVisualiser(
 {
 
     setDataLoader(data_loader);
-
-
 
     // QT timer that updates the animation
     mTimer = new QTimer(this);
@@ -164,7 +162,8 @@ ui::MDVisualiser::MDVisualiser(
 
     // ─── Simulation ───────────────────────────────────────────────────────────────
     // 1) “Simulation settings…” – placeholder for later
-    simulationMenu->addAction(tr("Simulation settings…"));
+    QAction* simulationSettingsAct = simulationMenu->addAction(tr("Simulation settings…"));
+    connect(simulationSettingsAct, &QAction::triggered, this, &MDVisualiser::onSimulationSettingsClicked);
 
     // 2) “Restart simulation” – replaces the old restart tool-button
     QAction* restartAct = simulationMenu->addAction(tr("Restart simulation"));
@@ -232,7 +231,9 @@ void ui::MDVisualiser::onTimerTimeout()
 {
     if (mPlaybackSettings->pause == false)
     {
-        mDataLoader->updateLastTimestepIndex();
+        std::unique_lock<std::mutex> lock(mSharedData->mutex);
+        mPlaybackSettings->update_last_timestep_index(mSharedData->index_of_latest_timestep_simulated);
+        lock.unlock();
         mPlaybackSettings->next_timestep();
         updateStepDisplay();
     }
@@ -371,5 +372,14 @@ void ui::MDVisualiser::onPerspectiveCameraToggled(bool checked)
 void ui::MDVisualiser::onResetCameraClicked()
 {
     mVTKWidget->resetCameraToSystem();
+}
+
+void ui::MDVisualiser::onSimulationSettingsClicked()
+{
+    mPlaybackSettings->pause = true;
+    // create a new simulation settings dialogue
+    auto* simulationSettingsDialogue = new SimulationSettingsDialogue(this, mSharedData);
+    simulationSettingsDialogue->exec();    
+    mPlaybackSettings->reset();
 }
 
