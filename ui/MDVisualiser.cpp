@@ -23,6 +23,10 @@
 #include <QSizePolicy>
 #include <QStyle>
 #include <QLabel>
+#include <QMenuBar>
+#include <QMenu>
+#include <QAction>
+#include <QActionGroup>
 
 
 #include <iostream>
@@ -131,10 +135,7 @@ ui::MDVisualiser::MDVisualiser(
     reverse->setIcon(style()->standardIcon(QStyle::SP_MediaSkipBackward));
     bar->addWidget(reverse, 0, 6, Qt::AlignVCenter);
 
-    // restart
-    auto restart = new QToolButton(central);
-    restart->setIcon(style()->standardIcon(QStyle::SP_BrowserReload));
-    bar->addWidget(restart, 0, 7, Qt::AlignVCenter);
+
 
     // White space
     bar->addItem(new QSpacerItem(0, 0,
@@ -144,21 +145,56 @@ ui::MDVisualiser::MDVisualiser(
     main->addLayout(bar);
 
 
-    // ---------- 3) Secondary controls ----------
-    auto *footer = new QHBoxLayout;
-    footer->addStretch();
-    mAtomManager = new AtomManager(central);
-    mAtomManager->setParentMDVisualiser(this);
-    auto manageAtoms = new QPushButton("Manage atoms…", central);
-    footer->addWidget(manageAtoms);
-    main->addLayout(footer);
+    // ---------- 3) Menu bar ----------
+    QMenuBar* mMenuBar       = menuBar();
+    QMenu* simulationMenu = mMenuBar->addMenu(tr("&Simulation"));
+    QMenu* cameraMenu     = mMenuBar->addMenu(tr("&Camera"));
+    QMenu* atomsMenu      = mMenuBar->addMenu(tr("&Atoms"));
 
 
     setCentralWidget(central);
     const int kInitW = 1000;            
     const int kInitH = 700;
     resize(kInitW, kInitH);             
-    mVTKWidget->setMinimumSize(800, 600);   
+    mVTKWidget->setMinimumSize(800, 600);
+
+
+    // ─── Simulation ───────────────────────────────────────────────────────────────
+    // 1) “Simulation settings…” – placeholder for later
+    simulationMenu->addAction(tr("Simulation settings…"));
+
+    // 2) “Restart simulation” – replaces the old restart tool-button
+    QAction* restartAct = simulationMenu->addAction(tr("Restart simulation"));
+    connect(restartAct, &QAction::triggered,
+            this,       &ui::MDVisualiser::onRestartClicked);
+
+
+    // ─── Camera ───────────────────────────────────────────────────────────────────
+    // 1) Reset camera – stub for now
+    cameraMenu->addAction(tr("Reset Camera"));
+
+    // 2) Camera mode submenu with two mutually exclusive options
+    QMenu* camModeMenu      = cameraMenu->addMenu(tr("Camera Mode"));
+    QActionGroup* camGroup  = new QActionGroup(this);   // exclusivity helper
+
+    QAction* parallelAct    = camModeMenu->addAction(tr("Parallel"));
+    parallelAct->setCheckable(true);
+    QAction* perspectiveAct = camModeMenu->addAction(tr("Perspective"));
+    perspectiveAct->setCheckable(true);
+    perspectiveAct->setChecked(true);                   // default view
+
+    camGroup->addAction(parallelAct);
+    camGroup->addAction(perspectiveAct);
+
+
+    // ─── Atoms ────────────────────────────────────────────────────────────────────
+    // 1) Manage atoms… – takes over the old push-button
+    QAction* manageAtomsAct = atomsMenu->addAction(tr("Manage Atoms…"));
+    connect(manageAtomsAct, &QAction::triggered,
+            this,           &ui::MDVisualiser::onManageAtomsClicked);
+
+    // 2) Clear atoms – placeholder
+    atomsMenu->addAction(tr("Clear Atoms"));   
 
     // ---------------  SIGNALS  ---------------
     connect(down,        &QToolButton::clicked, this, &MDVisualiser::onSpeedDownClicked);
@@ -167,8 +203,6 @@ ui::MDVisualiser::MDVisualiser(
                         this, &MDVisualiser::onSpeedChanged);
     connect(playPause,   &QToolButton::toggled, this, &MDVisualiser::onStartPauseToggled);
     connect(reverse,     &QToolButton::clicked, this, &MDVisualiser::onReverseClicked);
-    connect(restart,     &QToolButton::clicked, this, &MDVisualiser::onRestartClicked);
-    connect(manageAtoms, &QPushButton::clicked, this, &MDVisualiser::onManageAtomsClicked);
 
     // ---------------  STYLE  ---------------
     qApp->setStyleSheet(R"(

@@ -17,6 +17,10 @@ class QMenu;
 class QToolButton;
 class QSpinBox;
 class QLCDNumber;
+class QLabel;
+class QMenuBar;
+class QMenu;
+class QActionGroup;
 
 
 
@@ -87,6 +91,8 @@ private:
     bool               FirstViewDone   = false;
 
     QTimer*            mTimer          = nullptr;
+
+    QMenuBar*         mMenuBar        = nullptr;
 
     /* data & settings */
     ui::PlaybackSettings* mPlaybackSettings = nullptr;
