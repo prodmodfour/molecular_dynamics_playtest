@@ -22,7 +22,10 @@ class QMenuBar;
 class QMenu;
 class QActionGroup;
 
-
+namespace graphs
+{
+    class EnergyGraphWidget;
+}
 
 namespace ui {
     class AtomManager;
@@ -49,6 +52,7 @@ public:
     SharedData*           mSharedData       = nullptr;
     ui::PlaybackSettings* mPlaybackSettings = nullptr;
 
+    graphs::EnergyGraphWidget* mEnergyGraphWidget = nullptr;
 
     ui::AtomManager*      getAtomManager()      { return mAtomManager; }
     ui::PlaybackSettings* getPlaybackSettings() { return mPlaybackSettings; }

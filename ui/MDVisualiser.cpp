@@ -12,6 +12,7 @@
 #include <random>
 #include "atom_management_widgets/StructureListViewer.h"
 #include "atom_management_widgets/AtomVTKPreview.h"
+#include "../graphs/EnergyGraphWidget.h"
 
 
 // Qt includes

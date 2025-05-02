@@ -11,7 +11,7 @@ set(CMAKE_AUTOMOC ON)
 set(CMAKE_AUTOUIC ON)
 set(CMAKE_AUTORCC ON)
 
-
+find_package(Qt6 REQUIRED COMPONENTS Widgets Charts)
 
 # ------------------------------------------------------------------------------
 #  Find VTK via Config mode. 
@@ -47,6 +47,7 @@ add_executable(Test_Simulation_Runs
     ../../../ui/SimulationSettingsDialogue.cpp
     ../../../ui/atom_management_widgets/StructureListViewer.cpp
     ../../../ui/atom_management_widgets/NewStructureDialog.cpp
+    ../../../graphs/EnergyGraphWidget.cpp
 )
 
 # If you have headers in non-standard locations:
@@ -56,12 +57,14 @@ target_include_directories(Test_Simulation_Runs
         ${CMAKE_CURRENT_SOURCE_DIR}/../../simulation
         ${CMAKE_CURRENT_SOURCE_DIR}/../../ui
         ${CMAKE_CURRENT_SOURCE_DIR}/../../geometry
+        ${CMAKE_CURRENT_SOURCE_DIR}/../../graphs
 )
 
 
 target_link_libraries(Test_Simulation_Runs
     PRIVATE
         ${VTK_LIBRARIES}
+        Qt6::Charts
 )
 
 # --- Install the executable -----------------------------------------------
