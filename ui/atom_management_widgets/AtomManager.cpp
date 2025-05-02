@@ -7,7 +7,7 @@
 #include <QPushButton>
 #include "../../atoms/Atom.h"
 #include <vector>
-
+#include "NewStructureDialog.h"
 
 ui::AtomManager::AtomManager(QWidget* parent) : QMainWindow(parent)
 {
@@ -23,15 +23,19 @@ ui::AtomManager::AtomManager(QWidget* parent) : QMainWindow(parent)
     mStructureListViewer->setParentAtomManager(this);
     mainLayout->addWidget(mStructureListViewer);
 
+    mAddStructureButton = new QPushButton("Add Structure", central);
+    mainLayout->addWidget(mAddStructureButton);
+    connect(mAddStructureButton, &QPushButton::clicked, this, &ui::AtomManager::onAddStructureButtonClicked);
+
     mCloseButton = new QPushButton("Close", central);
     mainLayout->addWidget(mCloseButton);
+    connect(mCloseButton, &QPushButton::clicked, this, &ui::AtomManager::onCloseButtonClicked);
 
     setCentralWidget(central);
     const int kInitW = 500;            
     const int kInitH = 350;
     resize(kInitW, kInitH);             
     mAtomVTKPreview->setMinimumSize(800, 600);   
-    connect(mCloseButton, &QPushButton::clicked, this, &ui::AtomManager::onCloseButtonClicked);
 
 }
 
@@ -45,3 +49,20 @@ void ui::AtomManager::setParentMDVisualiser(MDVisualiser* visualiser)
 {
     parentMDVisualiser = visualiser;
 }
+
+void ui::AtomManager::onAddStructureButtonClicked()
+{
+    NewStructureDialog* newStructureDialog = new NewStructureDialog(this);
+    if (newStructureDialog->exec() == QDialog::Accepted)
+    {
+        ui::StructureParams params = newStructureDialog->m_params;
+        std::cout << "Structure params: " << params.structureName.toStdString() << std::endl;
+        std::cout << "Structure type: " << params.structureType.toStdString() << std::endl;
+        std::cout << "Cubes in X: " << params.cubesX << std::endl;
+        std::cout << "Cubes in Y: " << params.cubesY << std::endl;
+        std::cout << "Cubes in Z: " << params.cubesZ << std::endl;
+        std::cout << "Atom type: " << params.atomType.toStdString() << std::endl;
+        std::cout << "Atom spacing: " << params.atomSpacing << std::endl;
+    }
+}
+

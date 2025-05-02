@@ -36,12 +36,13 @@ public:
 
     AtomVTKPreview* mAtomVTKPreview;
 
-    
-
+    void onAddStructureButtonClicked();
 
 private:
     QPushButton* mCloseButton;
+    QPushButton* mAddStructureButton;
     MDVisualiser* parentMDVisualiser; 
+
 
 
 
