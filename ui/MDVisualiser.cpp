@@ -10,6 +10,7 @@
 #include "SimulationSettingsDialogue.h"
 #include "../atoms/Atom.h"
 #include <random>
+#include "atom_management_widgets/StructureListViewer.h"
 
 // Qt includes
 #include <QTimer>
@@ -241,26 +242,28 @@ void ui::MDVisualiser::onTimerTimeout()
         lock.unlock();
         mPlaybackSettings->next_timestep();
 
-        mAtomManager->mStructureListViewer->setStructureList(&(current_timestep_data->structure_list));
-        mAtomManager->mStructureListViewer->refreshList();
- 
+
         updateStepDisplay();
     }
 
     if (mDataLoader && mDataLoader->load()) 
     {
         if (current_timestep_data) {
-             mVTKWidget->updateAtoms(current_timestep_data->atoms);
-             if ( mSharedData->index_of_latest_timestep_displayed < mPlaybackSettings->current_timestep_index)
-             {
-                mSharedData->index_of_latest_timestep_displayed = mPlaybackSettings->current_timestep_index;
+            mVTKWidget->updateAtoms(current_timestep_data->atoms);
+            if ( mSharedData->index_of_latest_timestep_displayed < mPlaybackSettings->current_timestep_index)
+            {
+            mSharedData->index_of_latest_timestep_displayed = mPlaybackSettings->current_timestep_index;
+            }
+
+            if (!FirstViewDone)
+            {
+            mVTKWidget->resetCameraToSystem();
+            FirstViewDone = true;
              }
 
-             if (!FirstViewDone)
-             {
-                mVTKWidget->resetCameraToSystem();
-                FirstViewDone = true;
-             }
+            mAtomManager->mStructureListViewer->setStructureList(&(current_timestep_data->structure_list));
+            mAtomManager->mStructureListViewer->refreshList();
+ 
              
         } else {
             std::cerr << "Error: current_timestep_data is null in onTimerTimeout." << std::endl;
