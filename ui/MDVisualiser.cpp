@@ -13,6 +13,7 @@
 #include "atom_management_widgets/StructureListViewer.h"
 #include "atom_management_widgets/AtomVTKPreview.h"
 #include "../graphs/EnergyGraphWidget.h"
+#include "../graphs/KineticEnergyHistogramWidget.h"
 
 
 // Qt includes
@@ -64,7 +65,7 @@ ui::MDVisualiser::MDVisualiser(
     mTimer->start(42); 
 
 
-
+    mEnergyGraphWidget = new graphs::EnergyGraphWidget(this);
 
     // ---------------  UI SET-UP  ---------------
     // Central container
@@ -242,6 +243,7 @@ void ui::MDVisualiser::onTimerTimeout()
         mPlaybackSettings->update_last_timestep_index(mSharedData->index_of_latest_timestep_simulated);
         lock.unlock();
         mPlaybackSettings->next_timestep();
+        mEnergyGraphWidget->addDataPoint(mPlaybackSettings->current_timestep_index, current_timestep_data->kinetic_energy, current_timestep_data->potential_energy);
     }
 
     if (mDataLoader && mDataLoader->load()) 
@@ -432,10 +434,30 @@ void ui::MDVisualiser::onAddAtomClicked()
 
 void ui::MDVisualiser::onShowEnergyLineGraphClicked()
 {
-    // TODO: Implement
+
+    QWidget* energyGraphWindow = new QWidget();
+    QVBoxLayout* layout = new QVBoxLayout(energyGraphWindow);
+    layout->addWidget(mEnergyGraphWidget);
+    energyGraphWindow->setLayout(layout);
+    energyGraphWindow->show();
 }
 
 void ui::MDVisualiser::onShowKineticEnergyHistogramClicked()
 {
-    // TODO: Implement
+    mPlaybackSettings->pause = true;
+    KineticEnergyHistogramWidget* kineticEnergyHistogramWidget = new KineticEnergyHistogramWidget();
+    std::vector<double> kineticEnergies;
+
+    for (auto atom : current_timestep_data->atoms)
+    {
+        kineticEnergies.push_back(atom.kinetic_energy);
+    }
+
+    kineticEnergyHistogramWidget->setEnergies(kineticEnergies);
+
+    QWidget* kineticEnergyHistogramWindow = new QWidget();
+    QVBoxLayout* layout = new QVBoxLayout(kineticEnergyHistogramWindow);
+    layout->addWidget(kineticEnergyHistogramWidget);
+    kineticEnergyHistogramWindow->setLayout(layout);
+    kineticEnergyHistogramWindow->show();
 }

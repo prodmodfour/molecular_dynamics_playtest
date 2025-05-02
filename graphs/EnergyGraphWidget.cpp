@@ -16,13 +16,13 @@ namespace graphs
 {
     // Label the series
     m_kineticSeries->setName("Kinetic Energy");
-    m_potentialSeries->setName("Potential Energy");
-    m_totalSeries->setName("Total Energy");
+    // m_potentialSeries->setName("Potential Energy");
+    // m_totalSeries->setName("Total Energy");
 
     // Configure and assemble chart
     m_chart->addSeries(m_kineticSeries);
-    m_chart->addSeries(m_potentialSeries);
-    m_chart->addSeries(m_totalSeries);
+    // m_chart->addSeries(m_potentialSeries);
+    // m_chart->addSeries(m_totalSeries);
 
     m_axisX->setTitleText("Time (s)");
     m_axisX->setLabelFormat("%.1f");
@@ -35,11 +35,11 @@ namespace graphs
 
     // Attach axes to each series
     m_kineticSeries->attachAxis(m_axisX);
-    m_potentialSeries->attachAxis(m_axisX);
-    m_totalSeries->attachAxis(m_axisX);
+    // m_potentialSeries->attachAxis(m_axisX);
+    // m_totalSeries->attachAxis(m_axisX);
     m_kineticSeries->attachAxis(m_axisY);
-    m_potentialSeries->attachAxis(m_axisY);
-    m_totalSeries->attachAxis(m_axisY);
+    // m_potentialSeries->attachAxis(m_axisY);
+    // m_totalSeries->attachAxis(m_axisY);
 
     // Chart view inside the widget
     QChartView *chartView = new QChartView(m_chart);
