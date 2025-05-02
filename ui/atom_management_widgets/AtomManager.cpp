@@ -63,6 +63,9 @@ void ui::AtomManager::onAddStructureButtonClicked()
         std::cout << "Cubes in Z: " << params.cubesZ << std::endl;
         std::cout << "Atom type: " << params.atomType.toStdString() << std::endl;
         std::cout << "Atom spacing: " << params.atomSpacing << std::endl;
+        std::cout << "Offset X: " << params.offsetX << std::endl;
+        std::cout << "Offset Y: " << params.offsetY << std::endl;
+        std::cout << "Offset Z: " << params.offsetZ << std::endl;   
     }
 }
 

@@ -17,7 +17,7 @@ NewStructureDialog::NewStructureDialog(QWidget *parent)
 {
     setWindowTitle(tr("New Structure"));
     m_nameEdit = new QLineEdit(this);
-    m_nameEdit->setPlaceholderText(tr("New Structure"));
+    m_nameEdit->setText(tr("New Structure"));
 
     m_structureCB  = new QComboBox(this);
     m_structureCB->addItems({QStringLiteral("fcc"),
@@ -42,6 +42,25 @@ NewStructureDialog::NewStructureDialog(QWidget *parent)
     m_spacingDSB->setValue(3.61);
     m_spacingDSB->setSuffix(QStringLiteral(" Å"));
 
+    m_offsetXDSB = new QDoubleSpinBox(this);
+    m_offsetXDSB->setDecimals(3);
+    m_offsetXDSB->setRange(-1000.0, 1000.0);
+    m_offsetXDSB->setValue(0.0);
+    m_offsetXDSB->setSuffix(QStringLiteral(" Å"));
+
+    m_offsetYDSB = new QDoubleSpinBox(this);
+    m_offsetYDSB->setDecimals(3);
+    m_offsetYDSB->setRange(-1000.0, 1000.0);
+    m_offsetYDSB->setValue(0.0);
+    m_offsetYDSB->setSuffix(QStringLiteral(" Å"));
+
+    m_offsetZDSB = new QDoubleSpinBox(this);
+    m_offsetZDSB->setDecimals(3);
+    m_offsetZDSB->setRange(-1000.0, 1000.0);
+    m_offsetZDSB->setValue(0.0);
+    m_offsetZDSB->setSuffix(QStringLiteral(" Å"));
+    
+
     auto *form = new QFormLayout;
     form->addRow(tr("Structure name:"),  m_nameEdit);
     form->addRow(tr("Structure type:"),  m_structureCB);
@@ -50,6 +69,9 @@ NewStructureDialog::NewStructureDialog(QWidget *parent)
     form->addRow(tr("Cubes in Z:"),      m_cubesZSB);
     form->addRow(tr("Atom type:"),       m_atomTypeCB);
     form->addRow(tr("Atom spacing:"),    m_spacingDSB);
+    form->addRow(tr("Offset X:"),        m_offsetXDSB);
+    form->addRow(tr("Offset Y:"),        m_offsetYDSB);
+    form->addRow(tr("Offset Z:"),        m_offsetZDSB);
 
     auto *buttons = new QDialogButtonBox(QDialogButtonBox::Ok
                                          | QDialogButtonBox::Cancel,
@@ -72,6 +94,9 @@ void NewStructureDialog::onAccept()
     m_params.cubesZ        = m_cubesZSB->value();
     m_params.atomType      = m_atomTypeCB->currentText();
     m_params.atomSpacing   = m_spacingDSB->value();
+    m_params.offsetX       = m_offsetXDSB->value();
+    m_params.offsetY       = m_offsetYDSB->value();
+    m_params.offsetZ       = m_offsetZDSB->value();
 
     accept();
 }

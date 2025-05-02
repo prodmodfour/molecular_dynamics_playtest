@@ -18,6 +18,9 @@ namespace ui
         int     cubesZ  = 4;
         QString atomType;        // "Cu"
         double  atomSpacing = 3.61;   // Å
+        double  offsetX = 0.0;
+        double  offsetY = 0.0;
+        double  offsetZ = 0.0;
     };
 
     class NewStructureDialog : public QDialog
@@ -45,6 +48,9 @@ private:
     QSpinBox       *m_cubesZSB;
     QComboBox      *m_atomTypeCB;
     QDoubleSpinBox *m_spacingDSB;
+    QDoubleSpinBox *m_offsetXDSB;
+    QDoubleSpinBox *m_offsetYDSB;
+    QDoubleSpinBox *m_offsetZDSB;
 
 
 };
