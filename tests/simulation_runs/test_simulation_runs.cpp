@@ -39,7 +39,7 @@ int main(int argc, char *argv[])
     // Create the first timestep that kickstarts the simulation
     simulation::Timestep first_timestep(config, all_atoms, 0, 0, 0);
     // We start by creating an Fcc copper block
-    atoms::Structure copper_block(4, 4, 4, "Copper_Block");
+    atoms::Structure copper_block(8, 4, 4, "Copper_Block");
     first_timestep.add_structure(copper_block);
 
     double x_offset = 0.0;

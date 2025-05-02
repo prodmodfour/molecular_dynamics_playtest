@@ -32,9 +32,8 @@ void StructureListViewer::refreshList()
     }
 
 
-    std::vector<std::string> names = mStructureList->get_all_structure_names(); // Assuming this method exists and is const
+    std::vector<std::string> names = mStructureList->get_all_structure_names(); 
 
-    // Populate the QListWidget
     for (std::string& name : names) {
 
         new QListWidgetItem(QString::fromStdString(name), this); 
@@ -69,5 +68,7 @@ void StructureListViewer::setParentAtomManager(ui::AtomManager* atomManager)
 {
     parentAtomManager = atomManager;
 }
+
+
 
 } // namespace ui

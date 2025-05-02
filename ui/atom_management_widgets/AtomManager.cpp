@@ -8,6 +8,7 @@
 #include "../../atoms/Atom.h"
 #include <vector>
 #include "NewStructureDialog.h"
+#include "../../atoms/Structure.h"
 
 ui::AtomManager::AtomManager(QWidget* parent) : QMainWindow(parent)
 {
@@ -66,6 +67,26 @@ void ui::AtomManager::onAddStructureButtonClicked()
         std::cout << "Offset X: " << params.offsetX << std::endl;
         std::cout << "Offset Y: " << params.offsetY << std::endl;
         std::cout << "Offset Z: " << params.offsetZ << std::endl;   
+
+
+        if (params.structureType == "fcc" && params.atomType == "Cu")
+        {
+            atoms::Structure fcc_structure(params.cubesX, params.cubesY, params.cubesZ, params.structureName.toStdString());
+            for (auto atom : fcc_structure.atoms)
+            {
+                atom.x += params.offsetX;
+                atom.y += params.offsetY;
+                atom.z += params.offsetZ;
+            }
+
+            parentMDVisualiser->current_timestep_data->add_structure(fcc_structure);
+            parentMDVisualiser->mSharedData->indexes_of_timesteps_edited_by_ui.push_back(parentMDVisualiser->mPlaybackSettings->current_timestep_index);
+
+        }
+
+        mStructureListViewer->setStructureList(&(parentMDVisualiser->current_timestep_data->structure_list));
+
+
     }
 }
 

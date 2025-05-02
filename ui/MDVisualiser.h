@@ -46,6 +46,9 @@ public:
 
     simulation::Timestep* current_timestep_data = nullptr;
 
+    SharedData*           mSharedData       = nullptr;
+    ui::PlaybackSettings* mPlaybackSettings = nullptr;
+
 
     ui::AtomManager*      getAtomManager()      { return mAtomManager; }
     ui::PlaybackSettings* getPlaybackSettings() { return mPlaybackSettings; }
@@ -81,6 +84,8 @@ public slots:
     void setDataLoader(ui::BasicDataLoader* data_loader);
     void setSharedData(SharedData* shared_data);
 
+
+
 private:
     void updateStepDisplay();     
 
@@ -104,9 +109,9 @@ private:
     QMenuBar*         mMenuBar        = nullptr;
 
 
-    ui::PlaybackSettings* mPlaybackSettings = nullptr;
+    
     ui::BasicDataLoader*  mDataLoader       = nullptr;
-    SharedData*           mSharedData       = nullptr;
+    
 };
 
 } // namespace ui
