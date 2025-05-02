@@ -245,9 +245,13 @@ void ui::MDVisualiser::onTimerTimeout()
 
             if (!FirstViewDone)
             {
-            mVTKWidget->resetCameraToSystem();
-            FirstViewDone = true;
-             }
+                mVTKWidget->resetCameraToSystem();
+                mAtomManager->mAtomVTKPreview->setAtomData(&(current_timestep_data->atoms));
+                mAtomManager->mStructureListViewer->setStructureList(&(current_timestep_data->structure_list));
+                mAtomManager->mStructureListViewer->refreshList();
+
+                FirstViewDone = true;
+            }
 
 
 
