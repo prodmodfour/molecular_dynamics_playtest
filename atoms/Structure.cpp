@@ -14,7 +14,7 @@ namespace atoms {
     Structure::Structure(std::vector<Atom> atoms, std::string name, std::string structure_type, std::string atom_type)
     {
         this->atoms = atoms;
-        this->name = name + "_" + atom_type;
+        this->name = name;
         this->structure_type = structure_type;
         this->atom_type = atom_type;
         this->box = geometry::Box(atoms);
@@ -24,7 +24,7 @@ namespace atoms {
     Structure::Structure(int cubes_in_x, int cubes_in_y, int cubes_in_z, std::string name, std::string structure_type , Atom atom, 
             double atom_spacing)
     {
-        this->name = name + "_" + atom.type;
+        this->name = name;
         this->structure_type = structure_type;
         this->atom_type = atom.type;
         this->atoms = generate_atoms_in_fcc_pattern(cubes_in_x, cubes_in_y, cubes_in_z, atom_spacing, atom.type, atom.mass, atom.radius);

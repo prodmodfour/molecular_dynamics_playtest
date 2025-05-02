@@ -11,6 +11,8 @@
 #include "../atoms/Atom.h"
 #include <random>
 #include "atom_management_widgets/StructureListViewer.h"
+#include "atom_management_widgets/AtomVTKPreview.h"
+
 
 // Qt includes
 #include <QTimer>
@@ -241,9 +243,6 @@ void ui::MDVisualiser::onTimerTimeout()
         mPlaybackSettings->update_last_timestep_index(mSharedData->index_of_latest_timestep_simulated);
         lock.unlock();
         mPlaybackSettings->next_timestep();
-
-
-        updateStepDisplay();
     }
 
     if (mDataLoader && mDataLoader->load()) 
@@ -261,9 +260,15 @@ void ui::MDVisualiser::onTimerTimeout()
             FirstViewDone = true;
              }
 
-            mAtomManager->mStructureListViewer->setStructureList(&(current_timestep_data->structure_list));
-            mAtomManager->mStructureListViewer->refreshList();
-            mAtomManager->mAtomVTKPreview->setAtomData(&(current_timestep_data->atoms));
+
+
+            if (mPlaybackSettings->pause == false)
+            {
+                mAtomManager->mAtomVTKPreview->setAtomData(&(current_timestep_data->atoms));
+                mAtomManager->mStructureListViewer->setStructureList(&(current_timestep_data->structure_list));
+                mAtomManager->mStructureListViewer->refreshList();
+
+            }
  
              
         } else {

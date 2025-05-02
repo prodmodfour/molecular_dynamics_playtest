@@ -30,7 +30,7 @@ ui::AtomManager::AtomManager(QWidget* parent) : QMainWindow(parent)
     const int kInitW = 500;            
     const int kInitH = 350;
     resize(kInitW, kInitH);             
-    mAtomVTKPreview->setMinimumSize(400, 300);   
+    mAtomVTKPreview->setMinimumSize(800, 600);   
     connect(mCloseButton, &QPushButton::clicked, this, &ui::AtomManager::onCloseButtonClicked);
 
 }

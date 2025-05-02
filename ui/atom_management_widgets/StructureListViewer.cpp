@@ -2,6 +2,9 @@
 #include "../../simulation/StructureList.h"
 #include <vector>
 #include <string>
+#include "AtomManager.h"
+#include "AtomVTKPreview.h"
+#include <iostream>
 
 namespace ui {
 
@@ -44,13 +47,21 @@ void StructureListViewer::onSelectionChanged()
     QList<QListWidgetItem*> selectedItems = this->selectedItems();
     if (!selectedItems.isEmpty())
     {
-
+        std::cout << "Structure Selection changed" << std::endl;
         std::string selectedName = selectedItems.first()->text().toStdString(); 
+        std::cout << "Selected Structure: " << selectedName << std::endl;
 
         parentAtomManager->mAtomVTKPreview->structures_to_display.clear();
         parentAtomManager->mAtomVTKPreview->structures_to_display.push_back(selectedName);
         parentAtomManager->mAtomVTKPreview->updateAtoms();
     }
+    else
+    {
+        std::cout << "No Structure Selected" << std::endl;
+        parentAtomManager->mAtomVTKPreview->structures_to_display.clear();
+        parentAtomManager->mAtomVTKPreview->updateAtoms();
+    }
+}
         
 
 

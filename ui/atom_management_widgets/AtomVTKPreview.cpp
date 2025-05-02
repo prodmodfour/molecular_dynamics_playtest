@@ -138,6 +138,7 @@ void AtomVTKPreview::updateAtoms()
     // Adjust camera to fit the new data
     mRenderer->ResetCameraClippingRange();
     mRenderer->ResetCamera();
+    renderImage();
 }
 
 void AtomVTKPreview::renderImage() 
