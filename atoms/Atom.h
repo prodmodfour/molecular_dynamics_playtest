@@ -17,7 +17,7 @@ class Atom
         double radius;
         double kinetic_energy;
         std::string type;
-        std::string name; // This is for potential use for labelling atoms in the UI
+        std::string name; 
         std::string parent_structure;
 
         // Default Constructor

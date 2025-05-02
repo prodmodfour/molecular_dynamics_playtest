@@ -19,15 +19,9 @@ ui::AtomManager::AtomManager(QWidget* parent) : QMainWindow(parent)
     mAtomVTKPreview->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
     mainLayout->addWidget(mAtomVTKPreview);
 
-    new_atoms = std::vector<atoms::Atom>();
-    mAtomVTKPreview->setAtomData(&new_atoms);
-
     mStructureListViewer = new StructureListViewer(central);
+    mStructureListViewer->setParentAtomManager(this);
     mainLayout->addWidget(mStructureListViewer);
-
-
-
-
 
     mCloseButton = new QPushButton("Close", central);
     mainLayout->addWidget(mCloseButton);

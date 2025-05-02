@@ -42,15 +42,21 @@ void StructureListViewer::refreshList()
 void StructureListViewer::onSelectionChanged()
 {
     QList<QListWidgetItem*> selectedItems = this->selectedItems();
-    if (!selectedItems.isEmpty()) {
-        // Get the text (structure name) of the first selected item
+    if (!selectedItems.isEmpty())
+    {
+
         std::string selectedName = selectedItems.first()->text().toStdString(); 
-        // Emit the signal with the selected structure's name
-        emit structureSelected(selectedName); 
-    } else {
-         // Optionally emit an empty string or a specific signal if nothing is selected
-         // emit structureSelected(""); 
+
+        parentAtomManager->mAtomVTKPreview->structures_to_display.clear();
+        parentAtomManager->mAtomVTKPreview->structures_to_display.push_back(selectedName);
+        parentAtomManager->mAtomVTKPreview->updateAtoms();
     }
+        
+
+
+void StructureListViewer::setParentAtomManager(ui::AtomManager* atomManager)
+{
+    parentAtomManager = atomManager;
 }
 
 } // namespace ui

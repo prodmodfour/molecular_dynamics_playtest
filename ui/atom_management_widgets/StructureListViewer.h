@@ -9,6 +9,9 @@ namespace simulation {
     class StructureList;
 }
 
+namespace ui {
+    class AtomManager;
+}
 
 namespace ui {
 
@@ -21,7 +24,8 @@ public:
 
 
     void setStructureList(simulation::StructureList* structureList); 
-    void refreshList(); 
+    void refreshList();
+    void setParentAtomManager(ui::AtomManager* atomManager);
 
 signals:
     // Emits the name of the selected structure
@@ -31,7 +35,8 @@ private slots:
     void onSelectionChanged();
 
 private:
-    simulation::StructureList* mStructureList = nullptr; \
+    simulation::StructureList* mStructureList = nullptr; 
+    ui::AtomManager* parentAtomManager = nullptr;
 };
 
 

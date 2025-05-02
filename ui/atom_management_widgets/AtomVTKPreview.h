@@ -3,6 +3,7 @@
 #include <QVTKOpenGLNativeWidget.h>
 #include <vtkSmartPointer.h>
 #include <vector>
+#include <string>
 
 #include "../../atoms/Atom.h" 
 
@@ -26,6 +27,7 @@ public:
     virtual ~AtomVTKPreview() = default;
 
     std::vector<atoms::Atom>* atoms; 
+    std::vector<std::string> structures_to_display;
     bool atom_data_is_set;
 
     void setAtomData(std::vector<atoms::Atom>* atoms); 

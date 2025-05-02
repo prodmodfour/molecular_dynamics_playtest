@@ -26,6 +26,7 @@ AtomVTKPreview::AtomVTKPreview(QWidget* parent)
 {
     setupVTKPipeline();
     atom_data_is_set = false;
+    structures_to_display = std::vector<std::string>();
 }
 
 void AtomVTKPreview::setupVTKPipeline() 
@@ -113,6 +114,10 @@ void AtomVTKPreview::updateAtoms()
 
     vtkIdType pointId = 0;
     for (auto& atom : *atoms) {
+        if (std::find(structures_to_display.begin(), structures_to_display.end(), atom.parent_structure) == structures_to_display.end()) {
+            continue;
+        }
+
         mPoints->InsertNextPoint(atom.x, atom.y, atom.z);
 
         // Get color based on kinetic energy relative to the max KE

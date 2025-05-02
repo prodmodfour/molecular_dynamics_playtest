@@ -3,6 +3,7 @@
 #include <QMainWindow>
 #include "../../atoms/Atom.h"
 #include <vector>
+#include <string>
 
 class QPushButton;
 
@@ -33,6 +34,8 @@ public:
     std::vector<atoms::Atom> new_atoms;
     ui::StructureListViewer* mStructureListViewer;
 
+    AtomVTKPreview* mAtomVTKPreview;
+
     
 
 
@@ -40,7 +43,7 @@ private:
     QPushButton* mCloseButton;
     MDVisualiser* parentMDVisualiser; 
 
-    AtomVTKPreview* mAtomVTKPreview;
+
 
 
 };

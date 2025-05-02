@@ -263,6 +263,7 @@ void ui::MDVisualiser::onTimerTimeout()
 
             mAtomManager->mStructureListViewer->setStructureList(&(current_timestep_data->structure_list));
             mAtomManager->mStructureListViewer->refreshList();
+            mAtomManager->mAtomVTKPreview->setAtomData(&(current_timestep_data->atoms));
  
              
         } else {
