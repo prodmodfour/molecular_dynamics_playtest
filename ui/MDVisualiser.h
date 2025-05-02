@@ -53,31 +53,30 @@ public:
 public slots:
     ui::AtomVTKWidget* getVTKWidget() { return mVTKWidget; }
 
-    /* core animation */
+
     void onTimerTimeout();
 
-    /* speed controls */
+
     void onSpeedChanged(int value);        
     void onSpeedUpClicked();
     void onSpeedDownClicked();
 
-    /* playback controls */
-    void onStartPauseToggled(bool playing);     // Play ⇄ Pause
+ 
+    void onStartPauseToggled(bool playing);     
     void onReverseClicked();
     void onRestartClicked();
 
-    /* misc */
+ 
     void onManageAtomsClicked();
     void onSimulationSettingsClicked();
     void onClearAtomsClicked();
     void onAddAtomClicked();
 
-    /* camera controls */
     void onParallelCameraToggled(bool checked);
     void onPerspectiveCameraToggled(bool checked);
     void onResetCameraClicked();
 
-    /* external setters */
+ 
     void setPlaybackSettings(ui::PlaybackSettings* playback_settings);
     void setDataLoader(ui::BasicDataLoader* data_loader);
     void setSharedData(SharedData* shared_data);
@@ -85,7 +84,7 @@ public slots:
 private:
     void updateStepDisplay();     
 
-    /* widgets */
+
     ui::AtomVTKWidget* mVTKWidget      = nullptr;
     ui::AtomManager*   mAtomManager    = nullptr;
 
@@ -104,7 +103,7 @@ private:
 
     QMenuBar*         mMenuBar        = nullptr;
 
-    /* data & settings */
+
     ui::PlaybackSettings* mPlaybackSettings = nullptr;
     ui::BasicDataLoader*  mDataLoader       = nullptr;
     SharedData*           mSharedData       = nullptr;

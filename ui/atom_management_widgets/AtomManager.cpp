@@ -4,6 +4,8 @@
 
 #include <QVBoxLayout>
 #include <QPushButton>
+#include "../../atoms/Atom.h"
+#include <vector>
 
 
 ui::AtomManager::AtomManager(QWidget* parent) : QMainWindow(parent)
@@ -11,9 +13,13 @@ ui::AtomManager::AtomManager(QWidget* parent) : QMainWindow(parent)
     QWidget* central = new QWidget(this);
     QVBoxLayout* mainLayout = new QVBoxLayout(central);
 
+
     mAtomVTKPreview = new AtomVTKPreview(central);
     mAtomVTKPreview->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
     mainLayout->addWidget(mAtomVTKPreview);
+
+    new_atoms = std::vector<Atom>();
+    mAtomVTKPreview->setAtomData(new_atoms);
 
 
     mCloseButton = new QPushButton("Close", central);

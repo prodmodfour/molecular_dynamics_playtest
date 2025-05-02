@@ -1,10 +1,12 @@
 #pragma once
 
 #include <QMainWindow>
+#include "../../atoms/Atom.h"
+#include <vector>
 
 class QPushButton;
 
-// Forward declaration of MDVisualiser to break the circular dependency
+
 namespace ui {
     class MDVisualiser;
     class AtomVTKPreview;
@@ -21,6 +23,10 @@ public:
     AtomManager(QWidget* parent = nullptr);
     void onCloseButtonClicked();
     void setParentMDVisualiser(MDVisualiser* visualiser);
+
+    std::vector<Atom> new_atoms;
+
+
     
 
 
