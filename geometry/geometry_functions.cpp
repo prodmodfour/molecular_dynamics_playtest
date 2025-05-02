@@ -36,7 +36,6 @@ for (auto &atom : atoms)
 std::vector<Vector> corners;
 corners.reserve(8);
 
-// The typical arrangement is:
 corners.emplace_back(min_x, min_y, min_z); // #0
 corners.emplace_back(min_x, min_y, max_z); // #1
 corners.emplace_back(min_x, max_y, min_z); // #2
@@ -45,7 +44,8 @@ corners.emplace_back(max_x, min_y, min_z); // #4
 corners.emplace_back(max_x, min_y, max_z); // #5
 corners.emplace_back(max_x, max_y, min_z); // #6
 corners.emplace_back(max_x, max_y, max_z); // #7
-    return corners;
+
+return corners;
 }
 
 

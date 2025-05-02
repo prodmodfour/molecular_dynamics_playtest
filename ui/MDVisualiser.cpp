@@ -170,13 +170,13 @@ ui::MDVisualiser::MDVisualiser(
     connect(resetCameraAct, &QAction::triggered, this, &MDVisualiser::onResetCameraClicked);
 
     QMenu* camModeMenu      = cameraMenu->addMenu(tr("Camera Mode"));
-    QActionGroup* camGroup  = new QActionGroup(this);   // exclusivity helper
+    QActionGroup* camGroup  = new QActionGroup(this);   
 
     QAction* parallelAct    = camModeMenu->addAction(tr("Parallel"));
     parallelAct->setCheckable(true);
     QAction* perspectiveAct = camModeMenu->addAction(tr("Perspective"));
     perspectiveAct->setCheckable(true);
-    perspectiveAct->setChecked(true);                   // default view
+    perspectiveAct->setChecked(true);              
 
     camGroup->addAction(parallelAct);
     camGroup->addAction(perspectiveAct);

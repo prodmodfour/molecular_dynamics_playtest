@@ -31,53 +31,44 @@ AtomVTKPreview::AtomVTKPreview(QWidget* parent)
 
 void AtomVTKPreview::setupVTKPipeline() 
 {
-    // Create a VTK render window and associate it with this widget
     mRenderWindow = vtkSmartPointer<vtkGenericOpenGLRenderWindow>::New();
     this->setRenderWindow(mRenderWindow);
 
-    // Create a renderer and add it to the render window
     mRenderer = vtkSmartPointer<vtkRenderer>::New();
     mRenderWindow->AddRenderer(mRenderer);
 
-    // Create points and poly data for atoms
     mPoints = vtkSmartPointer<vtkPoints>::New();
     mPolyData = vtkSmartPointer<vtkPolyData>::New();
     mPolyData->SetPoints(mPoints);
 
-    // Initialise color array
     mColors = vtkSmartPointer<vtkUnsignedCharArray>::New();
     mColors->SetNumberOfComponents(4); // RGBA
     mColors->SetName("Colors");
     mPolyData->GetPointData()->AddArray(mColors);
 
-    // Create a sphere source to use as a glyph
     vtkSmartPointer<vtkSphereSource> sphereSource = vtkSmartPointer<vtkSphereSource>::New();
-    // Use a default radius, can be adjusted later if needed
-    // We use the radius of copper as our default
+
     sphereSource->SetRadius(1.28); 
 
-    // Create glyph mapper
+
     mGlyphMapper = vtkSmartPointer<vtkGlyph3DMapper>::New();
     mGlyphMapper->SetInputData(mPolyData);
     mGlyphMapper->SetSourceConnection(sphereSource->GetOutputPort());
     mGlyphMapper->SetScaleModeToScaleByMagnitude(); 
     mGlyphMapper->SetScaleFactor(1.0); 
 
-    // Configure color handling
     mGlyphMapper->ScalarVisibilityOn();
     mGlyphMapper->SetScalarModeToUsePointFieldData();
     mGlyphMapper->SelectColorArray("Colors");
     mGlyphMapper->SetColorModeToDirectScalars(); 
     mGlyphMapper->SetUseLookupTableScalarRange(false);
 
-    // Create an actor and set its mapper
+
     mGlyphActor = vtkSmartPointer<vtkActor>::New();
     mGlyphActor->SetMapper(mGlyphMapper);
 
-    // Add the actor to the renderer
     mRenderer->AddActor(mGlyphActor);
 
-    // Set a background color
     vtkSmartPointer<vtkNamedColors> colors = vtkSmartPointer<vtkNamedColors>::New();
     mRenderer->SetBackground(colors->GetColor3d("Black").GetData());
 
@@ -103,7 +94,7 @@ void AtomVTKPreview::setAtomData(std::vector<atoms::Atom>* atoms)
 void AtomVTKPreview::updateAtoms()
 {
     if (!atoms || atoms->empty()) {
-        return; // Nothing to update
+        return; 
     }
 
     mPoints->Reset();
@@ -120,22 +111,17 @@ void AtomVTKPreview::updateAtoms()
 
         mPoints->InsertNextPoint(atom.x, atom.y, atom.z);
 
-        // Get color based on kinetic energy relative to the max KE
         Color atomColor = determine_colour_based_on_kinetic_energy(atom.kinetic_energy, 0.01); 
         unsigned char color[4] = {atomColor.r, atomColor.g, atomColor.b, atomColor.a};
         mColors->SetTypedTuple(pointId++, color);
     }
 
-    // Notify VTK that the data has changed
     mPoints->Modified();
     mColors->Modified();
     mPolyData->Modified();
 
-
-    // Update the glyph mapper input
     mGlyphMapper->SetInputData(mPolyData); 
 
-    // Adjust camera to fit the new data
     mRenderer->ResetCameraClippingRange();
     mRenderer->ResetCamera();
     renderImage();

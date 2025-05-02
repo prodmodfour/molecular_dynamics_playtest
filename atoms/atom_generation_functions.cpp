@@ -6,7 +6,6 @@ std::vector<atoms::Atom> generate_atoms_in_fcc_pattern(int cubes_in_x, int cubes
 {
     std::vector<atoms::Atom> crystal;
 
-    // FCC basis vectors
     std::vector<std::vector<double>> basis = {
         {0.0, 0.0, 0.0},
         {0.0, 0.5, 0.5},
@@ -14,7 +13,6 @@ std::vector<atoms::Atom> generate_atoms_in_fcc_pattern(int cubes_in_x, int cubes
         {0.5, 0.5, 0.0}
     };
 
-    // Generate crystal structure
     for (int ix = 0; ix < cubes_in_x; ix++) {
         for (int iy = 0; iy < cubes_in_y; iy++) {
             for (int iz = 0; iz < cubes_in_z; iz++) {
@@ -30,7 +28,6 @@ std::vector<atoms::Atom> generate_atoms_in_fcc_pattern(int cubes_in_x, int cubes
             }
         }
     }
-
 
     return crystal;
 }

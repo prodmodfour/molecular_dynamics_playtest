@@ -12,12 +12,12 @@ namespace ui
     struct StructureParams
     {
         QString structureName;
-        QString structureType;   // "fcc" | "bcc"
+        QString structureType;
         int     cubesX  = 4;
         int     cubesY  = 4;
         int     cubesZ  = 4;
-        QString atomType;        // "Cu"
-        double  atomSpacing = 3.61;   // Å
+        QString atomType;     
+        double  atomSpacing = 3.61;   
         double  offsetX = 0.0;
         double  offsetY = 0.0;
         double  offsetZ = 0.0;

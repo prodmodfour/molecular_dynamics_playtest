@@ -20,7 +20,6 @@ class Atom
         std::string name; 
         std::string parent_structure;
 
-        // Default Constructor
         Atom(std::string type, double mass, double radius)
         {
             x = 0;

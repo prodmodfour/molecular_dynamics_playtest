@@ -45,6 +45,7 @@ class Plane
 
             
         };
+        
         geometry::Vector normal;
         std::vector<geometry::Vector> corners;
         geometry::Vector center;

@@ -48,7 +48,6 @@ class Timestep
             this->structures[structure.name] = structure;
             this->structure_list.add_structure(structure);
 
-            // Add the atoms to the atoms vector
             for (atoms::Atom atom : structure.atoms)
             {
                 this->atoms.push_back(atom);

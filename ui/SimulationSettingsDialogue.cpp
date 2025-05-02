@@ -24,7 +24,7 @@ SimulationSettingsDialogue::SimulationSettingsDialogue(QWidget* parent, SharedDa
     auto* rCutoffSpin = new QDoubleSpinBox(this);
     rCutoffSpin->setObjectName("rCutoffSpin");
     rCutoffSpin->setDecimals(6);
-    rCutoffSpin->setSuffix(" Å");               // Angstroms
+    rCutoffSpin->setSuffix(" Å");     
     rCutoffSpin->setMinimum(0.0);
     rCutoffSpin->setMaximum(std::numeric_limits<double>::max());
     rCutoffSpin->setValue(shared_data->config.r_cutoff);
@@ -32,7 +32,7 @@ SimulationSettingsDialogue::SimulationSettingsDialogue(QWidget* parent, SharedDa
     auto* timestepSpin = new QDoubleSpinBox(this);
     timestepSpin->setObjectName("timestepSpin");
     timestepSpin->setDecimals(6);
-    timestepSpin->setSuffix(" ps");             // Picoseconds
+    timestepSpin->setSuffix(" ps");     
     timestepSpin->setMinimum(0.0);
     timestepSpin->setMaximum(std::numeric_limits<double>::max());
     timestepSpin->setValue(shared_data->config.timestep_size);

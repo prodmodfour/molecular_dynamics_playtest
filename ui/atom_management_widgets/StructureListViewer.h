@@ -2,9 +2,9 @@
 
 #include <QListWidget>
 #include <QListWidgetItem>
-#include <string> // Added for std::string
+#include <string> 
 
-// Forward declaration
+
 namespace simulation {
     class StructureList;
 }
@@ -28,7 +28,6 @@ public:
     void setParentAtomManager(ui::AtomManager* atomManager);
 
 signals:
-    // Emits the name of the selected structure
     void structureSelected(const std::string& structureName); 
 
 private slots:

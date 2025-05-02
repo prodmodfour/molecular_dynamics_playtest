@@ -57,11 +57,8 @@ class PlaybackSettings
             assert(speed > 0);
             assert(last >= 0);
 
-            // Bring any stray value back into the legal range up-front.
             index = std::clamp(index, 0, last);
 
-            // No movement possible if the range is degenerate or we are already at an edge
-            // and trying to move past it.
             if (last == 0 ||
                 (index == last && direction > 0) ||
                 (index == 0    && direction < 0))
@@ -69,7 +66,6 @@ class PlaybackSettings
                 return;
             }
 
-            // Move, then clamp once more to make sure we never leave the range.
             index = std::clamp(index + direction * speed, 0, last);
         }
 

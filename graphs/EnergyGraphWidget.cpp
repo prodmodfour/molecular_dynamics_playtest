@@ -14,12 +14,11 @@ namespace graphs
       m_timer(new QTimer(this)),
       m_currentTime(0.0)
 {
-    // Label the series
+
     m_kineticSeries->setName("Kinetic Energy");
     // m_potentialSeries->setName("Potential Energy");
     // m_totalSeries->setName("Total Energy");
 
-    // Configure and assemble chart
     m_chart->addSeries(m_kineticSeries);
     // m_chart->addSeries(m_potentialSeries);
     // m_chart->addSeries(m_totalSeries);
@@ -33,7 +32,6 @@ namespace graphs
     m_axisY->setRange(0.0, 150.0);
     m_chart->addAxis(m_axisY, Qt::AlignLeft);
 
-    // Attach axes to each series
     m_kineticSeries->attachAxis(m_axisX);
     // m_potentialSeries->attachAxis(m_axisX);
     // m_totalSeries->attachAxis(m_axisX);
@@ -41,7 +39,6 @@ namespace graphs
     // m_potentialSeries->attachAxis(m_axisY);
     // m_totalSeries->attachAxis(m_axisY);
 
-    // Chart view inside the widget
     QChartView *chartView = new QChartView(m_chart);
     chartView->setRenderHint(QPainter::Antialiasing);
 
@@ -54,18 +51,15 @@ namespace graphs
 
 void EnergyGraphWidget::addDataPoint(qreal time, qreal kinetic, qreal potential)
 {
-    // Append points to each series
     m_kineticSeries->append(time, kinetic);
     m_potentialSeries->append(time, potential);
     m_totalSeries->append(time, kinetic + potential);
 
-    // Scroll X‑axis once we move past its current upper bound
     if (time > m_axisX->max())
     {
         m_axisX->setRange(m_axisX->min() + 1.0, time + 1.0);
     }
 
-    // Auto‑adjust Y‑axis if energies exceed the visible range
     qreal maxVisible = qMax(qMax(kinetic, potential), kinetic + potential);
     if (maxVisible > m_axisY->max())
     {

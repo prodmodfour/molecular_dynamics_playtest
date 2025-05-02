@@ -22,8 +22,7 @@ protected:
 
 private:
     void recomputeBins();
-
-    // -----------------------------------------------------------------------
+    
     std::vector<double> m_data;
     int                 m_binCount;
     QVector<int>        m_binFrequencies;

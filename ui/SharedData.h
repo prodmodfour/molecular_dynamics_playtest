@@ -40,12 +40,13 @@ class SharedData
 
 };
 
+// Unused
 class LocalUnsavedChangesToSharedData : public SharedData
 {
     public:
         LocalUnsavedChangesToSharedData();
         
-        // bools to signify whether a variable in the parent class has been changed since the last loop.
+
         bool config_changed_since_last_loop;
         bool time_changed_since_last_loop;
         bool atom_pair_library_changed_since_last_loop;

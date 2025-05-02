@@ -8,7 +8,6 @@ namespace atoms {
 
     Structure::Structure()
     {
-        // Nothing
     }
 
     Structure::Structure(std::vector<Atom> atoms, std::string name, std::string structure_type, std::string atom_type)

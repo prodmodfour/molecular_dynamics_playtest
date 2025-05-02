@@ -7,7 +7,6 @@
 
 #include "../../atoms/Atom.h" 
 
-// Forward declarations for VTK classes
 class vtkGenericOpenGLRenderWindow;
 class vtkRenderer;
 class vtkPoints;

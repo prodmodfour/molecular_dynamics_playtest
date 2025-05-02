@@ -49,12 +49,10 @@ void KineticEnergyHistogramWidget::paintEvent(QPaintEvent* /*event*/)
     const int    maxFreq  = *std::max_element(m_binFrequencies.begin(),
                                               m_binFrequencies.end());
 
-    // ---- Axes -------------------------------------------------------------
     p.setPen(Qt::black);
     p.drawLine(padding, h - padding, w, h - padding);   
     p.drawLine(padding, padding, padding, h - padding); 
 
-    // ---- Histogram bars ---------------------------------------------------
     for (int i = 0; i < m_binCount; ++i) {
         const double freq      = m_binFrequencies[i];
         const double barHeight = static_cast<double>(h - 2 * padding) * freq / maxFreq;
@@ -68,7 +66,6 @@ void KineticEnergyHistogramWidget::paintEvent(QPaintEvent* /*event*/)
         p.drawRect(barRect);
     }
 
-    // ---- Tick labels ------------------------------------------------------
     p.setFont(QFont("Sans", 8));
     for (int i = 0; i <= m_binCount; ++i) {
         const double energy = m_minEnergy +
