@@ -119,14 +119,6 @@ ui::MDVisualiser::MDVisualiser(
     playPause->setCheckable(true);
     bar->addWidget(playPause, 0, 4, Qt::AlignVCenter);
 
-    // current step (read-only LCD)
-    // Commented out because it causes a crash with long simulations
-    // auto stepLcd = new QLCDNumber(4, central);
-    // stepLcd->display(mPlaybackSettings->current_timestep_index);
-    // stepLcd->setSegmentStyle(QLCDNumber::Flat);
-    // stepLcd->setMinimumWidth(30);
-    // mStepLcd = stepLcd;
-    // bar->addWidget(stepLcd, 0, 5, Qt::AlignVCenter);
 
     // “Current timestep” label
     auto stepLabel = new QLabel(tr("Current Timestep"), central);
@@ -249,6 +241,8 @@ void ui::MDVisualiser::onTimerTimeout()
         lock.unlock();
         mPlaybackSettings->next_timestep();
 
+        mAtomManager->mStructureListViewer->setStructureList(&(current_timestep_data->structure_list));
+        mAtomManager->mStructureListViewer->refreshList();
  
         updateStepDisplay();
     }

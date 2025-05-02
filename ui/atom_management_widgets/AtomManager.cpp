@@ -1,7 +1,8 @@
 #include "AtomManager.h"
 #include "../MDVisualiser.h" 
 #include "AtomVTKPreview.h"
-
+#include "StructureListViewer.h"
+#include "../../simulation/StructureList.h"
 #include <QVBoxLayout>
 #include <QPushButton>
 #include "../../atoms/Atom.h"
@@ -18,8 +19,14 @@ ui::AtomManager::AtomManager(QWidget* parent) : QMainWindow(parent)
     mAtomVTKPreview->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
     mainLayout->addWidget(mAtomVTKPreview);
 
-    new_atoms = std::vector<Atom>();
-    mAtomVTKPreview->setAtomData(new_atoms);
+    new_atoms = std::vector<atoms::Atom>();
+    mAtomVTKPreview->setAtomData(&new_atoms);
+
+    mStructureListViewer = new StructureListViewer(central);
+    mainLayout->addWidget(mStructureListViewer);
+
+
+
 
 
     mCloseButton = new QPushButton("Close", central);
