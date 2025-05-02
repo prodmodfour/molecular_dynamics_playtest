@@ -35,11 +35,10 @@ int main(int argc, char *argv[])
     std::vector<simulation::Timestep> simulation_data;
     std::vector<atoms::Atom> all_atoms;
 
-
     // Create the first timestep that kickstarts the simulation
     simulation::Timestep first_timestep(config, all_atoms, 0, 0, 0);
     // We start by creating an Fcc copper block
-    atoms::Structure copper_block(10, 10, 4, "Copper_Block");
+    atoms::Structure copper_block(12, 12, 8, "Copper_Block");
     first_timestep.add_structure(copper_block);
 
     double x_offset = 0.0;

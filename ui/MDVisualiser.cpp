@@ -12,8 +12,7 @@
 #include <random>
 #include "atom_management_widgets/StructureListViewer.h"
 #include "atom_management_widgets/AtomVTKPreview.h"
-#include "../graphs/EnergyGraphWidget.h"
-#include "../graphs/KineticEnergyHistogramWidget.h"
+
 
 
 // Qt includes
@@ -65,7 +64,7 @@ ui::MDVisualiser::MDVisualiser(
     mTimer->start(42); 
 
 
-    mEnergyGraphWidget = new graphs::EnergyGraphWidget(this);
+    // mEnergyGraphWidget = new graphs::EnergyGraphWidget(this);
 
     // ---------------  UI SET-UP  ---------------
     // Central container
@@ -83,7 +82,7 @@ ui::MDVisualiser::MDVisualiser(
     // ---------- 2) Playback toolbar ----------
     auto *bar = new QGridLayout;          
     bar->setHorizontalSpacing(8);
-    bar->setVerticalSpacing(2);
+    bar->setVerticalSpacing(3);
 
     // White space
     bar->addItem(new QSpacerItem(0, 0,
@@ -128,7 +127,16 @@ ui::MDVisualiser::MDVisualiser(
     reverse->setIcon(style()->standardIcon(QStyle::SP_MediaSkipBackward));
     bar->addWidget(reverse, 0, 6, Qt::AlignVCenter);
 
-
+    // Toggle Playback Direction label
+    auto togglePlaybackDirectionLabel = new QLabel(tr("Reverse\nForward"), central);
+    togglePlaybackDirectionLabel->setAlignment(Qt::AlignHCenter | Qt::AlignTop);
+    togglePlaybackDirectionLabel->setWordWrap(true);                       
+    togglePlaybackDirectionLabel->setFixedWidth(reverse->sizeHint().width() + 30); 
+    f = togglePlaybackDirectionLabel->font();
+    f.setPointSizeF(f.pointSizeF() - 1);
+    togglePlaybackDirectionLabel->setFont(f);
+    togglePlaybackDirectionLabel->setStyleSheet("color:#666;");
+    bar->addWidget(togglePlaybackDirectionLabel, 1, 6, Qt::AlignHCenter);
 
     // White space
     bar->addItem(new QSpacerItem(0, 0,
@@ -138,12 +146,12 @@ ui::MDVisualiser::MDVisualiser(
     main->addLayout(bar);
 
 
-    // ---------- 3) Menu bar ----------
-    QMenuBar* mMenuBar       = menuBar();
-    QMenu* simulationMenu = mMenuBar->addMenu(tr("&Simulation"));
-    QMenu* cameraMenu     = mMenuBar->addMenu(tr("&Camera"));
-    QMenu* atomsMenu      = mMenuBar->addMenu(tr("&Atoms"));
-    QMenu* graphsMenu     = mMenuBar->addMenu(tr("&Graphs"));
+    // // ---------- 3) Menu bar ----------
+    // QMenuBar* mMenuBar       = menuBar();
+    // QMenu* simulationMenu = mMenuBar->addMenu(tr("&Simulation"));
+    // QMenu* cameraMenu     = mMenuBar->addMenu(tr("&Camera"));
+    // QMenu* atomsMenu      = mMenuBar->addMenu(tr("&Atoms"));
+    // QMenu* graphsMenu     = mMenuBar->addMenu(tr("&Graphs"));
 
 
     setCentralWidget(central);
@@ -153,62 +161,60 @@ ui::MDVisualiser::MDVisualiser(
     mVTKWidget->setMinimumSize(800, 600);
 
 
-    // ─── Simulation ───────────────────────────────────────────────────────────────
+    // // ─── Simulation ───────────────────────────────────────────────────────────────
 
-    QAction* simulationSettingsAct = simulationMenu->addAction(tr("Simulation settings…"));
-    connect(simulationSettingsAct, &QAction::triggered, this, &MDVisualiser::onSimulationSettingsClicked);
+    // QAction* simulationSettingsAct = simulationMenu->addAction(tr("Simulation settings…"));
+    // connect(simulationSettingsAct, &QAction::triggered, this, &MDVisualiser::onSimulationSettingsClicked);
 
+    // QAction* restartAct = simulationMenu->addAction(tr("Restart simulation"));
+    // connect(restartAct, &QAction::triggered,
+    //         this,       &ui::MDVisualiser::onRestartClicked);
 
-    QAction* restartAct = simulationMenu->addAction(tr("Restart simulation"));
-    connect(restartAct, &QAction::triggered,
-            this,       &ui::MDVisualiser::onRestartClicked);
+    // // ─── Camera ───────────────────────────────────────────────────────────────────
 
+    // QAction* resetCameraAct = cameraMenu->addAction(tr("Reset Camera"));
+    // connect(resetCameraAct, &QAction::triggered, this, &MDVisualiser::onResetCameraClicked);
 
-    // ─── Camera ───────────────────────────────────────────────────────────────────
+    // QMenu* camModeMenu      = cameraMenu->addMenu(tr("Camera Mode"));
+    // QActionGroup* camGroup  = new QActionGroup(this);   
 
-    QAction* resetCameraAct = cameraMenu->addAction(tr("Reset Camera"));
-    connect(resetCameraAct, &QAction::triggered, this, &MDVisualiser::onResetCameraClicked);
+    // QAction* parallelAct    = camModeMenu->addAction(tr("Parallel"));
+    // parallelAct->setCheckable(true);
+    // QAction* perspectiveAct = camModeMenu->addAction(tr("Perspective"));
+    // perspectiveAct->setCheckable(true);
+    // perspectiveAct->setChecked(true);              
 
-    QMenu* camModeMenu      = cameraMenu->addMenu(tr("Camera Mode"));
-    QActionGroup* camGroup  = new QActionGroup(this);   
-
-    QAction* parallelAct    = camModeMenu->addAction(tr("Parallel"));
-    parallelAct->setCheckable(true);
-    QAction* perspectiveAct = camModeMenu->addAction(tr("Perspective"));
-    perspectiveAct->setCheckable(true);
-    perspectiveAct->setChecked(true);              
-
-    camGroup->addAction(parallelAct);
-    camGroup->addAction(perspectiveAct);
-    connect(parallelAct, &QAction::triggered, this, &MDVisualiser::onParallelCameraToggled);
-    connect(perspectiveAct, &QAction::triggered, this, &MDVisualiser::onPerspectiveCameraToggled);
+    // camGroup->addAction(parallelAct);
+    // camGroup->addAction(perspectiveAct);
+    // connect(parallelAct, &QAction::triggered, this, &MDVisualiser::onParallelCameraToggled);
+    // connect(perspectiveAct, &QAction::triggered, this, &MDVisualiser::onPerspectiveCameraToggled);
 
 
-    // ─── Atoms ────────────────────────────────────────────────────────────────────
+    // // ─── Atoms ────────────────────────────────────────────────────────────────────
 
-    QAction* manageAtomsAct = atomsMenu->addAction(tr("Manage Atoms…"));
-    mAtomManager = new AtomManager(central);
-    mAtomManager->setParentMDVisualiser(this);
-    connect(manageAtomsAct, &QAction::triggered,
-            this,           &ui::MDVisualiser::onManageAtomsClicked);
+    // QAction* manageAtomsAct = atomsMenu->addAction(tr("Manage Atoms…"));
+    // mAtomManager = new AtomManager(central);
+    // mAtomManager->setParentMDVisualiser(this);
+    // connect(manageAtomsAct, &QAction::triggered,
+    //         this,           &ui::MDVisualiser::onManageAtomsClicked);
 
 
-    QAction* clearAtomsAct = atomsMenu->addAction(tr("Clear Atoms"));
-    connect(clearAtomsAct, &QAction::triggered, this, &MDVisualiser::onClearAtomsClicked);
+    // QAction* clearAtomsAct = atomsMenu->addAction(tr("Clear Atoms"));
+    // connect(clearAtomsAct, &QAction::triggered, this, &MDVisualiser::onClearAtomsClicked);
 
-    // ─── Graphs ───────────────────────────────────────────────────────────────
+    // // ─── Graphs ───────────────────────────────────────────────────────────────
 
-    QAction* showEnergyLineGraph = graphsMenu->addAction(tr("Energy Line Graph"));
-    connect(showEnergyLineGraph, &QAction::triggered, this, &MDVisualiser::onShowEnergyLineGraphClicked);
+    // QAction* showEnergyLineGraph = graphsMenu->addAction(tr("Energy Line Graph"));
+    // connect(showEnergyLineGraph, &QAction::triggered, this, &MDVisualiser::onShowEnergyLineGraphClicked);
 
-    QAction* showKineticEnergyHistogram = graphsMenu->addAction(tr("Kinetic Energy Histogram"));
-    connect(showKineticEnergyHistogram, &QAction::triggered, this, &MDVisualiser::onShowKineticEnergyHistogramClicked);
+    // QAction* showKineticEnergyHistogram = graphsMenu->addAction(tr("Kinetic Energy Histogram"));
+    // connect(showKineticEnergyHistogram, &QAction::triggered, this, &MDVisualiser::onShowKineticEnergyHistogramClicked);
 
 
     // This exists for testing whether adding atoms works.
     // I'll leave it in for now...
-    QAction* addAtomAct = atomsMenu->addAction(tr("Add Random Atom"));
-    connect(addAtomAct, &QAction::triggered, this, &MDVisualiser::onAddAtomClicked);
+    // QAction* addAtomAct = atomsMenu->addAction(tr("Add Random Atom"));
+    // connect(addAtomAct, &QAction::triggered, this, &MDVisualiser::onAddAtomClicked);
 
     // ---------------  SIGNALS  ---------------
     connect(down,        &QToolButton::clicked, this, &MDVisualiser::onSpeedDownClicked);
@@ -243,7 +249,7 @@ void ui::MDVisualiser::onTimerTimeout()
         mPlaybackSettings->update_last_timestep_index(mSharedData->index_of_latest_timestep_simulated);
         lock.unlock();
         mPlaybackSettings->next_timestep();
-        mEnergyGraphWidget->addDataPoint(mPlaybackSettings->current_timestep_index, current_timestep_data->kinetic_energy, current_timestep_data->potential_energy);
+        // mEnergyGraphWidget->addDataPoint(mPlaybackSettings->current_timestep_index, current_timestep_data->kinetic_energy, current_timestep_data->potential_energy);
     }
 
     if (mDataLoader && mDataLoader->load()) 
@@ -252,17 +258,15 @@ void ui::MDVisualiser::onTimerTimeout()
             mVTKWidget->updateAtoms(current_timestep_data->atoms);
             if ( mSharedData->index_of_latest_timestep_displayed < mPlaybackSettings->current_timestep_index)
             {
-            mSharedData->index_of_latest_timestep_displayed = mPlaybackSettings->current_timestep_index;
+                mSharedData->index_of_latest_timestep_displayed = mPlaybackSettings->current_timestep_index;
             }
 
             if (!FirstViewDone)
             {
-
-
                 mVTKWidget->resetCameraToSystem();
-                mAtomManager->mAtomVTKPreview->setAtomData(&(current_timestep_data->atoms));
-                mAtomManager->mStructureListViewer->setStructureList(&(current_timestep_data->structure_list));
-                mAtomManager->mStructureListViewer->refreshList();
+                // mAtomManager->mAtomVTKPreview->setAtomData(&(current_timestep_data->atoms));
+                // mAtomManager->mStructureListViewer->setStructureList(&(current_timestep_data->structure_list));
+                // mAtomManager->mStructureListViewer->refreshList();
 
                 FirstViewDone = true;
             }
@@ -271,9 +275,9 @@ void ui::MDVisualiser::onTimerTimeout()
 
             if (mPlaybackSettings->pause == false)
             {
-                mAtomManager->mAtomVTKPreview->setAtomData(&(current_timestep_data->atoms));
-                mAtomManager->mStructureListViewer->setStructureList(&(current_timestep_data->structure_list));
-                mAtomManager->mStructureListViewer->refreshList();
+                // mAtomManager->mAtomVTKPreview->setAtomData(&(current_timestep_data->atoms));
+                // mAtomManager->mStructureListViewer->setStructureList(&(current_timestep_data->structure_list));
+                // mAtomManager->mStructureListViewer->refreshList();
 
             }
  
@@ -432,32 +436,4 @@ void ui::MDVisualiser::onAddAtomClicked()
     mSharedData->indexes_of_timesteps_edited_by_ui.push_back(mPlaybackSettings->current_timestep_index);
 }
 
-void ui::MDVisualiser::onShowEnergyLineGraphClicked()
-{
 
-    QWidget* energyGraphWindow = new QWidget();
-    QVBoxLayout* layout = new QVBoxLayout(energyGraphWindow);
-    layout->addWidget(mEnergyGraphWidget);
-    energyGraphWindow->setLayout(layout);
-    energyGraphWindow->show();
-}
-
-void ui::MDVisualiser::onShowKineticEnergyHistogramClicked()
-{
-    mPlaybackSettings->pause = true;
-    KineticEnergyHistogramWidget* kineticEnergyHistogramWidget = new KineticEnergyHistogramWidget();
-    std::vector<double> kineticEnergies;
-
-    for (auto atom : current_timestep_data->atoms)
-    {
-        kineticEnergies.push_back(atom.kinetic_energy);
-    }
-
-    kineticEnergyHistogramWidget->setEnergies(kineticEnergies);
-
-    QWidget* kineticEnergyHistogramWindow = new QWidget();
-    QVBoxLayout* layout = new QVBoxLayout(kineticEnergyHistogramWindow);
-    layout->addWidget(kineticEnergyHistogramWidget);
-    kineticEnergyHistogramWindow->setLayout(layout);
-    kineticEnergyHistogramWindow->show();
-}

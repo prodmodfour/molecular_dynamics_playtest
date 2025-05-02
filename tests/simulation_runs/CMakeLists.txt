@@ -1,6 +1,6 @@
 cmake_minimum_required(VERSION 3.10)
-project(Test_Simulation_Runs)
-set(PROJECT_VERSION 0.7)  
+project(Stable)
+set(PROJECT_VERSION 1.0)  
 
 # Tell CMake to use C++17
 set(CMAKE_CXX_STANDARD 17)
@@ -30,7 +30,7 @@ find_package(VTK CONFIG REQUIRED COMPONENTS
 # ------------------------------------------------------------------------------
 #  Add your executable and source files
 # ------------------------------------------------------------------------------
-add_executable(Test_Simulation_Runs
+add_executable(Stable
     test_simulation_runs.cpp
     ../../../ui/MDVisualiser.cpp
     ../../../ui/AtomVTKWidget.cpp
@@ -47,29 +47,26 @@ add_executable(Test_Simulation_Runs
     ../../../ui/SimulationSettingsDialogue.cpp
     ../../../ui/atom_management_widgets/StructureListViewer.cpp
     ../../../ui/atom_management_widgets/NewStructureDialog.cpp
-    ../../../graphs/EnergyGraphWidget.cpp
-    ../../../graphs/KineticEnergyHistogramWidget.cpp
 )
 
 # If you have headers in non-standard locations:
-target_include_directories(Test_Simulation_Runs
+target_include_directories(Stable
     PRIVATE
         ${CMAKE_CURRENT_SOURCE_DIR}/../../physics
         ${CMAKE_CURRENT_SOURCE_DIR}/../../simulation
         ${CMAKE_CURRENT_SOURCE_DIR}/../../ui
         ${CMAKE_CURRENT_SOURCE_DIR}/../../geometry
-        ${CMAKE_CURRENT_SOURCE_DIR}/../../graphs
 )
 
 
-target_link_libraries(Test_Simulation_Runs
+target_link_libraries(Stable
     PRIVATE
         ${VTK_LIBRARIES}
-        Qt6::Charts
+
 )
 
 # --- Install the executable -----------------------------------------------
-install(TARGETS Test_Simulation_Runs
+install(TARGETS Stable
         RUNTIME DESTINATION bin          # Windows & UNIX
 )
 # --- tell CMake where your pre-built runtimes live ------------------------
@@ -106,7 +103,7 @@ set(CPACK_PACKAGE_VERSION         "${PROJECT_VERSION}")
 set(CPACK_GENERATOR "ZIP")
 
 # --- Windows specifics ----------------------------------------------------
-set(CPACK_NSIS_INSTALLED_ICON_NAME "bin\\\\Test_Simulation_Runs.exe")
+set(CPACK_NSIS_INSTALLED_ICON_NAME "bin\\\\Stable.exe")
 set(CPACK_NSIS_MENU_LINKS
     "https://github.com/prodmodfour/molecular_dynamics_playtest"  "Project home page")
 

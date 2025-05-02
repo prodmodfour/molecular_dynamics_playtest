@@ -22,10 +22,7 @@ class QMenuBar;
 class QMenu;
 class QActionGroup;
 
-namespace graphs
-{
-    class EnergyGraphWidget;
-}
+
 
 namespace ui {
     class AtomManager;
@@ -52,7 +49,7 @@ public:
     SharedData*           mSharedData       = nullptr;
     ui::PlaybackSettings* mPlaybackSettings = nullptr;
 
-    graphs::EnergyGraphWidget* mEnergyGraphWidget = nullptr;
+
 
     ui::AtomManager*      getAtomManager()      { return mAtomManager; }
     ui::PlaybackSettings* getPlaybackSettings() { return mPlaybackSettings; }
@@ -82,9 +79,6 @@ public slots:
     void onParallelCameraToggled(bool checked);
     void onPerspectiveCameraToggled(bool checked);
     void onResetCameraClicked();
-
-    void onShowEnergyLineGraphClicked();
-    void onShowKineticEnergyHistogramClicked();
 
  
     void setPlaybackSettings(ui::PlaybackSettings* playback_settings);
