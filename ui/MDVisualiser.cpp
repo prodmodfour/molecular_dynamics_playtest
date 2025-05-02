@@ -56,11 +56,11 @@ ui::MDVisualiser::MDVisualiser(
 
     setDataLoader(data_loader);
 
-    // QT timer that updates the animation
+    // update every 42 ms (approx. 24 FPS)
     mTimer = new QTimer(this);
     connect(mTimer, &QTimer::timeout,
             this, &ui::MDVisualiser::onTimerTimeout);
-    mTimer->start(42); // update every 42 ms (approx. 24 FPS)
+    mTimer->start(42); 
 
 
 
@@ -87,7 +87,7 @@ ui::MDVisualiser::MDVisualiser(
     bar->addItem(new QSpacerItem(0, 0,
                 QSizePolicy::Expanding, QSizePolicy::Minimum), 0, 0);
 
-    // speed ↓
+    // speed down
     auto down = new QToolButton(central);
     down->setIcon(style()->standardIcon(QStyle::SP_MediaSeekBackward));
     bar->addWidget(down, 0, 1, Qt::AlignVCenter);
@@ -102,7 +102,7 @@ ui::MDVisualiser::MDVisualiser(
     mSpeedSpin = speedSpin;
     bar->addWidget(speedSpin, 0, 2, Qt::AlignVCenter);   
 
-    // “Speed” label directly underneath
+    // “Speed” label
     auto speedLabel = new QLabel(tr("Speed"), central);
     speedLabel->setAlignment(Qt::AlignHCenter | Qt::AlignTop);
     QFont f = speedLabel->font();
@@ -111,7 +111,7 @@ ui::MDVisualiser::MDVisualiser(
     speedLabel->setStyleSheet("color:#666;");
     bar->addWidget(speedLabel, 1, 2, Qt::AlignHCenter); 
 
-    // speed ↑
+    // speed up
     auto up = new QToolButton(central);
     up->setIcon(style()->standardIcon(QStyle::SP_MediaSeekForward));
     bar->addWidget(up, 0, 3, Qt::AlignVCenter);
@@ -141,6 +141,7 @@ ui::MDVisualiser::MDVisualiser(
     QMenu* simulationMenu = mMenuBar->addMenu(tr("&Simulation"));
     QMenu* cameraMenu     = mMenuBar->addMenu(tr("&Camera"));
     QMenu* atomsMenu      = mMenuBar->addMenu(tr("&Atoms"));
+    QMenu* graphsMenu     = mMenuBar->addMenu(tr("&Graphs"));
 
 
     setCentralWidget(central);
@@ -151,22 +152,21 @@ ui::MDVisualiser::MDVisualiser(
 
 
     // ─── Simulation ───────────────────────────────────────────────────────────────
-    // 1) “Simulation settings…” – placeholder for later
+
     QAction* simulationSettingsAct = simulationMenu->addAction(tr("Simulation settings…"));
     connect(simulationSettingsAct, &QAction::triggered, this, &MDVisualiser::onSimulationSettingsClicked);
 
-    // 2) “Restart simulation” – replaces the old restart tool-button
+
     QAction* restartAct = simulationMenu->addAction(tr("Restart simulation"));
     connect(restartAct, &QAction::triggered,
             this,       &ui::MDVisualiser::onRestartClicked);
 
 
     // ─── Camera ───────────────────────────────────────────────────────────────────
-    // 1) Reset camera – stub for now
+
     QAction* resetCameraAct = cameraMenu->addAction(tr("Reset Camera"));
     connect(resetCameraAct, &QAction::triggered, this, &MDVisualiser::onResetCameraClicked);
 
-    // 2) Camera mode submenu with two mutually exclusive options
     QMenu* camModeMenu      = cameraMenu->addMenu(tr("Camera Mode"));
     QActionGroup* camGroup  = new QActionGroup(this);   // exclusivity helper
 
@@ -183,19 +183,28 @@ ui::MDVisualiser::MDVisualiser(
 
 
     // ─── Atoms ────────────────────────────────────────────────────────────────────
-    // 1) Manage atoms… – takes over the old push-button
+
     QAction* manageAtomsAct = atomsMenu->addAction(tr("Manage Atoms…"));
     mAtomManager = new AtomManager(central);
     mAtomManager->setParentMDVisualiser(this);
     connect(manageAtomsAct, &QAction::triggered,
             this,           &ui::MDVisualiser::onManageAtomsClicked);
 
-    // 2) Clear atoms
+
     QAction* clearAtomsAct = atomsMenu->addAction(tr("Clear Atoms"));
     connect(clearAtomsAct, &QAction::triggered, this, &MDVisualiser::onClearAtomsClicked);
 
-    // 3) Add an atom
-    // This exist for testing whether adding atoms works.
+    // ─── Graphs ───────────────────────────────────────────────────────────────
+
+    QAction* showEnergyLineGraph = graphsMenu->addAction(tr("Energy Line Graph"));
+    connect(showEnergyLineGraph, &QAction::triggered, this, &MDVisualiser::onShowEnergyLineGraphClicked);
+
+    QAction* showKineticEnergyHistogram = graphsMenu->addAction(tr("Kinetic Energy Histogram"));
+    connect(showKineticEnergyHistogram, &QAction::triggered, this, &MDVisualiser::onShowKineticEnergyHistogramClicked);
+
+
+    // This exists for testing whether adding atoms works.
+    // I'll leave it in for now...
     QAction* addAtomAct = atomsMenu->addAction(tr("Add Random Atom"));
     connect(addAtomAct, &QAction::triggered, this, &MDVisualiser::onAddAtomClicked);
 
@@ -391,7 +400,7 @@ void ui::MDVisualiser::onResetCameraClicked()
 void ui::MDVisualiser::onSimulationSettingsClicked()
 {
     mPlaybackSettings->pause = true;
-    // create a new simulation settings dialogue
+
     auto* simulationSettingsDialogue = new SimulationSettingsDialogue(this, mSharedData);
     simulationSettingsDialogue->exec();    
     mPlaybackSettings->reset();
@@ -418,4 +427,14 @@ void ui::MDVisualiser::onAddAtomClicked()
 
     current_timestep_data->atoms.push_back(atom);
     mSharedData->indexes_of_timesteps_edited_by_ui.push_back(mPlaybackSettings->current_timestep_index);
+}
+
+void ui::MDVisualiser::onShowEnergyLineGraphClicked()
+{
+    // TODO: Implement
+}
+
+void ui::MDVisualiser::onShowKineticEnergyHistogramClicked()
+{
+    // TODO: Implement
 }

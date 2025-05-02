@@ -79,6 +79,9 @@ public slots:
     void onPerspectiveCameraToggled(bool checked);
     void onResetCameraClicked();
 
+    void onShowEnergyLineGraphClicked();
+    void onShowKineticEnergyHistogramClicked();
+
  
     void setPlaybackSettings(ui::PlaybackSettings* playback_settings);
     void setDataLoader(ui::BasicDataLoader* data_loader);
