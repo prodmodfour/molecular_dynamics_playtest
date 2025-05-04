@@ -45,9 +45,6 @@ class PlaybackSettings
             step_timestep(current_timestep_index, last_timestep_index, direction, speed);
         }
 
-
-
-
         void step_timestep(int& index,
                         int  last,
                         int  direction,

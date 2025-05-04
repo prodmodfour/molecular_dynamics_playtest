@@ -2,7 +2,7 @@
 #include "DataLoader.h" 
 #include "../../simulation/Timestep.h"
 #include "../PlaybackSettings.h"
-#include "../MDVisualiser.h"
+#include "../main_visualiser_widgets/MDVisualiser.h"
 #include "../../atoms/Atom.h"
 #include <iostream>
 #include <vector>

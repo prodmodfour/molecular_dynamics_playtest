@@ -1,5 +1,5 @@
 #include "AtomManager.h"
-#include "../MDVisualiser.h" 
+#include "../main_visualiser_widgets/MDVisualiser.h" 
 #include "AtomVTKPreview.h"
 #include "StructureListViewer.h"
 #include "../../simulation/StructureList.h"

@@ -3,9 +3,3 @@
 /.vscode
 /vtk_extra
 **/build/
-**/QtRuntime/
-**/VtkRuntime/
-/QtRuntime/
-/VtkRuntime/
-QtRuntime/
-VtkRuntime/
