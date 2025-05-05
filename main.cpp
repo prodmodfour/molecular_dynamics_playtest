@@ -31,11 +31,9 @@ int main(int argc, char *argv[])
 {
     QApplication app(argc, argv);
 
-    QSettings user_settings;
-
     QSettings developer_settings(
             QSettings::IniFormat,
-            QSettings::SystemScope,
+            QSettings::UserScope,
             "STFC",
             "developer_settings");
 
