@@ -34,6 +34,7 @@ int main(int argc, char *argv[])
 
     ui::load_settings();
     debug::setup_logging();
+    
     //---------------------------------Simulation Section---------------------------------
     SharedData shared_data;
     simulation::Config config;

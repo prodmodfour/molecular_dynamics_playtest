@@ -48,8 +48,6 @@ namespace debug
             QLoggingCategory::setFilterRules(QStringLiteral("atoms.*=true"));
         }
 
-        developer_settings.sync();
-
     }
 }
 
