@@ -59,6 +59,8 @@ add_executable(Molecular_Dynamics_Playtest
 
     graphs/EnergyGraphWidget.cpp
     graphs/KineticEnergyHistogramWidget.cpp
+
+    debug/logging.cpp
 )
 
 target_include_directories(Molecular_Dynamics_Playtest
@@ -68,6 +70,7 @@ target_include_directories(Molecular_Dynamics_Playtest
         ${CMAKE_CURRENT_SOURCE_DIR}/ui
         ${CMAKE_CURRENT_SOURCE_DIR}/geometry
         ${CMAKE_CURRENT_SOURCE_DIR}/graphs
+        ${CMAKE_CURRENT_SOURCE_DIR}/debug
 )
 
 

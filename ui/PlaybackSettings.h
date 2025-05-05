@@ -14,7 +14,7 @@ class PlaybackSettings
         {
             this->direction = 1;
             this->speed = 1;
-            this->pause = true;
+            this->pause = false;
             this->current_timestep_index = 0;
             this->last_timestep_index = last_timestep_index;
         }

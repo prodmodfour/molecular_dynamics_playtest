@@ -18,12 +18,11 @@
 
 #include "physics/physics_functions.h"
 
-
+#include "ui/settings_functions.h"
 
 #include <vector>
 #include <iostream>
 #include <QApplication>
-#include <QSettings>
 #include <thread>
 
 
@@ -31,21 +30,28 @@ int main(int argc, char *argv[])
 {
     QApplication app(argc, argv);
 
-    QSettings developer_settings(
-            QSettings::IniFormat,
-            QSettings::UserScope,
-            "STFC",
-            "developer_settings");
+    ui::load_settings();
 
-    if (!developer_settings.contains("first_run") || developer_settings.value("first_run").toBool())
-    {
-        developer_settings.setValue("first_run", false);
-        developer_settings.sync();
-    }
-    else
-    {
-        developer_settings.sync();
-    }
-    
-    return 0;
+      
+    //---------------------------------Simulation Section---------------------------------
+    SharedData shared_data;
+    simulation::Config config;
+    std::vector<simulation::Timestep> simulation_data;
+    std::vector<atoms::Atom> all_atoms;
+    simulation::Timestep first_timestep(config, all_atoms, 0, 0, 0);
+
+    simulation_data.push_back(first_timestep);
+    ui::PlaybackSettings playback_settings(0);
+
+    std::thread simulation_thread(simulation::run_simulation, &shared_data, &simulation_data);
+    // We detach because we control the simulation using shared_data
+    simulation_thread.detach();
+
+   //---------------------------------Visualisation Section--------------------------------
+    ui::BasicDataLoader data_loader;
+    data_loader.setData(&simulation_data);
+
+    ui::MDVisualiser visualiser(nullptr, &data_loader, &playback_settings, &shared_data);
+    visualiser.show();
+    return app.exec();
 }
