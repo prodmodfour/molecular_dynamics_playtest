@@ -3,7 +3,6 @@
 #include "Plane.h"
 #include "../atoms/Atom.h"
 #include <vector>
-#include "StructureGeometry.h"
 #include <limits>
 #include <cmath>
 

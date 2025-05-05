@@ -20,6 +20,8 @@
 
 #include "ui/settings_functions.h"
 
+#include "debug/logging.h"
+
 #include <vector>
 #include <iostream>
 #include <QApplication>
@@ -31,8 +33,7 @@ int main(int argc, char *argv[])
     QApplication app(argc, argv);
 
     ui::load_settings();
-
-      
+    debug::setup_logging();
     //---------------------------------Simulation Section---------------------------------
     SharedData shared_data;
     simulation::Config config;
