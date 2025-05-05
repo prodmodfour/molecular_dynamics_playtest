@@ -3,6 +3,7 @@
 #include <vector>
 #include "AtomPairData.h"
 #include <stdexcept>
+#include "debug/logging.h"
 
 namespace atoms {
 
@@ -14,6 +15,7 @@ class AtomPairLibrary
         {
             atom_pair_data = std::vector<AtomPairData>();
             atom_pair_data.push_back(AtomPairData("Cu", "Cu", 46291.3, 2.285));
+            qCInfo(atoms_logging_category) << "Atom pair library created";
         }
         std::vector<AtomPairData> atom_pair_data;
 

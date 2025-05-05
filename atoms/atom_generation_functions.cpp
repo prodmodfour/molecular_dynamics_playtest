@@ -1,4 +1,5 @@
 #include "atom_generation_functions.h"
+#include "debug/logging.h"
 
 namespace atoms {
 
@@ -28,6 +29,8 @@ std::vector<atoms::Atom> generate_atoms_in_fcc_pattern(int cubes_in_x, int cubes
             }
         }
     }
+
+    qCInfo(atoms_logging_category) << "Generated" << crystal.size() << "atoms in fcc pattern";
 
     return crystal;
 }
