@@ -1,5 +1,5 @@
 #include "atom_generation_functions.h"
-#include "debug/logging.h"
+#include "../debug/logging.h"
 
 namespace atoms {
 

@@ -3,7 +3,7 @@
 #include <vector>
 #include "AtomPairData.h"
 #include <stdexcept>
-#include "debug/logging.h"
+#include "../debug/logging.h"
 
 namespace atoms {
 

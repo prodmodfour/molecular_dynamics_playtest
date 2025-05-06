@@ -21,7 +21,7 @@ simulation::Timestep simulate_timestep(simulation::Timestep input_timestep, atom
 {
     double total_potential_energy = 0;
     simulation::Config config = shared_data->config;
-    physics::evaluate_interactions(config, total_potential_energy, input_timestep.atoms, atom_pair_library); // Calculate forces
+    physics::evaluate_interactions(config, total_potential_energy, input_timestep.atoms, atom_pair_library); // Calculate forces and potential energy
 
     for (atoms::Atom &atom : input_timestep.atoms)
     {
@@ -34,9 +34,9 @@ simulation::Timestep simulate_timestep(simulation::Timestep input_timestep, atom
         total_kinetic_energy += atom.kinetic_energy;
     }
 
-    input_timestep.time += config.timestep_size;
+    
 
-    simulation::Timestep output_timestep = simulation::Timestep(config, input_timestep.atoms, total_kinetic_energy, total_potential_energy, input_timestep.time);
+    simulation::Timestep output_timestep = simulation::Timestep(config, input_timestep.atoms, total_kinetic_energy, total_potential_energy, input_timestep.time + config.timestep_size);
     output_timestep.structure_list = input_timestep.structure_list;
     output_timestep.structures = input_timestep.structures;
 
@@ -54,8 +54,6 @@ void run_simulation(SharedData* shared_data, std::vector<simulation::Timestep>* 
         }
 
         // -------------------------------------Preprocess Section---------------------------------
-        
- 
         // There were two options that I considered for managing the data after the user has edited the simulation parameters mid simulation.
         // (This is important because, once a timestep is edited, every subsequent simulated timestep becomes obsolete and must be resimulated)
 
@@ -72,9 +70,6 @@ void run_simulation(SharedData* shared_data, std::vector<simulation::Timestep>* 
         std::unique_lock<std::mutex> lock(shared_data->mutex);
         if (shared_data->indexes_of_timesteps_edited_by_ui.size() > 0)
         {
-
-
-
             // It is possible that the user will have edited multiple timesteps since the last loop.
             // This section finds the smallest index of the timesteps that have been edited.
             int smallest_index_edited_by_ui = simulation_data->size() - 1;

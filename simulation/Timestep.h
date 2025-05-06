@@ -65,8 +65,6 @@ class Timestep
                 std::vector<atoms::Atom> new_atoms;
                 new_atoms.push_back(atom);
                 add_structure(atoms::Structure(new_atoms, structure_name, structure_type, atom.type));
-
-
             }
             else
             {
