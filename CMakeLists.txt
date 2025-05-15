@@ -33,44 +33,44 @@ find_package(VTK CONFIG REQUIRED COMPONENTS
 add_executable(Molecular_Dynamics_Playtest
     main.cpp
 
-    ui/atom_management_widgets/AtomVTKPreview.cpp 
-    ui/atom_management_widgets/AtomManager.cpp 
-    ui/atom_management_widgets/StructureListViewer.cpp
-    ui/atom_management_widgets/NewStructureDialog.cpp
+    src/ui/atom_management_widgets/AtomVTKPreview.cpp 
+    src/ui/atom_management_widgets/AtomManager.cpp 
+    src/ui/atom_management_widgets/StructureListViewer.cpp
+    src/ui/atom_management_widgets/NewStructureDialog.cpp
 
-    ui/data_loaders/BasicDataLoader.cpp
+    src/ui/data_loaders/BasicDataLoader.cpp
 
-    ui/main_visualiser_widgets/MDVisualiser.cpp
-    ui/main_visualiser_widgets/AtomVTKWidget.cpp
+    src/ui/main_visualiser_widgets/MDVisualiser.cpp
+    src/ui/main_visualiser_widgets/AtomVTKWidget.cpp
 
-    ui/simulation_management_widgets/SimulationSettingsDialogue.cpp
+    src/ui/simulation_management_widgets/SimulationSettingsDialogue.cpp
 
-    ui/SharedData.cpp
-    ui/visualisation_functions.cpp
-    ui/settings_functions.cpp
+    src/ui/SharedData.cpp
+    src/ui/visualisation_functions.cpp
+    src/ui/settings_functions.cpp
 
-    simulation/StructureList.cpp
-    simulation/Timestep.cpp
+    src/simulation/StructureList.cpp
+    src/simulation/Timestep.cpp
 
-    atoms/Structure.cpp
-    atoms/atom_generation_functions.cpp
+    src/atoms/Structure.cpp
+    src/atoms/atom_generation_functions.cpp
     
-    geometry/geometry_functions.cpp
+    src/geometry/geometry_functions.cpp
 
-    graphs/EnergyGraphWidget.cpp
-    graphs/KineticEnergyHistogramWidget.cpp
+    src/graphs/EnergyGraphWidget.cpp
+    src/graphs/KineticEnergyHistogramWidget.cpp
 
-    debug/logging.cpp
+    src/debug/logging.cpp
 )
 
 target_include_directories(Molecular_Dynamics_Playtest
     PRIVATE
-        ${CMAKE_CURRENT_SOURCE_DIR}/physics
-        ${CMAKE_CURRENT_SOURCE_DIR}/simulation
-        ${CMAKE_CURRENT_SOURCE_DIR}/ui
-        ${CMAKE_CURRENT_SOURCE_DIR}/geometry
-        ${CMAKE_CURRENT_SOURCE_DIR}/graphs
-        ${CMAKE_CURRENT_SOURCE_DIR}/debug
+        ${CMAKE_CURRENT_SOURCE_DIR}/src/physics
+        ${CMAKE_CURRENT_SOURCE_DIR}/src/simulation
+        ${CMAKE_CURRENT_SOURCE_DIR}/src/ui
+        ${CMAKE_CURRENT_SOURCE_DIR}/src/geometry
+        ${CMAKE_CURRENT_SOURCE_DIR}/src/graphs
+        ${CMAKE_CURRENT_SOURCE_DIR}/src/debug
 )
 
 
@@ -85,8 +85,8 @@ install(TARGETS Molecular_Dynamics_Playtest
         RUNTIME DESTINATION bin          # Windows
 )
 # --- tell CMake where your pre-built runtimes live ------------------------
-set(QT_RUNTIME_DIR  "${CMAKE_SOURCE_DIR}/QtRuntime")   # adjust
-set(VTK_RUNTIME_DIR "${CMAKE_SOURCE_DIR}/VtkRuntime")  # adjust
+set(QT_RUNTIME_DIR  "${CMAKE_SOURCE_DIR}/include/QtRuntime")   # adjust
+set(VTK_RUNTIME_DIR "${CMAKE_SOURCE_DIR}/include/VtkRuntime")  # adjust
 
 # -- Qt --------------------------------------------------------------------
 # Core DLLs + plugins + translations
