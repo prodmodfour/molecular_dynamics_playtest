@@ -3,3 +3,4 @@
 /.vscode
 /vtk_extra
 **/build/
+update_git.bat
