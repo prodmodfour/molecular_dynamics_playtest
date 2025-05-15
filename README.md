@@ -5,5 +5,6 @@ Dependencies:
 
 Build tips:
     After building with cmake, either use winqdeploy to add the necessary DLLs to the build folder or copy them directly from the include directory.
-
+    
+    In the build command, add --config Release if you don't want debug logging enabled (better performance). --config Debug otherwise.
 
