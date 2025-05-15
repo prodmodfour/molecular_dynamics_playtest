@@ -51,6 +51,7 @@ add_executable(Molecular_Dynamics_Playtest
 
     src/simulation/StructureList.cpp
     src/simulation/Timestep.cpp
+    src/simulation/Config.cpp
 
     src/atoms/Structure.cpp
     src/atoms/atom_generation_functions.cpp
