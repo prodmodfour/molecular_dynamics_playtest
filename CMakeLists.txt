@@ -61,7 +61,8 @@ add_executable(Molecular_Dynamics_Playtest
     src/geometry/geometry_functions.cpp
     src/geometry/Box.cpp
     src/geometry/Plane.cpp
-    
+    src/geometry/Vector.cpp
+
     src/graphs/EnergyGraphWidget.cpp
     src/graphs/KineticEnergyHistogramWidget.cpp
 
