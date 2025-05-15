@@ -54,6 +54,7 @@ add_executable(Molecular_Dynamics_Playtest
 
     src/atoms/Structure.cpp
     src/atoms/atom_generation_functions.cpp
+    src/atoms/Atom.cpp
     
     src/geometry/geometry_functions.cpp
 
