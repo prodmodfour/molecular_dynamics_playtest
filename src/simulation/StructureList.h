@@ -10,7 +10,7 @@ class StructureList
 {
     public:
         StructureList();
-        std::vector<std::string> structure_names;
+        
 
         void add_structure(atoms::Structure structure);
         void remove_structure(std::string structure_name);
@@ -19,7 +19,9 @@ class StructureList
         std::vector<std::string> get_all_structure_names();
         void print_all_structure_names();
         bool structure_exists(std::string structure_name);
-        
+    
+    private:
+        std::vector<std::string> structure_names;
 };
 
 }
