@@ -26,16 +26,21 @@ namespace atoms {
             void set_atom_type(std::string atom_type);
 
             std::vector<Atom> get_atoms();
+            std::string get_name();
+            std::string get_structure_type();
+            std::string get_atom_type();
 
+            geometry::Box get_box();
 
             void label_atoms();
-            std::vector<Atom> atoms;
-            
-            std::string name;
-            std::string structure_type;
-            std::string atom_type;
 
-            geometry::Box box;
+            private:
+                std::vector<Atom> atoms;
+                std::string name;
+                std::string structure_type;
+                std::string atom_type;
+
+                geometry::Box box;
 
 
 

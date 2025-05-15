@@ -45,10 +45,10 @@ class Timestep
 
         void add_structure(atoms::Structure structure)
         {
-            this->structures[structure.name] = structure;
+            this->structures[structure.get_name()] = structure;
             this->structure_list.add_structure(structure);
 
-            for (atoms::Atom atom : structure.atoms)
+            for (atoms::Atom atom : structure.get_atoms())
             {
                 this->atoms.push_back(atom);
             }

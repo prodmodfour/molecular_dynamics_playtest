@@ -72,7 +72,7 @@ void ui::AtomManager::onAddStructureButtonClicked()
         if (params.structureType == "fcc" && params.atomType == "Cu")
         {
             atoms::Structure fcc_structure(params.cubesX, params.cubesY, params.cubesZ, params.structureName.toStdString());
-            for (auto atom : fcc_structure.atoms)
+            for (auto atom : fcc_structure.get_atoms())
             {
                 atom.x += params.offsetX;
                 atom.y += params.offsetY;

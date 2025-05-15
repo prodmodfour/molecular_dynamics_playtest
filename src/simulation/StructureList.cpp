@@ -15,9 +15,9 @@ StructureList::StructureList()
 void StructureList::add_structure(atoms::Structure structure)
 {
 
-    if (std::find(structure_names.begin(), structure_names.end(), structure.name) == structure_names.end())
+    if (std::find(structure_names.begin(), structure_names.end(), structure.get_name()) == structure_names.end())
     {
-        structure_names.push_back(structure.name);
+        structure_names.push_back(structure.get_name());
     }
 }
 

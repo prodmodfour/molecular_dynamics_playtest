@@ -57,6 +57,8 @@ namespace atoms {
         {
             add_atom(atom);
         }
+
+        this->box = geometry::Box(atoms);
     }
 
     void Structure::set_name(std::string name)
@@ -78,6 +80,27 @@ namespace atoms {
     {
         return atoms;
     }
+
+    std::string Structure::get_name()
+    {
+        return name;
+    }
+
+    std::string Structure::get_structure_type()
+    {
+        return structure_type;
+    }
+
+    std::string Structure::get_atom_type()
+    {
+        return atom_type;
+    }
+
+    geometry::Box Structure::get_box()
+    {
+        return box;
+    }
+    
 
     void Structure::label_atoms()
     {
