@@ -23,11 +23,11 @@ class AtomPairLibrary
         {
             for (AtomPairData &atom_pair_data : atom_pair_data)
             {
-                if (atom_pair_data.atom_type_1 == atom_type_1 && atom_pair_data.atom_type_2 == atom_type_2)
+                if (atom_pair_data.get_atom_type_1() == atom_type_1 && atom_pair_data.get_atom_type_2() == atom_type_2)
                 {
                     return atom_pair_data;
                 }
-                else if (atom_pair_data.atom_type_1 == atom_type_2 && atom_pair_data.atom_type_2 == atom_type_1)
+                else if (atom_pair_data.get_atom_type_1() == atom_type_2 && atom_pair_data.get_atom_type_2() == atom_type_1)
                 {
                     return atom_pair_data;
                 }

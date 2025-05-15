@@ -68,8 +68,8 @@ void evaluate_interactions(simulation::Config config, double &total_potential_en
             distance = std::sqrt(squared_distance);
 
             atoms::AtomPairData atom_pair_data = atom_pair_library.get_atom_pair_data(atom_i.type, atom_j.type);
-            double sigma = atom_pair_data.sigma;
-            double epsilon = atom_pair_data.epsilon;
+            double sigma = atom_pair_data.get_sigma();
+            double epsilon = atom_pair_data.get_epsilon();
 
             sigma_squared = sigma * sigma;
             sr2 = sigma_squared / squared_distance;
