@@ -11,22 +11,20 @@ namespace geometry {
 class Box
 {
     public:
-        Box()
-        {
-        }
+        Box();
 
-        Box(std::vector<atoms::Atom> &atoms)
-        {
-            this->corners = determine_cuboid_corners(atoms);
-            
-            this->top_plane    = Plane(corners[1], corners[3], corners[7], corners[5]);
-            this->bottom_plane = Plane(corners[0], corners[4], corners[6], corners[2]);
-            this->left_plane   = Plane(corners[0], corners[2], corners[3], corners[1]);
-            this->right_plane  = Plane(corners[4], corners[5], corners[7], corners[6]);
-            this->front_plane  = Plane(corners[0], corners[1], corners[5], corners[4]);
-            this->back_plane   = Plane(corners[2], corners[6], corners[7], corners[3]);
-            
-        }
+        Box(std::vector<atoms::Atom> &atoms);
+
+        std::vector<geometry::Vector> get_corners();
+        geometry::Plane get_top_plane();
+        geometry::Plane get_bottom_plane();
+        geometry::Plane get_left_plane();
+        geometry::Plane get_right_plane();
+        geometry::Plane get_front_plane();
+        geometry::Plane get_back_plane();
+        geometry::Vector get_center();
+
+    private:
 
         std::vector<geometry::Vector> corners;
         geometry::Plane top_plane;
