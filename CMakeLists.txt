@@ -31,7 +31,7 @@ find_package(VTK CONFIG REQUIRED COMPONENTS
 #  Add your executable and source files
 # ------------------------------------------------------------------------------
 add_executable(Molecular_Dynamics_Playtest
-    main.cpp
+    src/main.cpp
 
     src/ui/atom_management_widgets/AtomVTKPreview.cpp 
     src/ui/atom_management_widgets/AtomManager.cpp 
