@@ -147,4 +147,12 @@ void AtomVTKPreview::resetCameraToSystem()
     this->renderWindow()->Render();
 }
 
+std::vector<std::string> AtomVTKPreview::get_structures_to_display()
+{
+    return structures_to_display;
+}
+
+
+
+
 } // namespace ui

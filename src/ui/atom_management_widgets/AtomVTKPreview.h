@@ -25,15 +25,18 @@ public:
     explicit AtomVTKPreview(QWidget* parent = nullptr);
     virtual ~AtomVTKPreview() = default;
 
-    std::vector<atoms::Atom>* atoms; 
-    std::vector<std::string> structures_to_display;
-    bool atom_data_is_set;
 
-    void setAtomData(std::vector<atoms::Atom>* atoms); 
+
+ 
 
     void updateAtoms();
     void renderImage();
     void resetCameraToSystem();
+    void setAtomData(std::vector<atoms::Atom>* atoms);
+
+
+    std::vector<std::string> get_structures_to_display();
+    std::vector<atoms::Atom>* get_atoms();
 
 
 private:
@@ -46,6 +49,9 @@ private:
     vtkSmartPointer<vtkUnsignedCharArray> mColors;
     vtkSmartPointer<vtkGlyph3DMapper> mGlyphMapper;
     vtkSmartPointer<vtkActor> mGlyphActor;
+    std::vector<atoms::Atom>* atoms; 
+    std::vector<std::string> structures_to_display;
+    bool atom_data_is_set;
 };
 
 } // namespace ui
