@@ -1,6 +1,6 @@
 #pragma once
 
-class Color{
+typedef struct Color{
     public:
         Color()
         {
@@ -21,4 +21,4 @@ class Color{
         unsigned char g;
         unsigned char b;
         unsigned char a;
-};
+} Color;

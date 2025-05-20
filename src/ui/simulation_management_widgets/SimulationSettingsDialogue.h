@@ -14,13 +14,15 @@ class SimulationSettingsDialogue : public QDialog
 
 public:
     SimulationSettingsDialogue(QWidget* parent = nullptr, SharedData* shared_data = nullptr);
-    SharedData* shared_data;
+
     void setSharedData(SharedData* shared_data);
     void applyChanges();
     
 public slots:
     void onApplyClicked();
     void onCancelClicked();
+private:
+    SharedData* shared_data;
 
 
 };
