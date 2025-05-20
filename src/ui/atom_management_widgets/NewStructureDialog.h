@@ -29,15 +29,10 @@ namespace ui
 public:
     explicit NewStructureDialog(QWidget *parent = nullptr);
     void onAccept();
+    StructureParams get_params();
 
 
-    QString structureType() const;
-    int     cubesX()        const;
-    int     cubesY()        const;
-    int     cubesZ()        const;
-    QString atomType()      const;
-    double  atomSpacing()   const;
-    StructureParams m_params;
+
 
 private:
     QLineEdit      *m_nameEdit;
@@ -51,6 +46,13 @@ private:
     QDoubleSpinBox *m_offsetXDSB;
     QDoubleSpinBox *m_offsetYDSB;
     QDoubleSpinBox *m_offsetZDSB;
+    QString structureType() const;
+    int     cubesX()        const;
+    int     cubesY()        const;
+    int     cubesZ()        const;
+    QString atomType()      const;
+    double  atomSpacing()   const;
+    StructureParams m_params;
 
 
 };

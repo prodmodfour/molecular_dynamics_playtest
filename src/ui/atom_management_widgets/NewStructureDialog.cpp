@@ -109,4 +109,10 @@ int     NewStructureDialog::cubesZ()        const { return m_cubesZSB->value(); 
 QString NewStructureDialog::atomType()      const { return m_atomTypeCB->currentText(); }
 double  NewStructureDialog::atomSpacing()   const { return m_spacingDSB->value(); }
 
+StructureParams NewStructureDialog::get_params()
+{
+    return m_params;
+}
+
+
 } // namespace ui

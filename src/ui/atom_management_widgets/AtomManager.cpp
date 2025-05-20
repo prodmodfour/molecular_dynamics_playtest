@@ -56,7 +56,7 @@ void ui::AtomManager::onAddStructureButtonClicked()
     NewStructureDialog* newStructureDialog = new NewStructureDialog(this);
     if (newStructureDialog->exec() == QDialog::Accepted)
     {
-        ui::StructureParams params = newStructureDialog->m_params;
+        ui::StructureParams params = newStructureDialog->get_params();
         std::cout << "Structure params: " << params.structureName.toStdString() << std::endl;
         std::cout << "Structure type: " << params.structureType.toStdString() << std::endl;
         std::cout << "Cubes in X: " << params.cubesX << std::endl;
