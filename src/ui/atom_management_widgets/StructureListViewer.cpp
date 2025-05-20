@@ -50,15 +50,15 @@ void StructureListViewer::onSelectionChanged()
         std::string selectedName = selectedItems.first()->text().toStdString(); 
         std::cout << "Selected Structure: " << selectedName << std::endl;
 
-        parentAtomManager->mAtomVTKPreview->structures_to_display.clear();
-        parentAtomManager->mAtomVTKPreview->structures_to_display.push_back(selectedName);
-        parentAtomManager->mAtomVTKPreview->updateAtoms();
+        parentAtomManager->get_atom_vtk_preview()->structures_to_display.clear();
+        parentAtomManager->get_atom_vtk_preview()->structures_to_display.push_back(selectedName);
+        parentAtomManager->get_atom_vtk_preview()->updateAtoms();
     }
     else
     {
         std::cout << "No Structure Selected" << std::endl;
-        parentAtomManager->mAtomVTKPreview->structures_to_display.clear();
-        parentAtomManager->mAtomVTKPreview->updateAtoms();
+        parentAtomManager->get_atom_vtk_preview()->structures_to_display.clear();
+        parentAtomManager->get_atom_vtk_preview()->updateAtoms();
     }
 }
         

@@ -260,9 +260,9 @@ void ui::MDVisualiser::onTimerTimeout()
 
 
                 mVTKWidget->resetCameraToSystem();
-                mAtomManager->mAtomVTKPreview->setAtomData(&(current_timestep_data->atoms));
-                mAtomManager->mStructureListViewer->setStructureList(&(current_timestep_data->structure_list));
-                mAtomManager->mStructureListViewer->refreshList();
+                mAtomManager->get_atom_vtk_preview()->setAtomData(&(current_timestep_data->atoms));
+                mAtomManager->get_structure_list_viewer()->setStructureList(&(current_timestep_data->structure_list));
+                mAtomManager->get_structure_list_viewer()->refreshList();
 
                 FirstViewDone = true;
             }
@@ -271,9 +271,9 @@ void ui::MDVisualiser::onTimerTimeout()
 
             if (mPlaybackSettings->pause == false)
             {
-                mAtomManager->mAtomVTKPreview->setAtomData(&(current_timestep_data->atoms));
-                mAtomManager->mStructureListViewer->setStructureList(&(current_timestep_data->structure_list));
-                mAtomManager->mStructureListViewer->refreshList();
+                mAtomManager->get_atom_vtk_preview()->setAtomData(&(current_timestep_data->atoms));
+                mAtomManager->get_structure_list_viewer()->setStructureList(&(current_timestep_data->structure_list));
+                mAtomManager->get_structure_list_viewer()->refreshList();
 
             }
  

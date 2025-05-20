@@ -5,7 +5,7 @@
 #include "DataLoader.h"
 
 namespace simulation {
-    class Timestep;
+    struct Timestep;
 }
 
 class SharedData;

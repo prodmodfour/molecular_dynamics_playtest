@@ -83,10 +83,37 @@ void ui::AtomManager::onAddStructureButtonClicked()
             parentMDVisualiser->mSharedData->indexes_of_timesteps_edited_by_ui.push_back(parentMDVisualiser->mPlaybackSettings->current_timestep_index);
 
         }
-
         mStructureListViewer->setStructureList(&(parentMDVisualiser->current_timestep_data->structure_list));
-
-
     }
+
 }
+
+
+std::vector<atoms::Atom> ui::AtomManager::get_new_atoms()
+{
+    return new_atoms;
+}
+
+void ui::AtomManager::set_new_atoms(std::vector<atoms::Atom> new_atoms)
+{
+    this->new_atoms = new_atoms;
+}
+
+ui::StructureListViewer* ui::AtomManager::get_structure_list_viewer()
+{
+    return mStructureListViewer;
+}
+
+ui::AtomVTKPreview* ui::AtomManager::get_atom_vtk_preview()
+{
+    return mAtomVTKPreview;
+}
+
+
+ui::MDVisualiser* ui::AtomManager::get_parent_md_visualiser()
+{
+    return parentMDVisualiser;
+}
+
+
 
