@@ -47,15 +47,16 @@ public:
                           ui::PlaybackSettings* playback_settings = nullptr,
                           SharedData*           shared_data       = nullptr);
 
-    simulation::Timestep* current_timestep_data = nullptr;
 
-    SharedData*           mSharedData       = nullptr;
-    ui::PlaybackSettings* mPlaybackSettings = nullptr;
 
     graphs::EnergyGraphWidget* mEnergyGraphWidget = nullptr;
 
     ui::AtomManager*      getAtomManager()      { return mAtomManager; }
     ui::PlaybackSettings* getPlaybackSettings() { return mPlaybackSettings; }
+    simulation::Timestep* getCurrentTimestepData() { return current_timestep_data; }
+    SharedData*           getSharedData()       { return mSharedData; }
+
+    void setCurrentTimestepData(simulation::Timestep* timestep) { current_timestep_data = timestep; }
 
 public slots:
     ui::AtomVTKWidget* getVTKWidget() { return mVTKWidget; }
@@ -118,6 +119,10 @@ private:
 
     
     ui::BasicDataLoader*  mDataLoader       = nullptr;
+    simulation::Timestep* current_timestep_data = nullptr;
+
+    SharedData*           mSharedData       = nullptr;
+    ui::PlaybackSettings* mPlaybackSettings = nullptr;
     
 };
 

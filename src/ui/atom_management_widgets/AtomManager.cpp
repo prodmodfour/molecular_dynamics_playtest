@@ -79,11 +79,11 @@ void ui::AtomManager::onAddStructureButtonClicked()
                 atom.z += params.offsetZ;
             }
 
-            parentMDVisualiser->current_timestep_data->add_structure(fcc_structure);
-            parentMDVisualiser->mSharedData->indexes_of_timesteps_edited_by_ui.push_back(parentMDVisualiser->mPlaybackSettings->current_timestep_index);
+            parentMDVisualiser->getCurrentTimestepData()->add_structure(fcc_structure);
+            parentMDVisualiser->getSharedData()->indexes_of_timesteps_edited_by_ui.push_back(parentMDVisualiser->getPlaybackSettings()->current_timestep_index);
 
         }
-        mStructureListViewer->setStructureList(&(parentMDVisualiser->current_timestep_data->structure_list));
+        mStructureListViewer->setStructureList(&(parentMDVisualiser->getCurrentTimestepData()->structure_list));
     }
 
 }
