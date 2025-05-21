@@ -8,7 +8,7 @@ namespace simulation {
     struct Timestep;
 }
 
-class SharedData;
+struct SharedData;
 
 namespace ui {
    

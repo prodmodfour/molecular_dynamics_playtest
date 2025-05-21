@@ -3,7 +3,7 @@
 #include <QDialog>
 
 
-class SharedData;
+struct SharedData;
 
 namespace ui
 {
