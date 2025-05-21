@@ -48,7 +48,7 @@ VTK/Qt visualiser for simulation runs. This project provides a platform for visu
 
 4.  **Post-build (Windows):**
     After building, you need to ensure the necessary DLLs are available to the executable. You have two options:
-    *   Use `windeployqt` (typically found in your Qt installation's `bin` directory) to automatically copy Qt-related DLLs. You may need to point it to your executable.
+    *   Use `windeployqt` (typically found in your Qt installation's `bin` directory) to automatically copy Qt-related DLLs. You may need to point it to your executable. You will still need to copy the VTK DLLs manually.
     *   Manually copy the required DLLs from the `include/QtRuntime` and `include/VtkRuntime` directories (as specified in `CMakeLists.txt`) into your build directory (e.g., `build/bin/Release` or `build/bin/Debug`). The `install` commands in CMake should handle this if you run the install step.
 
 ## Installation
