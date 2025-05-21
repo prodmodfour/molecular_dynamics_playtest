@@ -80,7 +80,7 @@ void ui::AtomManager::onAddStructureButtonClicked()
             }
 
             parentMDVisualiser->getCurrentTimestepData()->add_structure(fcc_structure);
-            parentMDVisualiser->getSharedData()->indexes_of_timesteps_edited_by_ui.push_back(parentMDVisualiser->getPlaybackSettings()->current_timestep_index);
+            parentMDVisualiser->getSharedData()->indexes_of_timesteps_edited_by_ui.push_back(parentMDVisualiser->getPlaybackSettings()->get_current_timestep_index());
 
         }
         mStructureListViewer->setStructureList(&(parentMDVisualiser->getCurrentTimestepData()->structure_list));

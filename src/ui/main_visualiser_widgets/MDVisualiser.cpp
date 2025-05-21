@@ -98,7 +98,7 @@ ui::MDVisualiser::MDVisualiser(
     auto speedSpin = new QSpinBox(central);
     speedSpin->setRange(1, 20);         
     speedSpin->setSingleStep(1);
-    speedSpin->setValue(static_cast<int>(mPlaybackSettings->speed));
+    speedSpin->setValue(static_cast<int>(mPlaybackSettings->get_current_speed()));
     speedSpin->setSuffix(u8"×");
     speedSpin->setFixedWidth(70);
     mSpeedSpin = speedSpin;
@@ -237,22 +237,22 @@ ui::MDVisualiser::MDVisualiser(
 void ui::MDVisualiser::onTimerTimeout()
 {
     // It seems that prints don't work here, possibly because of the way that Qt works.
-    if (mPlaybackSettings->pause == false)
+    if (mPlaybackSettings->is_paused() == false)
     {
         std::unique_lock<std::mutex> lock(mSharedData->mutex);
         mPlaybackSettings->update_last_timestep_index(mSharedData->index_of_latest_timestep_simulated);
         lock.unlock();
         mPlaybackSettings->next_timestep();
-        mEnergyGraphWidget->addDataPoint(mPlaybackSettings->current_timestep_index, current_timestep_data->kinetic_energy, current_timestep_data->potential_energy);
+        mEnergyGraphWidget->addDataPoint(mPlaybackSettings->get_current_timestep_index(), current_timestep_data->kinetic_energy, current_timestep_data->potential_energy);
     }
 
     if (mDataLoader && mDataLoader->load()) 
     {
         if (current_timestep_data) {
             mVTKWidget->updateAtoms(current_timestep_data->atoms);
-            if ( mSharedData->index_of_latest_timestep_displayed < mPlaybackSettings->current_timestep_index)
+            if ( mSharedData->index_of_latest_timestep_displayed < mPlaybackSettings->get_current_timestep_index())
             {
-            mSharedData->index_of_latest_timestep_displayed = mPlaybackSettings->current_timestep_index;
+            mSharedData->index_of_latest_timestep_displayed = mPlaybackSettings->get_current_timestep_index();
             }
 
             if (!FirstViewDone)
@@ -269,7 +269,7 @@ void ui::MDVisualiser::onTimerTimeout()
 
 
 
-            if (mPlaybackSettings->pause == false)
+            if (mPlaybackSettings->is_paused() == false)
             {
                 mAtomManager->get_atom_vtk_preview()->setAtomData(&(current_timestep_data->atoms));
                 mAtomManager->get_structure_list_viewer()->setStructureList(&(current_timestep_data->structure_list));
@@ -312,7 +312,7 @@ void ui::MDVisualiser::onSpeedChanged(int)
 {
     int newSpeed = mSpeedSpin->value();
     if (newSpeed <= 0) { 
-         mSpeedSpin->setValue(mPlaybackSettings->speed); 
+         mSpeedSpin->setValue(mPlaybackSettings->get_current_speed()); 
          return;
     }
 
@@ -355,7 +355,7 @@ void ui::MDVisualiser::setPlaybackSettings(ui::PlaybackSettings* playback_settin
 
 void ui::MDVisualiser::onManageAtomsClicked()
 {
-    mPlaybackSettings->pause = true;
+    mPlaybackSettings->toggle_pause();
 
     mAtomManager->show();
 }
@@ -365,7 +365,7 @@ void ui::MDVisualiser::onManageAtomsClicked()
 void ui::MDVisualiser::updateStepDisplay()
 {
     if (mStepLcd && mPlaybackSettings)
-        mStepLcd->display(mPlaybackSettings->current_timestep_index);
+        mStepLcd->display(mPlaybackSettings->get_current_timestep_index());
 }
 
 void ui::MDVisualiser::setSharedData(SharedData* shared_data)
@@ -402,7 +402,7 @@ void ui::MDVisualiser::onResetCameraClicked()
 
 void ui::MDVisualiser::onSimulationSettingsClicked()
 {
-    mPlaybackSettings->pause = true;
+    mPlaybackSettings->toggle_pause();
 
     auto* simulationSettingsDialogue = new SimulationSettingsDialogue(this, mSharedData);
     simulationSettingsDialogue->exec();    
@@ -411,14 +411,14 @@ void ui::MDVisualiser::onSimulationSettingsClicked()
 
 void ui::MDVisualiser::onClearAtomsClicked()
 {
-    mPlaybackSettings->pause = true;
+    mPlaybackSettings->toggle_pause();
     mPlaybackSettings->reset();
     mDataLoader->clearData();
 }
 
 void ui::MDVisualiser::onAddAtomClicked()
 {
-    mPlaybackSettings->pause = true;
+    mPlaybackSettings->toggle_pause();
     atoms::Atom atom("Cu", 63.546, 1.28);
 
     std::random_device rd;
@@ -429,7 +429,7 @@ void ui::MDVisualiser::onAddAtomClicked()
     atom.z = dis(gen);
 
     current_timestep_data->atoms.push_back(atom);
-    mSharedData->indexes_of_timesteps_edited_by_ui.push_back(mPlaybackSettings->current_timestep_index);
+    mSharedData->indexes_of_timesteps_edited_by_ui.push_back(mPlaybackSettings->get_current_timestep_index());
 }
 
 void ui::MDVisualiser::onShowEnergyLineGraphClicked()
@@ -444,7 +444,7 @@ void ui::MDVisualiser::onShowEnergyLineGraphClicked()
 
 void ui::MDVisualiser::onShowKineticEnergyHistogramClicked()
 {
-    mPlaybackSettings->pause = true;
+    mPlaybackSettings->toggle_pause();
     KineticEnergyHistogramWidget* kineticEnergyHistogramWidget = new KineticEnergyHistogramWidget();
     std::vector<double> kineticEnergies;
 

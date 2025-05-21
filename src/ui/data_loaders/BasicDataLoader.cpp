@@ -28,8 +28,8 @@ bool BasicDataLoader::load()
         return false;
     }
     
-    std::vector<atoms::Atom> atoms = data->at(playback_settings->current_timestep_index).atoms;
-    visualiser->setCurrentTimestepData(&data->at(playback_settings->current_timestep_index));
+    std::vector<atoms::Atom> atoms = data->at(playback_settings->get_current_timestep_index()).atoms;
+    visualiser->setCurrentTimestepData(&data->at(playback_settings->get_current_timestep_index()));
     return true;
 }
 

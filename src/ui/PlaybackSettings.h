@@ -19,11 +19,7 @@ class PlaybackSettings
             this->last_timestep_index = last_timestep_index;
         }
 
-        int direction;
-        int speed; 
-        bool pause;
-        int current_timestep_index;
-        int last_timestep_index;
+
 
         void change_direction()
         {
@@ -80,7 +76,18 @@ class PlaybackSettings
             pause = true;
         }
 
+        bool is_paused() { return pause; }
 
+        int get_current_timestep_index() { return current_timestep_index; }
+
+        int get_current_speed() { return speed; }
+
+    private:
+        int direction;
+        int speed; 
+        bool pause;
+        int current_timestep_index;
+        int last_timestep_index;
     
 };
 
